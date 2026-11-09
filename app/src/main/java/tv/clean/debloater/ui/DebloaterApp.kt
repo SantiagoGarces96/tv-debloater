@@ -42,6 +42,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -56,9 +57,97 @@ import tv.clean.debloater.vm.UiState
 @Composable
 fun DebloaterApp(state: UiState, vm: DebloaterViewModel, modifier: Modifier = Modifier) {
     when (state.stage) {
+        Stage.Platform -> PlatformScreen(vm, modifier)
         Stage.Connect -> ConnectScreen(state, vm, modifier)
         Stage.Packages -> PackagesScreen(state, vm, modifier)
         Stage.Working -> WorkingScreen(state, vm, modifier)
+        Stage.LgInfo -> LgInfoScreen(vm, modifier)
+    }
+}
+
+@Composable
+private fun PlatformScreen(vm: DebloaterViewModel, modifier: Modifier) {
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(24.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+    ) {
+        Text("Clean TV", style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold)
+        Text("¿Qué tipo de televisor o decodificador tienes?", style = MaterialTheme.typography.bodyMedium)
+
+        Card(Modifier.fillMaxWidth()) {
+            Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text("📺 Android TV / Google TV / Decodificador", fontWeight = FontWeight.Bold)
+                Text(
+                    "Quita bloatware, telemetría y anuncios por ADB; bloqueo de anuncios por DNS y launcher limpio.",
+                    style = MaterialTheme.typography.bodySmall,
+                )
+                Button(onClick = vm::chooseAndroid, modifier = Modifier.fillMaxWidth()) {
+                    Text("Continuar con Android")
+                }
+            }
+        }
+
+        Card(Modifier.fillMaxWidth()) {
+            Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text("📺 LG (webOS)", fontWeight = FontWeight.Bold)
+                Text(
+                    "Las LG no son Android ni usan ADB. Se limpian con un launcher propio vía Modo Desarrollador.",
+                    style = MaterialTheme.typography.bodySmall,
+                )
+                OutlinedButton(onClick = vm::chooseLg, modifier = Modifier.fillMaxWidth()) {
+                    Text("Ver opción para LG")
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun LgInfoScreen(vm: DebloaterViewModel, modifier: Modifier) {
+    val uriHandler = LocalUriHandler.current
+    val project = "https://github.com/Razdva122/clean-your-tv-lg-webos"
+    val installer = "https://github.com/Razdva122/clean-your-tv-lg-webos/releases/latest"
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(24.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+    ) {
+        Text("LG (webOS)", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
+        Card(Modifier.fillMaxWidth()) {
+            Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text("Por qué es distinto", fontWeight = FontWeight.SemiBold)
+                Text(
+                    "LG webOS no es Android: no hay ADB ni se pueden desinstalar servicios del sistema como aquí. " +
+                        "Lo que sí se puede es poner un launcher limpio (sin filas patrocinadas) usando el " +
+                        "Modo Desarrollador de LG.",
+                    style = MaterialTheme.typography.bodySmall,
+                )
+            }
+        }
+        Card(Modifier.fillMaxWidth()) {
+            Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text("Cómo hacerlo", fontWeight = FontWeight.SemiBold)
+                Text(
+                    "Hay una app Android dedicada (open source, MIT) que lo instala desde el teléfono: " +
+                        "activas Modo Desarrollador en la TV, metes la clave de 6 caracteres y la app instala el launcher.",
+                    style = MaterialTheme.typography.bodySmall,
+                )
+            }
+        }
+        Button(onClick = { uriHandler.openUri(installer) }, modifier = Modifier.fillMaxWidth()) {
+            Text("Descargar la app para LG (webOS)")
+        }
+        OutlinedButton(onClick = { uriHandler.openUri(project) }, modifier = Modifier.fillMaxWidth()) {
+            Text("Ver el proyecto en GitHub")
+        }
+        TextButton(onClick = vm::backToPlatform, modifier = Modifier.fillMaxWidth()) {
+            Text("Volver")
+        }
     }
 }
 
@@ -144,6 +233,9 @@ private fun ConnectScreen(state: UiState, vm: DebloaterViewModel, modifier: Modi
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.secondary,
         )
+        TextButton(onClick = vm::backToPlatform, modifier = Modifier.fillMaxWidth()) {
+            Text("← Cambiar plataforma")
+        }
     }
 }
 

@@ -25,12 +25,12 @@ import tv.clean.debloater.data.DebloatRepository
 import tv.clean.debloater.data.Telemetry
 import tv.clean.debloater.data.UadEntry
 
-enum class Stage { Connect, Packages, Working }
+enum class Stage { Platform, Connect, Packages, Working, LgInfo }
 
 enum class Action { Disable, Uninstall }
 
 data class UiState(
-    val stage: Stage = Stage.Connect,
+    val stage: Stage = Stage.Platform,
     val hostInput: String = "",
     val busy: Boolean = false,
     val device: DeviceInfo? = null,
@@ -60,6 +60,12 @@ class DebloaterViewModel(app: Application) : AndroidViewModel(app) {
     private var installed: List<String> = emptyList()
     private var catalog: Map<String, String?> = emptyMap()
     private var uad: Map<String, UadEntry> = emptyMap()
+
+    fun chooseAndroid() = _state.update { it.copy(stage = Stage.Connect, error = null) }
+
+    fun chooseLg() = _state.update { it.copy(stage = Stage.LgInfo) }
+
+    fun backToPlatform() = _state.update { it.copy(stage = Stage.Platform, error = null, found = emptyList()) }
 
     fun onHostChange(value: String) = _state.update { it.copy(hostInput = value, error = null) }
 

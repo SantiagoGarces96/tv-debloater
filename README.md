@@ -6,7 +6,17 @@ y te deja quitar el bloatware (telemetría, filas patrocinadas, apps preinstalad
 > Inspirada en el proyecto [CleanYourTV](https://github.com/Gathin23/cleanyourtv) (MIT), del que se reutilizan
 > las listas de paquetes por modelo. Ver [`NOTICE`](NOTICE).
 
-## Qué hace
+## Plataformas
+
+Al abrir, la app pregunta qué tienes:
+
+- **Android TV / Google TV / Decodificador** → todo el debloat por ADB (lo que describe este README).
+- **LG (webOS)** → LG no es Android ni usa ADB; se limpia con un launcher propio vía Modo Desarrollador.
+  La app enlaza al proyecto dedicado
+  [Razdva122/clean-your-tv-lg-webos](https://github.com/Razdva122/clean-your-tv-lg-webos) (MIT),
+  que incluye su propia app Android para instalarlo.
+
+## Qué hace (Android)
 
 - **Encuentra la TV sola en el Wi‑Fi** (escaneo del puerto ADB), o le pones la IP a mano.
 - Se conecta a la TV por ADB TCP (`ip:5555`), usando una clave ADB propia que la app genera y guarda.
