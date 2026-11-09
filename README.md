@@ -1,5 +1,7 @@
 # Clean TV — debloater para Android/Google TV desde el teléfono
 
+[![CI](https://github.com/SantiagoGarces96/tv-debloater/actions/workflows/ci.yml/badge.svg)](https://github.com/SantiagoGarces96/tv-debloater/actions/workflows/ci.yml)
+
 App Android **para tu teléfono** que se conecta a tu propia Android TV / Google TV por **ADB sobre Wi‑Fi**
 y te deja quitar el bloatware (telemetría, filas patrocinadas, apps preinstaladas) sin PC y sin root.
 
