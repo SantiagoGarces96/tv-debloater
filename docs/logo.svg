@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="460" height="120" viewBox="0 0 460 120">
+  <rect width="460" height="120" rx="20" fill="#0B0C0F"/>
+  <!-- Insignia con casco espartano (diseño original) -->
+  <rect x="16" y="16" width="88" height="88" rx="20" fill="#14161B" stroke="#23272F"/>
+  <g transform="translate(16,16) scale(0.74)">
+    <path fill="#E0312B" d="M54,20 C47,20 42,27 42,38 L49,40 C49,30 51,26 54,26 C57,26 59,30 59,40 L66,38 C66,27 61,20 54,20 Z"/>
+    <path fill="#8E1714" d="M54,26 C52,30 51,34 51,40 L57,40 C57,34 56,30 54,26 Z"/>
+    <path fill="#E0312B" d="M54,30 C39,30 30,41 30,56 C30,71 39,83 50,88 L50,72 C43,68 39,62 39,56 C39,45 46,39 54,39 C62,39 69,45 69,56 C69,62 65,68 58,72 L58,88 C69,83 78,71 78,56 C78,41 69,30 54,30 Z"/>
+    <path fill="#E0312B" d="M51,45 h6 v30 h-6 z"/>
+  </g>
+  <!-- Wordmark -->
+  <text x="124" y="58" font-family="Inter,Segoe UI,system-ui,sans-serif" font-size="38" font-weight="800" fill="#F4F5F7">SG <tspan fill="#E0312B">Alfa</tspan></text>
+  <text x="126" y="86" font-family="Inter,Segoe UI,system-ui,sans-serif" font-size="15" fill="#9BA1AC">Limpia tu TV y decodificador</text>
+</svg>

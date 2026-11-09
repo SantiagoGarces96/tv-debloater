@@ -1,5 +1,7 @@
 # SG Alfa — limpia tu TV y decodificador desde el teléfono
 
+<p align="center"><img src="docs/logo.svg" width="440" alt="SG Alfa"></p>
+
 [![CI](https://github.com/SantiagoGarces96/tv-debloater/actions/workflows/ci.yml/badge.svg)](https://github.com/SantiagoGarces96/tv-debloater/actions/workflows/ci.yml)
 
 **SG Alfa** es una app Android **para tu teléfono** que limpia tu propia tele o decodificador: quita el
@@ -8,6 +10,12 @@ bloatware (telemetría, filas patrocinadas, apps preinstaladas), **bloquea anunc
 
 > Proyecto propio e independiente. Reutiliza datos abiertos con crédito (ver [`NOTICE`](NOTICE)) e
 > iremos migrando a datos propios.
+
+## Vistas
+
+<p align="center"><img src="docs/preview.svg" width="900" alt="Vista previa de la app"></p>
+
+<sub>Vista previa de la interfaz (mockup). La app aún no se ha probado en una TV real.</sub>
 
 ## Plataformas
 
