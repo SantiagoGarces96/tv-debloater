@@ -45,6 +45,7 @@ data class AppRow(
     val risk: String? = null,
     /** true si parece telemetría/rastreo/anuncios. */
     val isTelemetry: Boolean = false,
+    val group: AppGroup = AppGroup.OTHER,
 )
 
 /** Registro de respaldo: qué se quitó y cuándo, para poder restaurar. */

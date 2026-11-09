@@ -19,6 +19,7 @@ import tv.clean.debloater.adb.TvDiscovery
 import tv.clean.debloater.data.AppRow
 import tv.clean.debloater.data.BackupRecord
 import tv.clean.debloater.data.BackupStore
+import tv.clean.debloater.data.Categorizer
 import tv.clean.debloater.data.DebloatProfile
 import tv.clean.debloater.data.DebloatRepository
 import tv.clean.debloater.data.Telemetry
@@ -144,6 +145,7 @@ class DebloaterViewModel(app: Application) : AndroidViewModel(app) {
             val reason = profileEntries[pkg] ?: catalog[pkg]
             val u = uad[pkg]
             val description = u?.description?.takeIf { it.isNotBlank() }
+            val telemetry = Telemetry.isTelemetry(pkg, reason, description, u?.labels ?: emptyList())
             AppRow(
                 packageName = pkg,
                 reason = reason,
@@ -151,7 +153,8 @@ class DebloaterViewModel(app: Application) : AndroidViewModel(app) {
                 inAnyList = pkg in catalog,
                 description = description,
                 risk = u?.removal?.takeIf { it.isNotBlank() },
-                isTelemetry = Telemetry.isTelemetry(pkg, reason, description, u?.labels ?: emptyList()),
+                isTelemetry = telemetry,
+                group = Categorizer.of(pkg, reason, description, u, telemetry),
             )
         }.sortedWith(
             compareByDescending<AppRow> { it.inSelectedProfile }

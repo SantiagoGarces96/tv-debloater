@@ -46,6 +46,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import tv.clean.debloater.data.AppGroup
 import tv.clean.debloater.data.AppRow
 import tv.clean.debloater.vm.Action
 import tv.clean.debloater.vm.DebloaterViewModel
@@ -267,14 +268,29 @@ private fun PackagesScreen(state: UiState, vm: DebloaterViewModel, modifier: Mod
 
         HorizontalDivider(Modifier.padding(vertical = 8.dp))
 
+        val grouped = remember(state.rows) { state.rows.groupBy { it.group } }
         LazyColumn(Modifier.weight(1f)) {
-            items(state.rows, key = { it.packageName }) { row ->
-                AppRowItem(
-                    row = row,
-                    checked = row.packageName in state.selected,
-                    onToggle = { vm.toggle(row.packageName) },
-                )
-                HorizontalDivider()
+            AppGroup.entries.forEach { group ->
+                val rows = grouped[group].orEmpty()
+                if (rows.isNotEmpty()) {
+                    item(key = "header_${group.name}") {
+                        Text(
+                            "${group.label} · ${rows.size}",
+                            style = MaterialTheme.typography.titleSmall,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.padding(top = 12.dp, bottom = 4.dp),
+                        )
+                    }
+                    items(rows, key = { it.packageName }) { row ->
+                        AppRowItem(
+                            row = row,
+                            checked = row.packageName in state.selected,
+                            onToggle = { vm.toggle(row.packageName) },
+                        )
+                        HorizontalDivider()
+                    }
+                }
             }
         }
 
@@ -311,6 +327,13 @@ private fun PackagesScreen(state: UiState, vm: DebloaterViewModel, modifier: Mod
             )
         }
 
+        homeSwitchNote(device)?.let {
+            Text(
+                it,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.error,
+            )
+        }
         OutlinedButton(
             onClick = { pickApk.launch(arrayOf("*/*")) },
             enabled = !state.busy,
@@ -318,6 +341,18 @@ private fun PackagesScreen(state: UiState, vm: DebloaterViewModel, modifier: Mod
         ) {
             Text("Instalar launcher (Projectivy) y fijar como inicio…")
         }
+    }
+}
+
+/** Nota de riesgo al cambiar la pantalla de inicio, según el fabricante/modelo. */
+private fun homeSwitchNote(device: tv.clean.debloater.adb.DeviceInfo?): String? {
+    val m = ((device?.manufacturer ?: "") + " " + (device?.model ?: "")).lowercase()
+    return when {
+        m.contains("amazon") || m.contains("fire") ->
+            "⚠️ Fire TV no permite launcher de terceros como inicio: aquí solo sirve el debloat."
+        m.contains("chromecast") || m.contains("google tv") || m.contains("streamer") ->
+            "⚠️ En Google TV/Chromecast el cambio de inicio puede no sobrevivir al reinicio."
+        else -> null
     }
 }
 
