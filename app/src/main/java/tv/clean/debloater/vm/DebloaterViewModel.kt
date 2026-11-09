@@ -1,0 +1,215 @@
+package tv.clean.debloater.vm
+
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import tv.clean.debloater.adb.AdbManager
+import tv.clean.debloater.adb.AdbResult
+import tv.clean.debloater.adb.DeviceInfo
+import tv.clean.debloater.data.AppRow
+import tv.clean.debloater.data.BackupRecord
+import tv.clean.debloater.data.BackupStore
+import tv.clean.debloater.data.DebloatProfile
+import tv.clean.debloater.data.DebloatRepository
+
+enum class Stage { Connect, Packages, Working }
+
+data class UiState(
+    val stage: Stage = Stage.Connect,
+    val hostInput: String = "",
+    val busy: Boolean = false,
+    val device: DeviceInfo? = null,
+    val error: String? = null,
+    val profiles: List<DebloatProfile> = emptyList(),
+    val selectedProfileId: String? = null,
+    val rows: List<AppRow> = emptyList(),
+    val selected: Set<String> = emptySet(),
+    val log: List<String> = emptyList(),
+    val workDone: Boolean = false,
+    val hasBackup: Boolean = false,
+)
+
+class DebloaterViewModel(app: Application) : AndroidViewModel(app) {
+
+    private val adb = AdbManager(app)
+    private val repo = DebloatRepository(app)
+    private val backups = BackupStore(app)
+
+    private val _state = MutableStateFlow(UiState())
+    val state: StateFlow<UiState> = _state.asStateFlow()
+
+    private var installed: List<String> = emptyList()
+    private var catalog: Map<String, String?> = emptyMap()
+
+    fun onHostChange(value: String) = _state.update { it.copy(hostInput = value, error = null) }
+
+    fun connect() {
+        val host = _state.value.hostInput.trim()
+        if (host.isEmpty()) {
+            _state.update { it.copy(error = "Escribe la IP de la TV.") }
+            return
+        }
+        val (ip, port) = parseHostPort(host)
+        _state.update { it.copy(busy = true, error = null) }
+        viewModelScope.launch {
+            when (val result = adb.connect(ip, port)) {
+                is AdbResult.Ok -> {
+                    val profiles = repo.profiles()
+                    catalog = repo.mergedCatalog()
+                    val backup = backups.latestForHost(ip)
+                    _state.update {
+                        it.copy(
+                            busy = false,
+                            device = result.value,
+                            profiles = profiles,
+                            stage = Stage.Packages,
+                            hasBackup = backup != null,
+                        )
+                    }
+                    loadPackages()
+                }
+                is AdbResult.Err -> _state.update { it.copy(busy = false, error = result.message) }
+            }
+        }
+    }
+
+    fun loadPackages() {
+        _state.update { it.copy(busy = true, error = null) }
+        viewModelScope.launch {
+            when (val result = adb.listPackages()) {
+                is AdbResult.Ok -> {
+                    installed = result.value
+                    rebuildRows()
+                    _state.update { it.copy(busy = false) }
+                }
+                is AdbResult.Err -> _state.update { it.copy(busy = false, error = result.message) }
+            }
+        }
+    }
+
+    fun selectProfile(id: String?) {
+        _state.update { it.copy(selectedProfileId = id) }
+        rebuildRows(preselect = true)
+    }
+
+    private fun rebuildRows(preselect: Boolean = true) {
+        val profile = _state.value.profiles.firstOrNull { it.id == _state.value.selectedProfileId }
+        val profileEntries = profile?.entries ?: emptyMap()
+        val rows = installed.map { pkg ->
+            AppRow(
+                packageName = pkg,
+                reason = profileEntries[pkg] ?: catalog[pkg],
+                inSelectedProfile = pkg in profileEntries,
+                inAnyList = pkg in catalog,
+            )
+        }.sortedWith(
+            compareByDescending<AppRow> { it.inSelectedProfile }
+                .thenByDescending { it.inAnyList }
+                .thenBy { it.packageName },
+        )
+        val selected = if (preselect) {
+            rows.filter { it.inSelectedProfile }.map { it.packageName }.toSet()
+        } else {
+            _state.value.selected
+        }
+        _state.update { it.copy(rows = rows, selected = selected) }
+    }
+
+    fun toggle(pkg: String) = _state.update {
+        val s = it.selected.toMutableSet()
+        if (!s.add(pkg)) s.remove(pkg)
+        it.copy(selected = s)
+    }
+
+    fun selectRecommended() = _state.update {
+        it.copy(selected = it.rows.filter { r -> r.inAnyList }.map { r -> r.packageName }.toSet())
+    }
+
+    fun clearSelection() = _state.update { it.copy(selected = emptySet()) }
+
+    fun runUninstall() {
+        val targets = _state.value.selected.toList()
+        if (targets.isEmpty()) return
+        _state.update { it.copy(stage = Stage.Working, busy = true, log = emptyList(), workDone = false) }
+        viewModelScope.launch {
+            val removed = mutableListOf<String>()
+            var i = 0
+            for (pkg in targets) {
+                i++
+                when (val r = adb.uninstallForUser0(pkg)) {
+                    is AdbResult.Ok -> {
+                        removed += pkg
+                        appendLog("[$i/${targets.size}] ✓ $pkg")
+                    }
+                    is AdbResult.Err -> appendLog("[$i/${targets.size}] ✗ $pkg — ${r.message}")
+                }
+            }
+            if (removed.isNotEmpty()) {
+                val dev = _state.value.device
+                backups.save(
+                    BackupRecord(
+                        host = adb.host ?: "",
+                        model = dev?.model ?: "",
+                        timestamp = System.currentTimeMillis(),
+                        removed = removed,
+                    ),
+                )
+                appendLog("Respaldo guardado (${removed.size} paquetes).")
+            }
+            installed = installed.filterNot { it in removed }
+            rebuildRows(preselect = false)
+            _state.update { it.copy(busy = false, workDone = true, hasBackup = true) }
+        }
+    }
+
+    fun restoreLatest() {
+        _state.update { it.copy(stage = Stage.Working, busy = true, log = emptyList(), workDone = false) }
+        viewModelScope.launch {
+            val host = adb.host ?: ""
+            val record = backups.latestForHost(host)
+            if (record == null) {
+                appendLog("No hay respaldo para $host.")
+                _state.update { it.copy(busy = false, workDone = true) }
+                return@launch
+            }
+            var i = 0
+            for (pkg in record.removed) {
+                i++
+                when (val r = adb.reinstallExisting(pkg)) {
+                    is AdbResult.Ok -> appendLog("[$i/${record.removed.size}] ✓ $pkg")
+                    is AdbResult.Err -> appendLog("[$i/${record.removed.size}] ✗ $pkg — ${r.message}")
+                }
+            }
+            appendLog("Restauración terminada.")
+            _state.update { it.copy(busy = false, workDone = true) }
+            loadPackages()
+        }
+    }
+
+    fun backToPackages() = _state.update { it.copy(stage = Stage.Packages, log = emptyList()) }
+
+    fun disconnect() {
+        adb.close()
+        installed = emptyList()
+        catalog = emptyMap()
+        _state.value = UiState()
+    }
+
+    private fun appendLog(line: String) = _state.update { it.copy(log = it.log + line) }
+
+    private fun parseHostPort(input: String): Pair<String, Int> {
+        val parts = input.split(":")
+        return if (parts.size == 2) parts[0].trim() to (parts[1].trim().toIntOrNull() ?: 5555)
+        else input.trim() to 5555
+    }
+
+    override fun onCleared() {
+        adb.close()
+        super.onCleared()
+    }
+}
