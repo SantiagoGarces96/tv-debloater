@@ -2,7 +2,9 @@ package tv.clean.home
 
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.BitmapFactory
 import android.graphics.drawable.Drawable
+import android.net.Uri
 import android.net.VpnService
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -28,7 +30,10 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -45,12 +50,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.paint
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
+import java.io.File
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -73,6 +82,7 @@ class HomeActivity : ComponentActivity() {
             var vpnOn by remember { mutableStateOf(false) }
             var config by remember { mutableStateOf(prefs.load()) }
             var showSettings by remember { mutableStateOf(false) }
+            var customWall by remember { mutableStateOf(loadWallpaper()) }
             val consent = rememberLauncherForActivityResult(
                 ActivityResultContracts.StartActivityForResult(),
             ) { result ->
@@ -86,12 +96,21 @@ class HomeActivity : ComponentActivity() {
                     SettingsScreen(
                         config = config,
                         onChange = { config = it; prefs.save(it) },
+                        onPickWallpaper = { uri ->
+                            if (saveWallpaper(uri)) {
+                                customWall = loadWallpaper()
+                                val c = config.copy(wallpaper = "custom")
+                                config = c
+                                prefs.save(c)
+                            }
+                        },
                         onClose = { showSettings = false },
                     )
                 } else {
                     Home(
                         apps = apps,
                         config = config,
+                        customWallpaper = customWall,
                         onLaunch = ::launch,
                         vpnOn = vpnOn,
                         onToggleVpn = {
@@ -130,6 +149,19 @@ class HomeActivity : ComponentActivity() {
         startService(Intent(this, DnsBlockVpnService::class.java).setAction(DnsBlockVpnService.ACTION_STOP))
     }
 
+    private val wallpaperFile get() = File(filesDir, "wallpaper.img")
+
+    private fun loadWallpaper(): ImageBitmap? = runCatching {
+        if (wallpaperFile.exists()) BitmapFactory.decodeFile(wallpaperFile.absolutePath)?.asImageBitmap() else null
+    }.getOrNull()
+
+    private fun saveWallpaper(uri: Uri): Boolean = runCatching {
+        contentResolver.openInputStream(uri)?.use { input ->
+            wallpaperFile.outputStream().use { output -> input.copyTo(output) }
+        }
+        true
+    }.getOrDefault(false)
+
     private fun loadApps(): List<AppEntry> {
         val pm = packageManager
         val self = packageName
@@ -157,6 +189,7 @@ class HomeActivity : ComponentActivity() {
 private fun Home(
     apps: List<AppEntry>,
     config: LauncherConfig,
+    customWallpaper: ImageBitmap?,
     onLaunch: (String) -> Unit,
     vpnOn: Boolean,
     onToggleVpn: () -> Unit,
@@ -171,7 +204,8 @@ private fun Home(
                 .thenBy { it.label.lowercase() },
         )
     }
-    Column(Modifier.fillMaxSize().padding(horizontal = 48.dp, vertical = 40.dp)) {
+    val bg = wallpaperModifier(config.wallpaper, customWallpaper)
+    Column(Modifier.fillMaxSize().then(bg).padding(horizontal = 48.dp, vertical = 40.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
             Clock()
             Spacer(Modifier.weight(1f))
@@ -215,6 +249,18 @@ private fun Home(
     }
 }
 
+private fun wallpaperModifier(wallpaperId: String, custom: ImageBitmap?): Modifier {
+    if (wallpaperId == "custom" && custom != null) {
+        return Modifier.paint(BitmapPainter(custom), contentScale = ContentScale.Crop)
+    }
+    val wp = LauncherPrefs.WALLPAPERS.firstOrNull { it.id == wallpaperId }
+    return if (wp != null && wp.colors.size >= 2) {
+        Modifier.background(Brush.verticalGradient(wp.colors.map { Color(it) }))
+    } else {
+        Modifier
+    }
+}
+
 @Composable
 private fun PillButton(text: String, accent: Color, onClick: () -> Unit) {
     val interaction = remember { MutableInteractionSource() }
@@ -234,10 +280,14 @@ private fun PillButton(text: String, accent: Color, onClick: () -> Unit) {
 private fun SettingsScreen(
     config: LauncherConfig,
     onChange: (LauncherConfig) -> Unit,
+    onPickWallpaper: (Uri) -> Unit,
     onClose: () -> Unit,
 ) {
     val accent = Color(config.accent)
-    Column(Modifier.fillMaxSize().padding(48.dp)) {
+    val pickImage = rememberLauncherForActivityResult(
+        ActivityResultContracts.OpenDocument(),
+    ) { uri -> if (uri != null) onPickWallpaper(uri) }
+    Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(48.dp)) {
         Text("Personalizar", color = Color.White, fontSize = 30.sp, fontWeight = FontWeight.Bold)
 
         Text("Color de acento", color = Color(0xFF9BA1AC), fontSize = 15.sp, modifier = Modifier.padding(top = 26.dp, bottom = 10.dp))
@@ -258,7 +308,26 @@ private fun SettingsScreen(
             }
         }
 
-        Spacer(Modifier.weight(1f))
+        Text("Fondo de pantalla", color = Color(0xFF9BA1AC), fontSize = 15.sp, modifier = Modifier.padding(top = 26.dp, bottom = 10.dp))
+        Row(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
+            LauncherPrefs.WALLPAPERS.forEach { wp ->
+                ChoiceButton(wp.name, accent, selected = config.wallpaper == wp.id) {
+                    onChange(config.copy(wallpaper = wp.id))
+                }
+            }
+            ChoiceButton("Mi imagen…", accent, selected = config.wallpaper == "custom") {
+                pickImage.launch(arrayOf("image/*"))
+            }
+        }
+        Text(
+            "Puedes usar tu propia imagen (anime, dibujos, lo que quieras). " +
+                "No incluimos arte con derechos de autor.",
+            color = Color(0xFF6B7280),
+            fontSize = 12.sp,
+            modifier = Modifier.padding(top = 8.dp),
+        )
+
+        Spacer(Modifier.height(28.dp))
         PillButton("Volver", accent, onClose)
     }
 }

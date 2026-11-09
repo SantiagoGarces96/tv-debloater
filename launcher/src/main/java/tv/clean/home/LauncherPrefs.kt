@@ -7,7 +7,11 @@ data class LauncherConfig(
     val accent: Long = 0xFF34D399, // esmeralda
     val columns: Int = 0,          // 0 = automático
     val favorites: Set<String> = emptySet(), // paquetes fijados
+    val wallpaper: String = "",    // "" negro, id de degradado, o "custom" (imagen del usuario)
 )
+
+/** Fondo original integrado (degradado). Sin imágenes con derechos de autor. */
+data class Wallpaper(val id: String, val name: String, val colors: List<Long>)
 
 class LauncherPrefs(context: Context) {
 
@@ -17,6 +21,7 @@ class LauncherPrefs(context: Context) {
         accent = sp.getLong(KEY_ACCENT, 0xFF34D399),
         columns = sp.getInt(KEY_COLUMNS, 0),
         favorites = sp.getStringSet(KEY_FAV, emptySet())?.toSet() ?: emptySet(),
+        wallpaper = sp.getString(KEY_WALL, "") ?: "",
     )
 
     fun save(config: LauncherConfig) {
@@ -24,6 +29,7 @@ class LauncherPrefs(context: Context) {
             .putLong(KEY_ACCENT, config.accent)
             .putInt(KEY_COLUMNS, config.columns)
             .putStringSet(KEY_FAV, config.favorites)
+            .putString(KEY_WALL, config.wallpaper)
             .apply()
     }
 
@@ -31,6 +37,16 @@ class LauncherPrefs(context: Context) {
         private const val KEY_ACCENT = "accent"
         private const val KEY_COLUMNS = "columns"
         private const val KEY_FAV = "favorites"
+        private const val KEY_WALL = "wallpaper"
+
+        /** Fondos originales integrados (degradados). */
+        val WALLPAPERS: List<Wallpaper> = listOf(
+            Wallpaper("", "Negro", listOf(0xFF0B0C0F, 0xFF0B0C0F)),
+            Wallpaper("aurora", "Aurora", listOf(0xFF0B0C0F, 0xFF0E3B2E, 0xFF0B0C0F)),
+            Wallpaper("atardecer", "Atardecer", listOf(0xFF2A0A1E, 0xFF3A1A2E, 0xFF0B0C0F)),
+            Wallpaper("oceano", "Océano", listOf(0xFF061826, 0xFF0A2A3A, 0xFF0B0C0F)),
+            Wallpaper("uva", "Uva", listOf(0xFF1A0A2E, 0xFF2A1A3E, 0xFF0B0C0F)),
+        )
 
         /** Paleta de acentos disponible (nombre -> color ARGB). */
         val ACCENTS: List<Pair<String, Long>> = listOf(
