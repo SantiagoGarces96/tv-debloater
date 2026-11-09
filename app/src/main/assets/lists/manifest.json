@@ -1,11 +1,34 @@
 {
   "source": "https://github.com/Gathin23/cleanyourtv (MIT)",
   "profiles": [
-    { "id": "google-chromecast-gtv-4k", "name": "Chromecast con Google TV (4K)", "brand": "Google", "file": "google-chromecast-gtv-4k.txt" },
-    { "id": "google-tv-streamer-4k-kirkwood", "name": "Google TV Streamer (4K)", "brand": "Google", "file": "google-tv-streamer-4k-kirkwood.txt" },
-    { "id": "nvidia-shield-tv-pro-2019", "name": "NVIDIA Shield TV Pro (2019)", "brand": "NVIDIA", "file": "nvidia-shield-tv-pro-2019.txt" },
-    { "id": "sony-bravia-4k-vh2", "name": "Sony BRAVIA 4K (VH2)", "brand": "Sony", "file": "sony-bravia-4k-vh2.txt" },
-    { "id": "onn-4k-streaming-box-2023", "name": "onn. 4K Streaming Box (2023)", "brand": "onn", "file": "onn-4k-streaming-box-2023.txt" },
-    { "id": "amazon-fire-tv-stick-4k-2023", "name": "Amazon Fire TV Stick 4K (2023)", "brand": "Amazon Fire TV", "file": "amazon-fire-tv-stick-4k-2023.txt" }
+    { "id": "_common", "name": "Común (multimarca, seguro)", "brand": "Todas", "file": "_common.txt" }
+    ,{ "id": "amazon-fire-tv-stick-4k-2023", "name": "Amazon Fire Tv Stick 4k 2023", "brand": "Amazon Fire TV", "file": "amazon-fire-tv-stick-4k-2023.txt" }
+    ,{ "id": "amazon-fire-tv-stick-4k-max-2023", "name": "Amazon Fire Tv Stick 4k Max 2023", "brand": "Amazon Fire TV", "file": "amazon-fire-tv-stick-4k-max-2023.txt" }
+    ,{ "id": "formovie-theater-koroli", "name": "Formovie Theater Koroli", "brand": "Formovie", "file": "formovie-theater-koroli.txt" }
+    ,{ "id": "google-chromecast-gtv-4k", "name": "Google Chromecast Gtv 4k", "brand": "Google", "file": "google-chromecast-gtv-4k.txt" }
+    ,{ "id": "google-chromecast-gtv-hd", "name": "Google Chromecast Gtv Hd", "brand": "Google", "file": "google-chromecast-gtv-hd.txt" }
+    ,{ "id": "google-tv-streamer-4k-kirkwood", "name": "Google Tv Streamer 4k Kirkwood", "brand": "Google", "file": "google-tv-streamer-4k-kirkwood.txt" }
+    ,{ "id": "hisense-u7-wutaishan", "name": "Hisense U7 Wutaishan", "brand": "Hisense", "file": "hisense-u7-wutaishan.txt" }
+    ,{ "id": "jvc-android-tv-menlo", "name": "Jvc Android Tv Menlo", "brand": "JVC", "file": "jvc-android-tv-menlo.txt" }
+    ,{ "id": "motorola-mt4310", "name": "Motorola Mt4310", "brand": "Motorola", "file": "motorola-mt4310.txt" }
+    ,{ "id": "nokia-streaming-box-8010", "name": "Nokia Streaming Box 8010", "brand": "Nokia", "file": "nokia-streaming-box-8010.txt" }
+    ,{ "id": "nvidia-shield-tv-2019", "name": "Nvidia Shield Tv 2019", "brand": "NVIDIA", "file": "nvidia-shield-tv-2019.txt" }
+    ,{ "id": "nvidia-shield-tv-pro-2019", "name": "Nvidia Shield Tv Pro 2019", "brand": "NVIDIA", "file": "nvidia-shield-tv-pro-2019.txt" }
+    ,{ "id": "onn-4k-pro-gen2", "name": "Onn 4k Pro Gen2", "brand": "onn", "file": "onn-4k-pro-gen2.txt" }
+    ,{ "id": "onn-4k-streaming-box-2023", "name": "Onn 4k Streaming Box 2023", "brand": "onn", "file": "onn-4k-streaming-box-2023.txt" }
+    ,{ "id": "panasonic-gs655", "name": "Panasonic Gs655", "brand": "Panasonic", "file": "panasonic-gs655.txt" }
+    ,{ "id": "philips-50pud7406", "name": "Philips 50pud7406", "brand": "Philips", "file": "philips-50pud7406.txt" }
+    ,{ "id": "redmi-mitv-mooq3", "name": "Redmi Mitv Mooq3", "brand": "Xiaomi/Redmi", "file": "redmi-mitv-mooq3.txt" }
+    ,{ "id": "sharp-aquos-tvx19b", "name": "Sharp Aquos Tvx19b", "brand": "Sharp", "file": "sharp-aquos-tvx19b.txt" }
+    ,{ "id": "skyworth-43e6a", "name": "Skyworth 43e6a", "brand": "Skyworth", "file": "skyworth-43e6a.txt" }
+    ,{ "id": "sony-bravia-4k-ur3", "name": "Sony Bravia 4k Ur3", "brand": "Sony", "file": "sony-bravia-4k-ur3.txt" }
+    ,{ "id": "sony-bravia-4k-vh2", "name": "Sony Bravia 4k Vh2", "brand": "Sony", "file": "sony-bravia-4k-vh2.txt" }
+    ,{ "id": "sony-bravia-4k-vh21", "name": "Sony Bravia 4k Vh21", "brand": "Sony", "file": "sony-bravia-4k-vh21.txt" }
+    ,{ "id": "tcl-65c7k-google-tv", "name": "Tcl 65c7k Google Tv", "brand": "TCL", "file": "tcl-65c7k-google-tv.txt" }
+    ,{ "id": "tcl-g06-us-google-tv", "name": "Tcl G06 Us Google Tv", "brand": "TCL", "file": "tcl-g06-us-google-tv.txt" }
+    ,{ "id": "tcl-qm6k-google-tv", "name": "Tcl Qm6k Google Tv", "brand": "TCL", "file": "tcl-qm6k-google-tv.txt" }
+    ,{ "id": "thomson-sppl-4k-sw6h", "name": "Thomson Sppl 4k Sw6h", "brand": "Thomson", "file": "thomson-sppl-4k-sw6h.txt" }
+    ,{ "id": "toshiba-cosmos-android-tv", "name": "Toshiba Cosmos Android Tv", "brand": "Toshiba", "file": "toshiba-cosmos-android-tv.txt" }
+    ,{ "id": "toshiba-fire-tv-aftha004", "name": "Toshiba Fire Tv Aftha004", "brand": "Toshiba", "file": "toshiba-fire-tv-aftha004.txt" }
   ]
 }

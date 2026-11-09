@@ -1,0 +1,20 @@
+# Lista comun multimarca (Clean TV)
+# Paquetes que aparecen en muchas listas de CleanYourTV y suelen ser seguros de quitar
+# en Android TV / Google TV. Fuente: https://github.com/Gathin23/cleanyourtv (MIT).
+# NO incluye el launcher del sistema, la accesibilidad (TalkBack) ni la impresion.
+# Revisa cada linea: algunos son opcionales segun lo que uses.
+
+com.google.android.feedback                 # envio de reportes de uso a Google
+com.google.android.partnersetup             # configuracion/telemetria del fabricante (partner)
+com.google.android.tungsten.setupwraith     # asistente de configuracion inicial
+com.android.tv.feedbackconsent              # consentimiento de envio de diagnosticos
+com.google.android.tvrecommendations        # filas de "recomendados"/patrocinados del inicio
+android.autoinstalls.config.google.gtvpai   # auto-instalacion de apps partner en el primer arranque
+fusion.android.tv.demo                       # modo demostracion de tienda
+com.mstar.android.tv.disclaimercustomization # aviso legal/descargo del fabricante (MStar)
+com.google.android.backdrop                  # salvapantallas Ambient (fotos/arte con promos) — opcional
+com.google.android.syncadapters.calendar     # sincronizacion de calendario de Google — opcional
+com.google.android.play.games                # Google Play Games — opcional
+com.google.android.videos                    # Google TV / Play Peliculas — opcional
+com.google.android.youtube.tvmusic           # YouTube Music para TV — opcional
+com.google.android.katniss                   # busqueda/Asistente de Google en TV — opcional (quita la busqueda por voz)
