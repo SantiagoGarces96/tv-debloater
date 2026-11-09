@@ -9,6 +9,9 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -38,9 +41,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -136,29 +142,35 @@ private fun Home(
     vpnOn: Boolean,
     onToggleVpn: () -> Unit,
 ) {
-    Column(Modifier.fillMaxSize().padding(40.dp)) {
+    var focusedLabel by remember { mutableStateOf<String?>(null) }
+    Column(Modifier.fillMaxSize().padding(horizontal = 48.dp, vertical = 40.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
-            Column {
-                Clock()
-                Text(
-                    "Clean Home",
-                    color = Color(0xFF9BA1AC),
-                    fontSize = 14.sp,
-                    modifier = Modifier.padding(top = 2.dp),
-                )
-            }
+            Clock()
             Spacer(Modifier.weight(1f))
             AdBlockToggle(vpnOn, onToggleVpn)
         }
-        Spacer(Modifier.padding(top = 20.dp))
+        // Top shelf: nombre de la app enfocada, en grande, con brillo.
+        Text(
+            focusedLabel ?: "Tus apps",
+            color = if (focusedLabel != null) Color.White else Color(0xFF9BA1AC),
+            fontSize = 30.sp,
+            fontWeight = FontWeight.Bold,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.padding(top = 22.dp, bottom = 24.dp),
+        )
         LazyVerticalGrid(
-            columns = GridCells.Adaptive(180.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
+            columns = GridCells.Adaptive(210.dp),
+            horizontalArrangement = Arrangement.spacedBy(26.dp),
+            verticalArrangement = Arrangement.spacedBy(26.dp),
             modifier = Modifier.fillMaxWidth(),
         ) {
             items(apps, key = { it.packageName }) { app ->
-                AppTile(app, onClick = { onLaunch(app.packageName) })
+                AppTile(
+                    app = app,
+                    onClick = { onLaunch(app.packageName) },
+                    onFocused = { focusedLabel = app.label },
+                )
             }
         }
     }
@@ -203,16 +215,22 @@ private fun AdBlockToggle(on: Boolean, onToggle: () -> Unit) {
 }
 
 @Composable
-private fun AppTile(app: AppEntry, onClick: () -> Unit) {
+private fun AppTile(app: AppEntry, onClick: () -> Unit, onFocused: () -> Unit) {
     val interaction = remember { MutableInteractionSource() }
     val focused by interaction.collectIsFocusedAsState()
-    val border = if (focused) Color(0xFF34D399) else Color(0xFF23272F)
+    val accent = Color(0xFF34D399)
+    val scale by animateFloatAsState(if (focused) 1.12f else 1f, spring(), label = "scale")
+    val elevation by animateDpAsState(if (focused) 18.dp else 0.dp, label = "elev")
+    val shape = RoundedCornerShape(16.dp)
     Box(
         Modifier
             .fillMaxWidth()
             .aspectRatio(16f / 9f)
-            .clip(RoundedCornerShape(14.dp))
-            .border(if (focused) 3.dp else 1.dp, border, RoundedCornerShape(14.dp))
+            .graphicsLayer { scaleX = scale; scaleY = scale }
+            .onFocusChanged { if (it.isFocused) onFocused() }
+            .shadow(elevation, shape, ambientColor = accent, spotColor = accent)
+            .clip(shape)
+            .border(if (focused) 3.dp else 1.dp, if (focused) accent else Color(0xFF23272F), shape)
             .clickable(interactionSource = interaction, indication = null, onClick = onClick),
         contentAlignment = Alignment.Center,
     ) {
@@ -222,16 +240,17 @@ private fun AppTile(app: AppEntry, onClick: () -> Unit) {
                 bitmap = img,
                 contentDescription = app.label,
                 contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(14.dp)),
+                modifier = Modifier.fillMaxSize().clip(shape),
             )
         } else {
             Text(
                 app.label,
                 color = Color.White,
-                fontSize = 15.sp,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.SemiBold,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.padding(10.dp),
+                modifier = Modifier.padding(12.dp),
             )
         }
     }
