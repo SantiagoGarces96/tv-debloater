@@ -1,8 +1,14 @@
 package tv.clean.debloater.webos
 
+import com.jcraft.jsch.ChannelExec
+import com.jcraft.jsch.ChannelSftp
+import com.jcraft.jsch.JSch
+import com.jcraft.jsch.Session
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.BufferedReader
+import java.io.ByteArrayOutputStream
+import java.io.File
 import java.net.HttpURLConnection
 import java.net.InetSocketAddress
 import java.net.Socket
@@ -85,6 +91,79 @@ object WebosClient {
                 append(keyDetail)
             }.trim(),
         )
+    }
+
+    /**
+     * Instala un .ipk de launcher en la TV por SSH (Modo Desarrollador).
+     * NO verificado contra una TV LG real: sigue el flujo de ares-install.
+     */
+    suspend fun installIpk(
+        ip: String,
+        keyPem: String,
+        ipk: File,
+        onLog: (String) -> Unit,
+    ): Boolean = withContext(Dispatchers.IO) {
+        val id = IpkReader.packageId(ipk)
+        if (id == null) {
+            onLog("No pude leer el id del paquete dentro del IPK.")
+            return@withContext false
+        }
+        onLog("Paquete: $id")
+        var session: Session? = null
+        try {
+            val jsch = JSch()
+            jsch.addIdentity("webos", keyPem.toByteArray(), null, ByteArray(0))
+            session = jsch.getSession("prisoner", ip.trim(), PORT_SSH).apply {
+                setConfig("StrictHostKeyChecking", "no")
+                connect(10000)
+            }
+            val remote = "/media/developer/" + ipk.name
+            onLog("Subiendo ${ipk.name} a la TV…")
+            val sftp = session.openChannel("sftp") as ChannelSftp
+            sftp.connect(10000)
+            sftp.put(ipk.absolutePath, remote)
+            sftp.disconnect()
+
+            onLog("Instalando $id…")
+            val cmd = "luna-send -n 1 -f luna://com.webos.appInstallService/dev/install " +
+                "'{\"id\":\"$id\",\"ipkUrl\":\"$remote\",\"subscribe\":true}'"
+            val out = exec(session, cmd)
+            onLog(out.trim().take(500))
+            val ok = listOf("installed", "\"returnValue\":true", "SUCCESS").any {
+                out.contains(it, ignoreCase = true)
+            }
+            onLog(if (ok) "✓ Instalación enviada a la TV." else "⚠️ Revisa la respuesta de arriba.")
+            ok
+        } catch (e: Throwable) {
+            onLog("✗ Error SSH: ${e.message ?: e.javaClass.simpleName}")
+            false
+        } finally {
+            session?.disconnect()
+        }
+    }
+
+    private fun exec(session: Session, command: String): String {
+        val channel = session.openChannel("exec") as ChannelExec
+        channel.setCommand(command)
+        val out = ByteArrayOutputStream()
+        channel.setErrStream(out)
+        val input = channel.inputStream
+        channel.connect()
+        val buf = ByteArray(2048)
+        while (true) {
+            while (input.available() > 0) {
+                val n = input.read(buf)
+                if (n < 0) break
+                out.write(buf, 0, n)
+            }
+            if (channel.isClosed) {
+                if (input.available() > 0) continue
+                break
+            }
+            Thread.sleep(50)
+        }
+        channel.disconnect()
+        return out.toString("UTF-8")
     }
 
     /** GET http://ip:port/webos_rsa?passphrase=XXXXXX → clave privada PEM. */

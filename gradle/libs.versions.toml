@@ -8,6 +8,7 @@ composeBom = "2024.09.03"
 dadb = "1.2.10"
 coroutines = "1.8.1"
 serialization = "1.6.3"
+jsch = "0.2.21"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -23,6 +24,7 @@ androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-toolin
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 androidx-material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended" }
 dadb = { group = "dev.mobile", name = "dadb", version.ref = "dadb" }
+jsch = { group = "com.github.mwiede", name = "jsch", version.ref = "jsch" }
 kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines" }
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "serialization" }
 

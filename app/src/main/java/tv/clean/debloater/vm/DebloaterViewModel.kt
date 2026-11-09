@@ -53,6 +53,7 @@ data class UiState(
     val lgBusy: Boolean = false,
     val lgDetail: String? = null,
     val lgKeyReady: Boolean = false,
+    val lgLog: List<String> = emptyList(),
 )
 
 class DebloaterViewModel(app: Application) : AndroidViewModel(app) {
@@ -67,6 +68,7 @@ class DebloaterViewModel(app: Application) : AndroidViewModel(app) {
     private var installed: List<String> = emptyList()
     private var catalog: Map<String, String?> = emptyMap()
     private var uad: Map<String, UadEntry> = emptyMap()
+    private var lgKey: String? = null
 
     fun chooseAndroid() = _state.update { it.copy(stage = Stage.Connect, error = null) }
 
@@ -82,6 +84,7 @@ class DebloaterViewModel(app: Application) : AndroidViewModel(app) {
         _state.update { it.copy(lgBusy = true, lgDetail = null, lgKeyReady = false) }
         viewModelScope.launch {
             val status = WebosClient.check(_state.value.lgIp, _state.value.lgPassphrase)
+            lgKey = status.devKeyPem
             _state.update {
                 it.copy(
                     lgBusy = false,
@@ -91,6 +94,28 @@ class DebloaterViewModel(app: Application) : AndroidViewModel(app) {
             }
         }
     }
+
+    fun lgInstall(uri: Uri) {
+        val key = lgKey
+        if (key == null) {
+            _state.update { it.copy(lgDetail = "Primero comprueba la conexión para obtener la clave.") }
+            return
+        }
+        _state.update { it.copy(lgBusy = true, lgLog = emptyList()) }
+        viewModelScope.launch {
+            val file = copyUriToCache(uri, "launcher.ipk")
+            if (file == null) {
+                appendLgLog("No se pudo leer el IPK seleccionado.")
+                _state.update { it.copy(lgBusy = false) }
+                return@launch
+            }
+            WebosClient.installIpk(_state.value.lgIp, key, file) { line -> appendLgLog(line) }
+            runCatching { file.delete() }
+            _state.update { it.copy(lgBusy = false) }
+        }
+    }
+
+    private fun appendLgLog(line: String) = _state.update { it.copy(lgLog = it.lgLog + line) }
 
     fun onHostChange(value: String) = _state.update { it.copy(hostInput = value, error = null) }
 
@@ -347,10 +372,10 @@ class DebloaterViewModel(app: Application) : AndroidViewModel(app) {
         }
     }
 
-    private suspend fun copyUriToCache(uri: Uri): File? = withContext(Dispatchers.IO) {
+    private suspend fun copyUriToCache(uri: Uri, name: String = "launcher.apk"): File? = withContext(Dispatchers.IO) {
         runCatching {
             val ctx = getApplication<Application>()
-            val file = File(ctx.cacheDir, "launcher.apk")
+            val file = File(ctx.cacheDir, name)
             ctx.contentResolver.openInputStream(uri)?.use { input ->
                 file.outputStream().use { output -> input.copyTo(output) }
             } ?: return@runCatching null

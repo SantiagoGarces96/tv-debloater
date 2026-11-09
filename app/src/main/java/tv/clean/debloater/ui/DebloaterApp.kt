@@ -109,6 +109,9 @@ private fun PlatformScreen(vm: DebloaterViewModel, modifier: Modifier) {
 private fun LgInfoScreen(state: UiState, vm: DebloaterViewModel, modifier: Modifier) {
     val uriHandler = LocalUriHandler.current
     val project = "https://github.com/Razdva122/clean-your-tv-lg-webos"
+    val pickIpk = rememberLauncherForActivityResult(
+        ActivityResultContracts.OpenDocument(),
+    ) { uri -> if (uri != null) vm.lgInstall(uri) }
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -168,11 +171,32 @@ private fun LgInfoScreen(state: UiState, vm: DebloaterViewModel, modifier: Modif
         }
         if (state.lgKeyReady) {
             Text(
-                "✓ Listo para instalar el launcher. La instalación del IPK por SSH llega en la próxima versión; " +
-                    "mientras tanto puedes usar la app dedicada de abajo.",
+                "✓ Clave lista. Elige el .ipk del launcher (descárgalo del proyecto de abajo) e instálalo.",
                 style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.primary,
             )
+            Button(
+                onClick = { pickIpk.launch(arrayOf("*/*")) },
+                enabled = !state.lgBusy,
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Text("Elegir IPK e instalar launcher")
+            }
         }
+        if (state.lgLog.isNotEmpty()) {
+            Card(Modifier.fillMaxWidth()) {
+                Column(Modifier.padding(10.dp)) {
+                    state.lgLog.forEach { line ->
+                        Text(line, style = MaterialTheme.typography.bodySmall, fontFamily = FontFamily.Monospace)
+                    }
+                }
+            }
+        }
+        Text(
+            "Nota: la instalación por SSH aún no se ha probado contra una TV LG real.",
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.secondary,
+        )
 
         OutlinedButton(onClick = { uriHandler.openUri(project) }, modifier = Modifier.fillMaxWidth()) {
             Text("App dedicada / proyecto LG en GitHub")

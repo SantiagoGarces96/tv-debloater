@@ -64,6 +64,7 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
 
     implementation(libs.dadb)
+    implementation(libs.jsch)
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.serialization.json)
 }
