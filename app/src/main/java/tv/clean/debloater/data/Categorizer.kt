@@ -2,11 +2,11 @@ package tv.clean.debloater.data
 
 /** Grupos en los que se clasifica cada app para mostrarlas ordenadas. */
 enum class AppGroup(val label: String) {
-    ADS("Anuncios"),
-    TRACKING("Rastreo / telemetría"),
-    BRAND("Extras de marca"),
-    APPS("Apps preinstaladas"),
-    OTHER("Otros"),
+    ADS("📣 Anuncios"),
+    TRACKING("🔎 Te espían"),
+    BRAND("🏷 Extras de marca"),
+    APPS("📦 Apps de sobra"),
+    OTHER("Otras"),
 }
 
 object Categorizer {

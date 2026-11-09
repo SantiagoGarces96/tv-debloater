@@ -77,45 +77,38 @@ private fun PlatformScreen(vm: DebloaterViewModel, modifier: Modifier) {
             .padding(24.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        Text("Clean TV", style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold)
-        Text("¿Qué tipo de televisor o decodificador tienes?", style = MaterialTheme.typography.bodyMedium)
+        Text("Empecemos.", style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold)
+        Text("¿Qué tele tienes? Elige la marca para continuar.", style = MaterialTheme.typography.bodyMedium)
 
         Card(Modifier.fillMaxWidth()) {
             Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text("📺 Android TV / Google TV / Decodificador", fontWeight = FontWeight.Bold)
+                Text("📺  Android TV / Google TV", fontWeight = FontWeight.Bold)
                 Text(
-                    "Quita bloatware, telemetría y anuncios por ADB; bloqueo de anuncios por DNS y launcher limpio.",
+                    "TV box, Chromecast, decodificadores y la mayoría de teles.",
                     style = MaterialTheme.typography.bodySmall,
                 )
                 Button(onClick = vm::chooseAndroid, modifier = Modifier.fillMaxWidth()) {
-                    Text("Continuar con Android")
+                    Text("Continuar")
                 }
             }
         }
 
         Card(Modifier.fillMaxWidth()) {
             Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text("📺 LG (webOS)", fontWeight = FontWeight.Bold)
-                Text(
-                    "Las LG no son Android ni usan ADB. Se limpian con un launcher propio vía Modo Desarrollador.",
-                    style = MaterialTheme.typography.bodySmall,
-                )
+                Text("📺  LG", fontWeight = FontWeight.Bold)
+                Text("Televisores LG (webOS).", style = MaterialTheme.typography.bodySmall)
                 OutlinedButton(onClick = vm::chooseLg, modifier = Modifier.fillMaxWidth()) {
-                    Text("Ver opción para LG")
+                    Text("Continuar con LG")
                 }
             }
         }
 
         Card(Modifier.fillMaxWidth()) {
             Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text("📺 Samsung (Tizen)", fontWeight = FontWeight.Bold)
-                Text(
-                    "Samsung usa SDB (no ADB) y Modo Desarrollador. La limpieza real necesita root y es " +
-                        "específica de cada modelo; aquí solo diagnóstico y guía.",
-                    style = MaterialTheme.typography.bodySmall,
-                )
+                Text("📺  Samsung", fontWeight = FontWeight.Bold)
+                Text("Televisores Samsung (Tizen).", style = MaterialTheme.typography.bodySmall)
                 OutlinedButton(onClick = vm::chooseSamsung, modifier = Modifier.fillMaxWidth()) {
-                    Text("Ver opción para Samsung")
+                    Text("Continuar con Samsung")
                 }
             }
         }
@@ -300,9 +293,9 @@ private fun ConnectScreen(state: UiState, vm: DebloaterViewModel, modifier: Modi
             .padding(24.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        Text("Clean TV", style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold)
+        Text("Conecta tu tele", style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold)
         Text(
-            "Conecta con tu Android/Google TV por ADB sobre Wi‑Fi y quita el bloatware.",
+            "Enciende la depuración por red en la tele (te guiamos) y búscala en tu Wi‑Fi.",
             style = MaterialTheme.typography.bodyMedium,
         )
 
@@ -413,12 +406,12 @@ private fun PackagesScreen(state: UiState, vm: DebloaterViewModel, modifier: Mod
             val s = remember(state.rows) { Categorizer.summarize(state.rows) }
             Card(Modifier.fillMaxWidth()) {
                 Column(Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                    Text("Encontrado en tu TV", fontWeight = FontWeight.SemiBold)
+                    Text("Encontrado en tu tele", fontWeight = FontWeight.SemiBold)
                     Text(
-                        "🔎 ${s[AppGroup.TRACKING] ?: 0} de rastreo · " +
-                            "📣 ${s[AppGroup.ADS] ?: 0} de anuncios · " +
-                            "🏷 ${s[AppGroup.BRAND] ?: 0} extras de marca · " +
-                            "📦 ${s[AppGroup.APPS] ?: 0} apps preinstaladas",
+                        "🔎 ${s[AppGroup.TRACKING] ?: 0} te espían · " +
+                            "📣 ${s[AppGroup.ADS] ?: 0} anuncios · " +
+                            "🏷 ${s[AppGroup.BRAND] ?: 0} de marca · " +
+                            "📦 ${s[AppGroup.APPS] ?: 0} de sobra",
                         style = MaterialTheme.typography.bodySmall,
                     )
                 }
@@ -448,7 +441,7 @@ private fun PackagesScreen(state: UiState, vm: DebloaterViewModel, modifier: Mod
             enabled = cleanCount > 0 && !state.busy,
             modifier = Modifier.fillMaxWidth(),
         ) {
-            Text("✨ Limpieza en un toque ($cleanCount, reversible)")
+            Text("✨  Limpiar ahora  ·  $cleanCount")
         }
         Spacer(Modifier.height(4.dp))
 
@@ -507,9 +500,9 @@ private fun PackagesScreen(state: UiState, vm: DebloaterViewModel, modifier: Mod
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            AssistChip(onClick = vm::selectRecommended, label = { Text("Recomendados") })
-            AssistChip(onClick = vm::selectTelemetry, label = { Text("Telemetría") })
-            AssistChip(onClick = vm::clearSelection, label = { Text("Ninguno") })
+            AssistChip(onClick = vm::selectRecommended, label = { Text("Recomendado") })
+            AssistChip(onClick = vm::selectTelemetry, label = { Text("Lo que espía") })
+            AssistChip(onClick = vm::clearSelection, label = { Text("Nada") })
         }
 
         // Método: desactivar (reversible) o desinstalar (usuario 0)
@@ -517,12 +510,12 @@ private fun PackagesScreen(state: UiState, vm: DebloaterViewModel, modifier: Mod
             FilterChip(
                 selected = state.action == Action.Disable,
                 onClick = { vm.setAction(Action.Disable) },
-                label = { Text("Desactivar (reversible)") },
+                label = { Text("Apagar (se puede volver)") },
             )
             FilterChip(
                 selected = state.action == Action.Uninstall,
                 onClick = { vm.setAction(Action.Uninstall) },
-                label = { Text("Desinstalar (user 0)") },
+                label = { Text("Borrar") },
             )
         }
 
@@ -561,9 +554,9 @@ private fun PackagesScreen(state: UiState, vm: DebloaterViewModel, modifier: Mod
         Spacer(Modifier.height(8.dp))
 
         val actionLabel = if (state.action == Action.Disable) {
-            "Desactivar ${state.selected.size}"
+            "Apagar ${state.selected.size}"
         } else {
-            "Desinstalar ${state.selected.size} (user 0)"
+            "Borrar ${state.selected.size}"
         }
         Button(
             onClick = vm::requestApply,
@@ -575,7 +568,7 @@ private fun PackagesScreen(state: UiState, vm: DebloaterViewModel, modifier: Mod
         }
         if (state.hasBackup) {
             OutlinedButton(onClick = vm::restoreLatest, modifier = Modifier.fillMaxWidth()) {
-                Text("Restaurar último respaldo")
+                Text("Deshacer la última limpieza")
             }
         }
 
@@ -586,8 +579,8 @@ private fun PackagesScreen(state: UiState, vm: DebloaterViewModel, modifier: Mod
             modifier = Modifier.fillMaxWidth(),
         ) {
             Text(
-                if (adOn) "Bloqueo de anuncios: ACTIVO — desactivar"
-                else "Activar bloqueo de anuncios (DNS AdGuard)",
+                if (adOn) "Anuncios bloqueados — quitar"
+                else "Bloquear anuncios en toda la tele",
             )
         }
 
@@ -603,7 +596,7 @@ private fun PackagesScreen(state: UiState, vm: DebloaterViewModel, modifier: Mod
             enabled = !state.busy,
             modifier = Modifier.fillMaxWidth(),
         ) {
-            Text("Instalar launcher (Projectivy) y fijar como inicio…")
+            Text("Poner una pantalla de inicio limpia")
         }
     }
 
@@ -611,19 +604,19 @@ private fun PackagesScreen(state: UiState, vm: DebloaterViewModel, modifier: Mod
         AlertDialog(
             onDismissRequest = vm::cancelConfirm,
             title = {
-                Text(if (c.uninstall) "Desinstalar ${c.count} apps" else "Desactivar ${c.count} apps")
+                Text(if (c.uninstall) "¿Borrar ${c.count} apps?" else "¿Apagar ${c.count} apps?")
             },
             text = {
                 Text(
                     if (c.uninstall) {
-                        "Se quitarán para el usuario 0 (reversible con install-existing). Se guarda un respaldo antes."
+                        "Se quitan de tu tele; se pueden volver a instalar. Guardamos una copia antes."
                     } else {
-                        "Se desactivarán (reversible con un toque). Se guarda un respaldo antes."
+                        "Se apagan; las puedes volver a encender con un toque. Guardamos una copia antes."
                     },
                 )
             },
-            confirmButton = { TextButton(onClick = vm::confirmProceed) { Text("Continuar") } },
-            dismissButton = { TextButton(onClick = vm::cancelConfirm) { Text("Cancelar") } },
+            confirmButton = { TextButton(onClick = vm::confirmProceed) { Text("Sí, limpiar") } },
+            dismissButton = { TextButton(onClick = vm::cancelConfirm) { Text("Ahora no") } },
         )
     }
 }
@@ -657,7 +650,7 @@ private fun AppRowItem(row: AppRow, checked: Boolean, onToggle: () -> Unit) {
             )
             // Badges: telemetría + nivel de riesgo
             Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                if (row.isTelemetry) Badge("🔎 datos", Color(0xFFFF6B6B))
+                if (row.isTelemetry) Badge("te espía", Color(0xFFF87171))
                 row.risk?.let { Badge(riskLabel(it), riskColor(it)) }
             }
             val text = row.description ?: row.reason
@@ -686,18 +679,18 @@ private fun Badge(text: String, color: Color) {
 
 private fun riskLabel(removal: String): String = when (removal.lowercase()) {
     "recommended" -> "seguro"
-    "advanced" -> "avanzado"
-    "expert" -> "experto"
-    "unsafe" -> "no seguro"
+    "advanced" -> "con cuidado"
+    "expert" -> "avanzado"
+    "unsafe" -> "riesgo"
     else -> removal.lowercase()
 }
 
 private fun riskColor(removal: String): Color = when (removal.lowercase()) {
-    "recommended" -> Color(0xFF7BE07B)
-    "advanced" -> Color(0xFFE0C65B)
+    "recommended" -> Color(0xFF34D399)
+    "advanced" -> Color(0xFFFBBF24)
     "expert" -> Color(0xFFE08A3C)
-    "unsafe" -> Color(0xFFFF6B6B)
-    else -> Color(0xFF9AA0A6)
+    "unsafe" -> Color(0xFFF87171)
+    else -> Color(0xFF9BA1AC)
 }
 
 @Composable
@@ -706,7 +699,7 @@ private fun WorkingScreen(state: UiState, vm: DebloaterViewModel, modifier: Modi
         Row(verticalAlignment = Alignment.CenterVertically) {
             if (state.busy) CircularProgressIndicator(Modifier.height(20.dp), strokeWidth = 2.dp)
             Text(
-                if (state.busy) "  Trabajando…" else "Terminado",
+                if (state.busy) "  Limpiando…" else "¡Listo!",
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
             )
