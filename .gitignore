@@ -19,3 +19,6 @@ build.log
 
 # kotlin compiler artifacts
 .kotlin/
+
+# test outputs
+test.log
