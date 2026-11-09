@@ -395,27 +395,27 @@ class DebloaterViewModel(app: Application) : AndroidViewModel(app) {
         }
     }
 
-    /** Fase 2: instala un APK de launcher en la TV y lo fija como pantalla de inicio. */
-    fun installLauncher(uri: Uri) {
+    /** Instala NUESTRO launcher (empaquetado en la app) y lo pone como pantalla de inicio. */
+    fun installOwnLauncher() {
         _state.update { it.copy(stage = Stage.Working, busy = true, log = emptyList(), workDone = false) }
         viewModelScope.launch {
-            appendLog("Preparando el APK…")
-            val file = copyUriToCache(uri)
+            appendLog("Preparando la pantalla de inicio…")
+            val file = copyAssetToCache("launcher/clean-home.apk", "clean-home.apk")
             if (file == null) {
-                appendLog("No se pudo leer el APK seleccionado.")
+                appendLog("No encontré el launcher dentro de la app.")
                 _state.update { it.copy(busy = false, workDone = true) }
                 return@launch
             }
-            appendLog("Instalando en la TV (${file.length() / (1024 * 1024)} MB)…")
+            appendLog("Instalando en la tele…")
             when (val r = adb.installApk(file)) {
                 is AdbResult.Ok -> {
-                    appendLog("✓ APK instalado.")
-                    appendLog("Fijando Projectivy como pantalla de inicio…")
-                    when (val h = adb.setDefaultHome(PROJECTIVY_HOME)) {
-                        is AdbResult.Ok -> appendLog("✓ Projectivy es ahora el inicio.")
+                    appendLog("✓ Instalada.")
+                    appendLog("Poniéndola como pantalla de inicio…")
+                    when (val h = adb.setDefaultHome(CLEAN_HOME_COMPONENT)) {
+                        is AdbResult.Ok -> appendLog("✓ Lista: tu tele abre la nueva pantalla de inicio.")
                         is AdbResult.Err -> appendLog(
-                            "APK instalado, pero no pude fijar el inicio: ${h.message}\n" +
-                                "Ábrelo una vez en la TV y elígelo como inicio desde Ajustes.",
+                            "Instalada, pero no pude fijarla: ${h.message}\n" +
+                                "Ábrela una vez en la tele y elígela como inicio.",
                         )
                     }
                 }
@@ -425,6 +425,18 @@ class DebloaterViewModel(app: Application) : AndroidViewModel(app) {
             _state.update { it.copy(busy = false, workDone = true) }
         }
     }
+
+    private suspend fun copyAssetToCache(assetPath: String, name: String): File? =
+        withContext(Dispatchers.IO) {
+            runCatching {
+                val ctx = getApplication<Application>()
+                val file = File(ctx.cacheDir, name)
+                ctx.assets.open(assetPath).use { input ->
+                    file.outputStream().use { output -> input.copyTo(output) }
+                }
+                file
+            }.getOrNull()
+        }
 
     private suspend fun copyUriToCache(uri: Uri, name: String = "launcher.apk"): File? = withContext(Dispatchers.IO) {
         runCatching {
@@ -460,8 +472,7 @@ class DebloaterViewModel(app: Application) : AndroidViewModel(app) {
     }
 
     companion object {
-        const val PROJECTIVY_PKG = "com.spocky.projengmenu"
-        const val PROJECTIVY_HOME = "com.spocky.projengmenu/com.spocky.projengmenu.ui.home.MainActivity"
+        const val CLEAN_HOME_COMPONENT = "tv.clean.home/tv.clean.home.HomeActivity"
         const val ADGUARD_DNS = "dns.adguard-dns.com"
     }
 }

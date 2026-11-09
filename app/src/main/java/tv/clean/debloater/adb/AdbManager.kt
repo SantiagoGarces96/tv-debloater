@@ -18,6 +18,8 @@ data class DeviceInfo(
     val manufacturer: String,
     val androidVersion: String,
     val sdk: String,
+    /** "Televisor", "Decodificador / TV box", "Fire TV" o "Dispositivo Android". */
+    val kind: String = "Dispositivo Android",
 )
 
 /**
@@ -74,11 +76,28 @@ class AdbManager(context: Context) {
     private fun readDeviceInfo(connection: Dadb): DeviceInfo {
         fun prop(name: String): String =
             runCatching { connection.shell("getprop $name").output.trim() }.getOrDefault("")
+        val model = prop("ro.product.model").ifBlank { "Desconocido" }
+        val manufacturer = prop("ro.product.manufacturer")
+        val characteristics = prop("ro.build.characteristics").lowercase()
+        val features = runCatching { connection.shell("pm list features").output }.getOrDefault("")
+        val leanback = features.contains("android.software.leanback")
+        val isTvType = features.contains("android.hardware.type.television") ||
+            characteristics.contains("tv") || leanback
+        val hasTuner = features.contains("android.hardware.tv.tuner") ||
+            features.contains("android.software.live_tv")
+        val isFire = manufacturer.contains("amazon", true) || model.startsWith("AFT", true)
+        val kind = when {
+            isFire -> "Fire TV"
+            isTvType && hasTuner -> "Televisor (Android TV)"
+            isTvType -> "Decodificador / TV box"
+            else -> "Dispositivo Android"
+        }
         return DeviceInfo(
-            model = prop("ro.product.model").ifBlank { "Desconocido" },
-            manufacturer = prop("ro.product.manufacturer"),
+            model = model,
+            manufacturer = manufacturer,
             androidVersion = prop("ro.build.version.release"),
             sdk = prop("ro.build.version.sdk"),
+            kind = kind,
         )
     }
 

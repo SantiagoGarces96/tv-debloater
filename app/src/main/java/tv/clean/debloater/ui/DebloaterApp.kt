@@ -376,9 +376,6 @@ private fun ConnectScreen(state: UiState, vm: DebloaterViewModel, modifier: Modi
 @Composable
 private fun PackagesScreen(state: UiState, vm: DebloaterViewModel, modifier: Modifier) {
     val device = state.device
-    val pickApk = rememberLauncherForActivityResult(
-        ActivityResultContracts.OpenDocument(),
-    ) { uri -> if (uri != null) vm.installLauncher(uri) }
 
     Column(modifier = modifier.fillMaxSize().padding(16.dp)) {
         Row(
@@ -393,7 +390,7 @@ private fun PackagesScreen(state: UiState, vm: DebloaterViewModel, modifier: Mod
                     fontWeight = FontWeight.Bold,
                 )
                 Text(
-                    "Android ${device?.androidVersion ?: "?"} · ${state.rows.size} apps",
+                    "${device?.kind ?: ""} · Android ${device?.androidVersion ?: "?"} · ${state.rows.size} apps",
                     style = MaterialTheme.typography.bodySmall,
                 )
             }
@@ -592,7 +589,7 @@ private fun PackagesScreen(state: UiState, vm: DebloaterViewModel, modifier: Mod
             )
         }
         OutlinedButton(
-            onClick = { pickApk.launch(arrayOf("*/*")) },
+            onClick = vm::installOwnLauncher,
             enabled = !state.busy,
             modifier = Modifier.fillMaxWidth(),
         ) {

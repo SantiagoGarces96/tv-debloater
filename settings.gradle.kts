@@ -22,3 +22,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "tv-debloater"
 include(":app")
+include(":launcher")
