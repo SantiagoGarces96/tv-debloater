@@ -16,3 +16,6 @@ local.properties
 
 # build log local
 build.log
+
+# kotlin compiler artifacts
+.kotlin/
