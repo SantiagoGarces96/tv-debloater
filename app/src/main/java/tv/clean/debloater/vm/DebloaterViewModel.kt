@@ -16,6 +16,7 @@ import tv.clean.debloater.adb.AdbManager
 import tv.clean.debloater.adb.AdbResult
 import tv.clean.debloater.adb.DeviceInfo
 import tv.clean.debloater.adb.TvDiscovery
+import tv.clean.debloater.tizen.SamsungClient
 import tv.clean.debloater.webos.WebosClient
 import tv.clean.debloater.data.AppRow
 import tv.clean.debloater.data.BackupRecord
@@ -27,7 +28,7 @@ import tv.clean.debloater.data.DebloatRepository
 import tv.clean.debloater.data.Telemetry
 import tv.clean.debloater.data.UadEntry
 
-enum class Stage { Platform, Connect, Packages, Working, LgInfo }
+enum class Stage { Platform, Connect, Packages, Working, LgInfo, SamsungInfo }
 
 enum class Action { Disable, Uninstall }
 
@@ -55,6 +56,10 @@ data class UiState(
     val lgDetail: String? = null,
     val lgKeyReady: Boolean = false,
     val lgLog: List<String> = emptyList(),
+    // Samsung Tizen
+    val samsungIp: String = "",
+    val samsungBusy: Boolean = false,
+    val samsungDetail: String? = null,
 )
 
 class DebloaterViewModel(app: Application) : AndroidViewModel(app) {
@@ -74,6 +79,18 @@ class DebloaterViewModel(app: Application) : AndroidViewModel(app) {
     fun chooseAndroid() = _state.update { it.copy(stage = Stage.Connect, error = null) }
 
     fun chooseLg() = _state.update { it.copy(stage = Stage.LgInfo) }
+
+    fun chooseSamsung() = _state.update { it.copy(stage = Stage.SamsungInfo) }
+
+    fun samsungOnIp(value: String) = _state.update { it.copy(samsungIp = value, samsungDetail = null) }
+
+    fun samsungCheck() {
+        _state.update { it.copy(samsungBusy = true, samsungDetail = null) }
+        viewModelScope.launch {
+            val status = SamsungClient.check(_state.value.samsungIp)
+            _state.update { it.copy(samsungBusy = false, samsungDetail = status.detail) }
+        }
+    }
 
     fun backToPlatform() = _state.update { it.copy(stage = Stage.Platform, error = null, found = emptyList()) }
 

@@ -62,6 +62,7 @@ fun DebloaterApp(state: UiState, vm: DebloaterViewModel, modifier: Modifier = Mo
         Stage.Packages -> PackagesScreen(state, vm, modifier)
         Stage.Working -> WorkingScreen(state, vm, modifier)
         Stage.LgInfo -> LgInfoScreen(state, vm, modifier)
+        Stage.SamsungInfo -> SamsungInfoScreen(state, vm, modifier)
     }
 }
 
@@ -101,6 +102,87 @@ private fun PlatformScreen(vm: DebloaterViewModel, modifier: Modifier) {
                     Text("Ver opción para LG")
                 }
             }
+        }
+
+        Card(Modifier.fillMaxWidth()) {
+            Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text("📺 Samsung (Tizen)", fontWeight = FontWeight.Bold)
+                Text(
+                    "Samsung usa SDB (no ADB) y Modo Desarrollador. La limpieza real necesita root y es " +
+                        "específica de cada modelo; aquí solo diagnóstico y guía.",
+                    style = MaterialTheme.typography.bodySmall,
+                )
+                OutlinedButton(onClick = vm::chooseSamsung, modifier = Modifier.fillMaxWidth()) {
+                    Text("Ver opción para Samsung")
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun SamsungInfoScreen(state: UiState, vm: DebloaterViewModel, modifier: Modifier) {
+    val uriHandler = LocalUriHandler.current
+    val project = "https://github.com/jss8649/quiet-tizen"
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(24.dp),
+        verticalArrangement = Arrangement.spacedBy(14.dp),
+    ) {
+        Text("Samsung (Tizen)", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
+
+        Card(Modifier.fillMaxWidth()) {
+            Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                Text("⚠️ Léelo antes", fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.error)
+                Text(
+                    "La limpieza de Samsung requiere root temporal y ediciones específicas de cada modelo. " +
+                        "El proyecto de referencia está probado en UN solo modelo (U8000F, Tizen 9) y rechaza a " +
+                        "propósito otros; aplicarlo en otro modelo puede dañar los ajustes de tu TV. " +
+                        "Por eso aquí solo diagnosticamos la conexión y te guiamos; el resto hazlo con tu modelo exacto.",
+                    style = MaterialTheme.typography.bodySmall,
+                )
+            }
+        }
+
+        Card(Modifier.fillMaxWidth()) {
+            Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                Text("Activa el Modo Desarrollador", fontWeight = FontWeight.SemiBold)
+                Text(
+                    "1. Entra en Apps y teclea 12345 con el control.\n" +
+                        "2. Activa «Developer mode», pon la IP de tu PC como Host PC IP y reinicia la TV.\n" +
+                        "3. Esto abre SDB en el puerto 26101.",
+                    style = MaterialTheme.typography.bodySmall,
+                )
+            }
+        }
+
+        OutlinedTextField(
+            value = state.samsungIp,
+            onValueChange = vm::samsungOnIp,
+            label = { Text("IP de la TV Samsung") },
+            singleLine = true,
+            enabled = !state.samsungBusy,
+            modifier = Modifier.fillMaxWidth(),
+        )
+        Button(onClick = vm::samsungCheck, enabled = !state.samsungBusy, modifier = Modifier.fillMaxWidth()) {
+            if (state.samsungBusy) {
+                CircularProgressIndicator(Modifier.height(18.dp), strokeWidth = 2.dp)
+                Text("  Comprobando…")
+            } else {
+                Text("Comprobar conexión (SDB)")
+            }
+        }
+        state.samsungDetail?.let {
+            Text(it, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.secondary)
+        }
+
+        OutlinedButton(onClick = { uriHandler.openUri(project) }, modifier = Modifier.fillMaxWidth()) {
+            Text("Abrir la guía del proyecto (quiet-tizen)")
+        }
+        TextButton(onClick = vm::backToPlatform, modifier = Modifier.fillMaxWidth()) {
+            Text("← Cambiar plataforma")
         }
     }
 }

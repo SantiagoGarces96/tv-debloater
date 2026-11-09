@@ -12,9 +12,11 @@ Al abrir, la app pregunta qué tienes:
 
 - **Android TV / Google TV / Decodificador** → todo el debloat por ADB (lo que describe este README).
 - **LG (webOS)** → LG no es Android ni usa ADB; se limpia con un launcher propio vía Modo Desarrollador.
-  La app enlaza al proyecto dedicado
-  [Razdva122/clean-your-tv-lg-webos](https://github.com/Razdva122/clean-your-tv-lg-webos) (MIT),
-  que incluye su propia app Android para instalarlo.
+  La app conecta por SSH e instala el launcher (basado en
+  [Razdva122/clean-your-tv-lg-webos](https://github.com/Razdva122/clean-your-tv-lg-webos), MIT).
+- **Samsung (Tizen)** → usa SDB (no ADB) y Modo Desarrollador. La limpieza real necesita root y es
+  específica de cada modelo, así que la app solo diagnostica la conexión y guía, y enlaza a
+  [jss8649/quiet-tizen](https://github.com/jss8649/quiet-tizen) (MIT) para tu modelo exacto.
 
 ## Qué hace (Android)
 
