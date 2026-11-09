@@ -1,0 +1,11 @@
+{
+  "source": "https://github.com/Gathin23/cleanyourtv (MIT)",
+  "profiles": [
+    { "id": "google-chromecast-gtv-4k", "name": "Chromecast con Google TV (4K)", "brand": "Google", "file": "google-chromecast-gtv-4k.txt" },
+    { "id": "google-tv-streamer-4k-kirkwood", "name": "Google TV Streamer (4K)", "brand": "Google", "file": "google-tv-streamer-4k-kirkwood.txt" },
+    { "id": "nvidia-shield-tv-pro-2019", "name": "NVIDIA Shield TV Pro (2019)", "brand": "NVIDIA", "file": "nvidia-shield-tv-pro-2019.txt" },
+    { "id": "sony-bravia-4k-vh2", "name": "Sony BRAVIA 4K (VH2)", "brand": "Sony", "file": "sony-bravia-4k-vh2.txt" },
+    { "id": "onn-4k-streaming-box-2023", "name": "onn. 4K Streaming Box (2023)", "brand": "onn", "file": "onn-4k-streaming-box-2023.txt" },
+    { "id": "amazon-fire-tv-stick-4k-2023", "name": "Amazon Fire TV Stick 4K (2023)", "brand": "Amazon Fire TV", "file": "amazon-fire-tv-stick-4k-2023.txt" }
+  ]
+}
