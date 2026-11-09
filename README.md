@@ -14,7 +14,20 @@ y te deja quitar el bloatware (telemetría, filas patrocinadas, apps preinstalad
 - Aplica **`pm uninstall --user 0 <paquete>`** a lo que elijas (se puede revertir con
   `pm install-existing` o un reset de fábrica).
 - Guarda un **respaldo** de lo que tocó, para restaurar después.
-- (Fase 2) Instala un launcher limpio y lo fija como pantalla de inicio.
+- Instala un launcher (**Projectivy**) y lo fija como pantalla de inicio.
+
+## Launcher (Projectivy)
+
+En la pantalla de paquetes, botón **"Instalar launcher (Projectivy) y fijar como inicio…"**:
+
+1. Elige el APK de [Projectivy Launcher](https://play.google.com/store/apps/details?id=com.spocky.projengmenu)
+   desde tu teléfono (el selector de archivos del sistema).
+2. La app lo sube a la TV con `adb install` y lo fija con
+   `cmd package set-home-activity com.spocky.projengmenu/...ui.home.MainActivity`.
+3. Si la TV no acepta fijarlo por ADB, abre Projectivy una vez y elígelo como inicio desde Ajustes.
+
+> Projectivy es de su autor (Spocky) y no se redistribuye en este repo: la app
+> solo instala el APK que tú elijas con el selector de archivos.
 
 ## Importante / alcance
 

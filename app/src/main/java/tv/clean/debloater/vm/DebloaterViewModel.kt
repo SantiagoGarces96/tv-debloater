@@ -1,13 +1,17 @@
 package tv.clean.debloater.vm
 
 import android.app.Application
+import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.io.File
 import tv.clean.debloater.adb.AdbManager
 import tv.clean.debloater.adb.AdbResult
 import tv.clean.debloater.adb.DeviceInfo
@@ -191,6 +195,48 @@ class DebloaterViewModel(app: Application) : AndroidViewModel(app) {
         }
     }
 
+    /** Fase 2: instala un APK de launcher en la TV y lo fija como pantalla de inicio. */
+    fun installLauncher(uri: Uri) {
+        _state.update { it.copy(stage = Stage.Working, busy = true, log = emptyList(), workDone = false) }
+        viewModelScope.launch {
+            appendLog("Preparando el APK…")
+            val file = copyUriToCache(uri)
+            if (file == null) {
+                appendLog("No se pudo leer el APK seleccionado.")
+                _state.update { it.copy(busy = false, workDone = true) }
+                return@launch
+            }
+            appendLog("Instalando en la TV (${file.length() / (1024 * 1024)} MB)…")
+            when (val r = adb.installApk(file)) {
+                is AdbResult.Ok -> {
+                    appendLog("✓ APK instalado.")
+                    appendLog("Fijando Projectivy como pantalla de inicio…")
+                    when (val h = adb.setDefaultHome(PROJECTIVY_HOME)) {
+                        is AdbResult.Ok -> appendLog("✓ Projectivy es ahora el inicio.")
+                        is AdbResult.Err -> appendLog(
+                            "APK instalado, pero no pude fijar el inicio: ${h.message}\n" +
+                                "Ábrelo una vez en la TV y elígelo como inicio desde Ajustes.",
+                        )
+                    }
+                }
+                is AdbResult.Err -> appendLog("✗ Falló la instalación: ${r.message}")
+            }
+            runCatching { file.delete() }
+            _state.update { it.copy(busy = false, workDone = true) }
+        }
+    }
+
+    private suspend fun copyUriToCache(uri: Uri): File? = withContext(Dispatchers.IO) {
+        runCatching {
+            val ctx = getApplication<Application>()
+            val file = File(ctx.cacheDir, "launcher.apk")
+            ctx.contentResolver.openInputStream(uri)?.use { input ->
+                file.outputStream().use { output -> input.copyTo(output) }
+            } ?: return@runCatching null
+            file
+        }.getOrNull()
+    }
+
     fun backToPackages() = _state.update { it.copy(stage = Stage.Packages, log = emptyList()) }
 
     fun disconnect() {
@@ -211,5 +257,10 @@ class DebloaterViewModel(app: Application) : AndroidViewModel(app) {
     override fun onCleared() {
         adb.close()
         super.onCleared()
+    }
+
+    companion object {
+        const val PROJECTIVY_PKG = "com.spocky.projengmenu"
+        const val PROJECTIVY_HOME = "com.spocky.projengmenu/com.spocky.projengmenu.ui.home.MainActivity"
     }
 }

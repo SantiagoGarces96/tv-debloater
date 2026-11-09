@@ -1,5 +1,7 @@
 package tv.clean.debloater.ui
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -121,6 +123,10 @@ private fun ConnectScreen(state: UiState, vm: DebloaterViewModel, modifier: Modi
 @Composable
 private fun PackagesScreen(state: UiState, vm: DebloaterViewModel, modifier: Modifier) {
     val device = state.device
+    val pickApk = rememberLauncherForActivityResult(
+        ActivityResultContracts.OpenDocument(),
+    ) { uri -> if (uri != null) vm.installLauncher(uri) }
+
     Column(modifier = modifier.fillMaxSize().padding(16.dp)) {
         Row(
             Modifier.fillMaxWidth(),
@@ -214,6 +220,13 @@ private fun PackagesScreen(state: UiState, vm: DebloaterViewModel, modifier: Mod
             OutlinedButton(onClick = vm::restoreLatest, modifier = Modifier.fillMaxWidth()) {
                 Text("Restaurar último respaldo")
             }
+        }
+        OutlinedButton(
+            onClick = { pickApk.launch(arrayOf("*/*")) },
+            enabled = !state.busy,
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            Text("Instalar launcher (Projectivy) y fijar como inicio…")
         }
     }
 }
