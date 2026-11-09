@@ -6,7 +6,7 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 import java.io.File
 
-/** Guarda y lee respaldos de lo que se quitó, en filesDir/backups/*.json. */
+/** Guarda y lee respaldos de lo que se quitó, en la carpeta backups del almacenamiento interno. */
 class BackupStore(context: Context) {
 
     private val dir = File(context.filesDir, "backups").apply { mkdirs() }
