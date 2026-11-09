@@ -20,6 +20,7 @@ import tv.clean.debloater.webos.WebosClient
 import tv.clean.debloater.data.AppRow
 import tv.clean.debloater.data.BackupRecord
 import tv.clean.debloater.data.BackupStore
+import tv.clean.debloater.data.AppGroup
 import tv.clean.debloater.data.Categorizer
 import tv.clean.debloater.data.DebloatProfile
 import tv.clean.debloater.data.DebloatRepository
@@ -241,6 +242,22 @@ class DebloaterViewModel(app: Application) : AndroidViewModel(app) {
     }
 
     fun clearSelection() = _state.update { it.copy(selected = emptySet()) }
+
+    /** Limpieza en un toque: desactiva (reversible) lo claramente molesto. */
+    fun cleanNow() {
+        val targets = _state.value.rows
+            .filter {
+                it.inSelectedProfile ||
+                    it.group == AppGroup.ADS ||
+                    it.group == AppGroup.TRACKING ||
+                    it.group == AppGroup.BRAND
+            }
+            .map { it.packageName }
+            .toSet()
+        if (targets.isEmpty()) return
+        _state.update { it.copy(selected = targets, action = Action.Disable) }
+        runAction()
+    }
 
     fun setAction(action: Action) = _state.update { it.copy(action = action) }
 

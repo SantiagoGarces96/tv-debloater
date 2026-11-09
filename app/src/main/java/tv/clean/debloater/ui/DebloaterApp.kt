@@ -336,6 +336,21 @@ private fun PackagesScreen(state: UiState, vm: DebloaterViewModel, modifier: Mod
         }
         Spacer(Modifier.height(8.dp))
 
+        val cleanCount = state.rows.count {
+            it.inSelectedProfile ||
+                it.group == AppGroup.ADS ||
+                it.group == AppGroup.TRACKING ||
+                it.group == AppGroup.BRAND
+        }
+        Button(
+            onClick = vm::cleanNow,
+            enabled = cleanCount > 0 && !state.busy,
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            Text("✨ Limpieza en un toque ($cleanCount, reversible)")
+        }
+        Spacer(Modifier.height(4.dp))
+
         // Selector de perfil con búsqueda (hay cientos de modelos)
         var expanded by remember { mutableStateOf(false) }
         var query by remember { mutableStateOf("") }
