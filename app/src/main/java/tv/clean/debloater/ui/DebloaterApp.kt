@@ -17,6 +17,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -565,7 +566,7 @@ private fun PackagesScreen(state: UiState, vm: DebloaterViewModel, modifier: Mod
             "Desinstalar ${state.selected.size} (user 0)"
         }
         Button(
-            onClick = vm::runAction,
+            onClick = vm::requestApply,
             enabled = state.selected.isNotEmpty() && !state.busy,
             colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error),
             modifier = Modifier.fillMaxWidth(),
@@ -604,6 +605,26 @@ private fun PackagesScreen(state: UiState, vm: DebloaterViewModel, modifier: Mod
         ) {
             Text("Instalar launcher (Projectivy) y fijar como inicio…")
         }
+    }
+
+    state.confirm?.let { c ->
+        AlertDialog(
+            onDismissRequest = vm::cancelConfirm,
+            title = {
+                Text(if (c.uninstall) "Desinstalar ${c.count} apps" else "Desactivar ${c.count} apps")
+            },
+            text = {
+                Text(
+                    if (c.uninstall) {
+                        "Se quitarán para el usuario 0 (reversible con install-existing). Se guarda un respaldo antes."
+                    } else {
+                        "Se desactivarán (reversible con un toque). Se guarda un respaldo antes."
+                    },
+                )
+            },
+            confirmButton = { TextButton(onClick = vm::confirmProceed) { Text("Continuar") } },
+            dismissButton = { TextButton(onClick = vm::cancelConfirm) { Text("Cancelar") } },
+        )
     }
 }
 

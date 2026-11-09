@@ -32,6 +32,9 @@ enum class Stage { Platform, Connect, Packages, Working, LgInfo, SamsungInfo }
 
 enum class Action { Disable, Uninstall }
 
+/** Confirmación pendiente antes de aplicar cambios. */
+data class Confirm(val count: Int, val uninstall: Boolean)
+
 data class UiState(
     val stage: Stage = Stage.Platform,
     val hostInput: String = "",
@@ -46,6 +49,7 @@ data class UiState(
     val workDone: Boolean = false,
     val hasBackup: Boolean = false,
     val action: Action = Action.Disable,
+    val confirm: Confirm? = null,
     val adBlockHost: String? = null,
     val discovering: Boolean = false,
     val found: List<String> = emptyList(),
@@ -272,7 +276,20 @@ class DebloaterViewModel(app: Application) : AndroidViewModel(app) {
             .map { it.packageName }
             .toSet()
         if (targets.isEmpty()) return
-        _state.update { it.copy(selected = targets, action = Action.Disable) }
+        _state.update { it.copy(selected = targets, action = Action.Disable, confirm = Confirm(targets.size, false)) }
+    }
+
+    /** Pide confirmar la acción manual (desactivar/desinstalar lo seleccionado). */
+    fun requestApply() {
+        val n = _state.value.selected.size
+        if (n == 0) return
+        _state.update { it.copy(confirm = Confirm(n, it.action == Action.Uninstall)) }
+    }
+
+    fun cancelConfirm() = _state.update { it.copy(confirm = null) }
+
+    fun confirmProceed() {
+        _state.update { it.copy(confirm = null) }
         runAction()
     }
 
