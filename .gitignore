@@ -22,3 +22,6 @@ build.log
 
 # test outputs
 test.log
+
+# build dirs de cualquier modulo
+**/build/
