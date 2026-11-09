@@ -24,6 +24,7 @@ import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.ExposedDropdownMenu
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.HorizontalDivider
@@ -45,6 +46,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import tv.clean.debloater.data.AppRow
+import tv.clean.debloater.vm.Action
 import tv.clean.debloater.vm.DebloaterViewModel
 import tv.clean.debloater.vm.Stage
 import tv.clean.debloater.vm.UiState
@@ -189,6 +191,20 @@ private fun PackagesScreen(state: UiState, vm: DebloaterViewModel, modifier: Mod
             Text("${state.selected.size} sel.", style = MaterialTheme.typography.bodySmall)
         }
 
+        // Método: desactivar (reversible) o desinstalar (usuario 0)
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            FilterChip(
+                selected = state.action == Action.Disable,
+                onClick = { vm.setAction(Action.Disable) },
+                label = { Text("Desactivar (reversible)") },
+            )
+            FilterChip(
+                selected = state.action == Action.Uninstall,
+                onClick = { vm.setAction(Action.Uninstall) },
+                label = { Text("Desinstalar (user 0)") },
+            )
+        }
+
         state.error?.let {
             Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
         }
@@ -208,19 +224,37 @@ private fun PackagesScreen(state: UiState, vm: DebloaterViewModel, modifier: Mod
 
         Spacer(Modifier.height(8.dp))
 
+        val actionLabel = if (state.action == Action.Disable) {
+            "Desactivar ${state.selected.size}"
+        } else {
+            "Desinstalar ${state.selected.size} (user 0)"
+        }
         Button(
-            onClick = vm::runUninstall,
+            onClick = vm::runAction,
             enabled = state.selected.isNotEmpty() && !state.busy,
             colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error),
             modifier = Modifier.fillMaxWidth(),
         ) {
-            Text("Desinstalar ${state.selected.size} (usuario 0)")
+            Text(actionLabel)
         }
         if (state.hasBackup) {
             OutlinedButton(onClick = vm::restoreLatest, modifier = Modifier.fillMaxWidth()) {
                 Text("Restaurar último respaldo")
             }
         }
+
+        val adOn = state.adBlockHost != null
+        OutlinedButton(
+            onClick = vm::toggleAdBlock,
+            enabled = !state.busy,
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            Text(
+                if (adOn) "Bloqueo de anuncios: ACTIVO — desactivar"
+                else "Activar bloqueo de anuncios (DNS AdGuard)",
+            )
+        }
+
         OutlinedButton(
             onClick = { pickApk.launch(arrayOf("*/*")) },
             enabled = !state.busy,

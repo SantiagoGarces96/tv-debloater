@@ -106,6 +106,40 @@ class AdbManager(context: Context) {
             }
         }
 
+    /** pm disable-user --user 0 <pkg>. No borra nada; reversible con enableForUser0. */
+    suspend fun disableForUser0(pkg: String): AdbResult<Unit> =
+        withContext(Dispatchers.IO) {
+            val d = dadb ?: return@withContext AdbResult.Err("Sin conexión.")
+            try {
+                val r = d.shell("pm disable-user --user 0 $pkg")
+                val out = (r.output + r.errorOutput).trim()
+                if (out.contains("disabled", ignoreCase = true)) {
+                    AdbResult.Ok(Unit)
+                } else {
+                    AdbResult.Err(out.ifBlank { "Falló al desactivar $pkg" })
+                }
+            } catch (e: Throwable) {
+                AdbResult.Err(describe(e, host, 5555))
+            }
+        }
+
+    /** Revierte un disable: pm enable <pkg>. */
+    suspend fun enableForUser0(pkg: String): AdbResult<Unit> =
+        withContext(Dispatchers.IO) {
+            val d = dadb ?: return@withContext AdbResult.Err("Sin conexión.")
+            try {
+                val r = d.shell("pm enable $pkg")
+                val out = (r.output + r.errorOutput).trim()
+                if (out.contains("enabled", ignoreCase = true) || r.exitCode == 0) {
+                    AdbResult.Ok(Unit)
+                } else {
+                    AdbResult.Err(out.ifBlank { "Falló al activar $pkg" })
+                }
+            } catch (e: Throwable) {
+                AdbResult.Err(describe(e, host, 5555))
+            }
+        }
+
     /** Revierte: vuelve a habilitar el APK de sistema para el usuario 0. */
     suspend fun reinstallExisting(pkg: String): AdbResult<Unit> =
         withContext(Dispatchers.IO) {
@@ -150,6 +184,44 @@ class AdbManager(context: Context) {
                 AdbResult.Err(describe(e, host, 5555))
             }
         }
+
+    /** Activa bloqueo de anuncios en toda la TV via DNS privado filtrante (sin root ni app). */
+    suspend fun setPrivateDns(hostname: String): AdbResult<Unit> =
+        withContext(Dispatchers.IO) {
+            val d = dadb ?: return@withContext AdbResult.Err("Sin conexión.")
+            try {
+                d.shell("settings put global private_dns_mode hostname")
+                val r = d.shell("settings put global private_dns_specifier $hostname")
+                if (r.exitCode == 0) AdbResult.Ok(Unit)
+                else AdbResult.Err((r.errorOutput).ifBlank { "No se pudo fijar el DNS privado" }.trim())
+            } catch (e: Throwable) {
+                AdbResult.Err(describe(e, host, 5555))
+            }
+        }
+
+    /** Desactiva el DNS privado (quita el bloqueo de anuncios por DNS). */
+    suspend fun clearPrivateDns(): AdbResult<Unit> =
+        withContext(Dispatchers.IO) {
+            val d = dadb ?: return@withContext AdbResult.Err("Sin conexión.")
+            try {
+                val r = d.shell("settings put global private_dns_mode off")
+                if (r.exitCode == 0) AdbResult.Ok(Unit)
+                else AdbResult.Err((r.errorOutput).ifBlank { "No se pudo desactivar el DNS privado" }.trim())
+            } catch (e: Throwable) {
+                AdbResult.Err(describe(e, host, 5555))
+            }
+        }
+
+    /** Devuelve el hostname de DNS privado activo, o null si está apagado. */
+    suspend fun currentPrivateDns(): String? = withContext(Dispatchers.IO) {
+        val d = dadb ?: return@withContext null
+        runCatching {
+            val mode = d.shell("settings get global private_dns_mode").output.trim()
+            if (!mode.equals("hostname", ignoreCase = true)) return@runCatching null
+            d.shell("settings get global private_dns_specifier").output.trim()
+                .takeIf { it.isNotBlank() && it != "null" }
+        }.getOrNull()
+    }
 
     private suspend fun <T> shellLines(
         command: String,

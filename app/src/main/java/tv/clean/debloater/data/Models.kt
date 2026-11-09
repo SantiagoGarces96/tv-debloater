@@ -40,4 +40,6 @@ data class BackupRecord(
     val model: String,
     val timestamp: Long,
     val removed: List<String>,
+    /** "uninstall" o "disable": cómo revertir. */
+    val action: String = "uninstall",
 )

@@ -23,6 +23,8 @@ import tv.clean.debloater.data.DebloatRepository
 
 enum class Stage { Connect, Packages, Working }
 
+enum class Action { Disable, Uninstall }
+
 data class UiState(
     val stage: Stage = Stage.Connect,
     val hostInput: String = "",
@@ -36,6 +38,8 @@ data class UiState(
     val log: List<String> = emptyList(),
     val workDone: Boolean = false,
     val hasBackup: Boolean = false,
+    val action: Action = Action.Disable,
+    val adBlockHost: String? = null,
 )
 
 class DebloaterViewModel(app: Application) : AndroidViewModel(app) {
@@ -66,6 +70,7 @@ class DebloaterViewModel(app: Application) : AndroidViewModel(app) {
                     val profiles = repo.profiles()
                     catalog = repo.mergedCatalog()
                     val backup = backups.latestForHost(ip)
+                    val dns = adb.currentPrivateDns()
                     _state.update {
                         it.copy(
                             busy = false,
@@ -73,6 +78,7 @@ class DebloaterViewModel(app: Application) : AndroidViewModel(app) {
                             profiles = profiles,
                             stage = Stage.Packages,
                             hasBackup = backup != null,
+                            adBlockHost = dns,
                         )
                     }
                     loadPackages()
@@ -136,38 +142,76 @@ class DebloaterViewModel(app: Application) : AndroidViewModel(app) {
 
     fun clearSelection() = _state.update { it.copy(selected = emptySet()) }
 
-    fun runUninstall() {
+    fun setAction(action: Action) = _state.update { it.copy(action = action) }
+
+    fun runAction() {
         val targets = _state.value.selected.toList()
         if (targets.isEmpty()) return
+        val action = _state.value.action
         _state.update { it.copy(stage = Stage.Working, busy = true, log = emptyList(), workDone = false) }
         viewModelScope.launch {
-            val removed = mutableListOf<String>()
+            val done = mutableListOf<String>()
             var i = 0
             for (pkg in targets) {
                 i++
-                when (val r = adb.uninstallForUser0(pkg)) {
+                val r = when (action) {
+                    Action.Disable -> adb.disableForUser0(pkg)
+                    Action.Uninstall -> adb.uninstallForUser0(pkg)
+                }
+                when (r) {
                     is AdbResult.Ok -> {
-                        removed += pkg
+                        done += pkg
                         appendLog("[$i/${targets.size}] ✓ $pkg")
                     }
                     is AdbResult.Err -> appendLog("[$i/${targets.size}] ✗ $pkg — ${r.message}")
                 }
             }
-            if (removed.isNotEmpty()) {
+            if (done.isNotEmpty()) {
                 val dev = _state.value.device
                 backups.save(
                     BackupRecord(
                         host = adb.host ?: "",
                         model = dev?.model ?: "",
                         timestamp = System.currentTimeMillis(),
-                        removed = removed,
+                        removed = done,
+                        action = if (action == Action.Disable) "disable" else "uninstall",
                     ),
                 )
-                appendLog("Respaldo guardado (${removed.size} paquetes).")
+                appendLog("Respaldo guardado (${done.size} paquetes).")
             }
-            installed = installed.filterNot { it in removed }
-            rebuildRows(preselect = false)
+            // Si se desinstalaron, salen del listado; si solo se desactivaron, siguen instalados.
+            if (action == Action.Uninstall) {
+                installed = installed.filterNot { it in done }
+                rebuildRows(preselect = false)
+            }
             _state.update { it.copy(busy = false, workDone = true, hasBackup = true) }
+        }
+    }
+
+    fun toggleAdBlock() {
+        val on = _state.value.adBlockHost != null
+        _state.update { it.copy(stage = Stage.Working, busy = true, log = emptyList(), workDone = false) }
+        viewModelScope.launch {
+            if (on) {
+                appendLog("Desactivando bloqueo de anuncios (DNS privado)…")
+                when (val r = adb.clearPrivateDns()) {
+                    is AdbResult.Ok -> {
+                        appendLog("✓ Bloqueo de anuncios desactivado.")
+                        _state.update { it.copy(adBlockHost = null) }
+                    }
+                    is AdbResult.Err -> appendLog("✗ ${r.message}")
+                }
+            } else {
+                appendLog("Activando bloqueo de anuncios con $ADGUARD_DNS…")
+                when (val r = adb.setPrivateDns(ADGUARD_DNS)) {
+                    is AdbResult.Ok -> {
+                        appendLog("✓ Anuncios y rastreadores bloqueados en toda la TV.")
+                        _state.update { it.copy(adBlockHost = ADGUARD_DNS) }
+                    }
+                    is AdbResult.Err -> appendLog("✗ ${r.message}")
+                }
+            }
+            _state.update { it.copy(busy = false, workDone = true) }
         }
     }
 
@@ -184,7 +228,9 @@ class DebloaterViewModel(app: Application) : AndroidViewModel(app) {
             var i = 0
             for (pkg in record.removed) {
                 i++
-                when (val r = adb.reinstallExisting(pkg)) {
+                val r = if (record.action == "disable") adb.enableForUser0(pkg)
+                else adb.reinstallExisting(pkg)
+                when (r) {
                     is AdbResult.Ok -> appendLog("[$i/${record.removed.size}] ✓ $pkg")
                     is AdbResult.Err -> appendLog("[$i/${record.removed.size}] ✗ $pkg — ${r.message}")
                 }
@@ -262,5 +308,6 @@ class DebloaterViewModel(app: Application) : AndroidViewModel(app) {
     companion object {
         const val PROJECTIVY_PKG = "com.spocky.projengmenu"
         const val PROJECTIVY_HOME = "com.spocky.projengmenu/com.spocky.projengmenu.ui.home.MainActivity"
+        const val ADGUARD_DNS = "dns.adguard-dns.com"
     }
 }

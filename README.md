@@ -10,10 +10,14 @@ y te deja quitar el bloatware (telemetría, filas patrocinadas, apps preinstalad
 
 - Se conecta a la TV por ADB TCP (`ip:5555`), usando una clave ADB propia que la app genera y guarda.
 - Lista los paquetes instalados en la TV (`pm list packages`).
-- Los compara con listas de debloat conocidas (en `app/src/main/assets/lists/`) y te deja marcar/desmarcar.
-- Aplica **`pm uninstall --user 0 <paquete>`** a lo que elijas (se puede revertir con
-  `pm install-existing` o un reset de fábrica).
-- Guarda un **respaldo** de lo que tocó, para restaurar después.
+- Los compara con **29 listas** de debloat (28 modelos + una lista común multimarca segura) y te
+  deja marcar/desmarcar, con el motivo de cada paquete.
+- Dos métodos, tú eliges:
+  - **Desactivar** (`pm disable-user --user 0`): reversible, no borra nada. Para apps molestas.
+  - **Desinstalar** (`pm uninstall --user 0`): quita la app para el usuario 0.
+- Guarda un **respaldo** de lo que tocó y lo **restaura** (con `pm enable` o `install-existing`).
+- **Bloqueo de anuncios** en toda la TV con un toque: DNS privado filtrante (AdGuard DNS,
+  `dns.adguard-dns.com`), sin root ni app. Se activa/desactiva desde la app.
 - Instala un launcher (**Projectivy**) y lo fija como pantalla de inicio.
 
 ## Launcher (Projectivy)
