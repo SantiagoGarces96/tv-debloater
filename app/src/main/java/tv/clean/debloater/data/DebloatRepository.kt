@@ -16,9 +16,22 @@ class DebloatRepository(private val context: Context) {
     @Volatile
     private var cached: List<DebloatProfile>? = null
 
+    @Volatile
+    private var uadCached: Map<String, UadEntry>? = null
+
     suspend fun profiles(): List<DebloatProfile> = withContext(Dispatchers.IO) {
         cached ?: loadProfiles().also { cached = it }
     }
+
+    /** Base de datos de UAD-ng: paquete -> descripción / riesgo / etiquetas. */
+    suspend fun uadDatabase(): Map<String, UadEntry> = withContext(Dispatchers.IO) {
+        uadCached ?: loadUad().also { uadCached = it }
+    }
+
+    private fun loadUad(): Map<String, UadEntry> = runCatching {
+        val text = context.assets.open("uad/uad_lists.json").bufferedReader().use { it.readText() }
+        json.decodeFromString<Map<String, UadEntry>>(text)
+    }.getOrDefault(emptyMap())
 
     /** Catálogo combinado de todas las listas: paquete -> primera razón conocida. */
     suspend fun mergedCatalog(): Map<String, String?> = withContext(Dispatchers.IO) {

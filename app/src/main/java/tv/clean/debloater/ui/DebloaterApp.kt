@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -40,6 +41,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -150,28 +152,60 @@ private fun PackagesScreen(state: UiState, vm: DebloaterViewModel, modifier: Mod
 
         Spacer(Modifier.height(8.dp))
 
-        // Selector de perfil
+        Card(Modifier.fillMaxWidth()) {
+            Text(
+                "⚠️ El malware de firmware (cajas baratas tipo BadBox) no se quita por ADB; " +
+                    "requiere reflashear o reemplazar el equipo. Aquí solo se desactiva/desinstala software normal.",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.secondary,
+                modifier = Modifier.padding(10.dp),
+            )
+        }
+        Spacer(Modifier.height(8.dp))
+
+        // Selector de perfil con búsqueda (hay cientos de modelos)
         var expanded by remember { mutableStateOf(false) }
+        var query by remember { mutableStateOf("") }
         val selectedName = state.profiles.firstOrNull { it.id == state.selectedProfileId }?.name
-            ?: "Todas las listas (recomendado)"
+            ?: "Común (recomendado)"
+        val filtered = remember(query, state.profiles) {
+            if (query.isBlank()) state.profiles
+            else state.profiles.filter {
+                it.name.contains(query, true) || it.brand.contains(query, true) || it.id.contains(query, true)
+            }
+        }
         ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { expanded = it }) {
             OutlinedTextField(
                 value = selectedName,
                 onValueChange = {},
                 readOnly = true,
-                label = { Text("Perfil de debloat") },
+                label = { Text("Modelo / perfil de debloat") },
                 trailingIcon = { Icon(Icons.Filled.ArrowDropDown, null) },
                 modifier = Modifier.fillMaxWidth().menuAnchor(),
             )
             ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+                OutlinedTextField(
+                    value = query,
+                    onValueChange = { query = it },
+                    singleLine = true,
+                    label = { Text("Buscar tu modelo…") },
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 4.dp),
+                )
                 DropdownMenuItem(
-                    text = { Text("Todas las listas (recomendado)") },
+                    text = { Text("Común (multimarca, recomendado)") },
                     onClick = { vm.selectProfile(null); expanded = false },
                 )
-                state.profiles.forEach { p ->
+                filtered.take(40).forEach { p ->
                     DropdownMenuItem(
-                        text = { Text(p.name) },
+                        text = { Text("${p.name}  ·  ${p.brand}") },
                         onClick = { vm.selectProfile(p.id); expanded = false },
+                    )
+                }
+                if (filtered.size > 40) {
+                    DropdownMenuItem(
+                        enabled = false,
+                        text = { Text("…y ${filtered.size - 40} más, afina la búsqueda") },
+                        onClick = {},
                     )
                 }
             }
@@ -180,14 +214,13 @@ private fun PackagesScreen(state: UiState, vm: DebloaterViewModel, modifier: Mod
         Spacer(Modifier.height(8.dp))
 
         Row(
-            Modifier.fillMaxWidth(),
+            Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             AssistChip(onClick = vm::selectRecommended, label = { Text("Recomendados") })
+            AssistChip(onClick = vm::selectTelemetry, label = { Text("Telemetría") })
             AssistChip(onClick = vm::clearSelection, label = { Text("Ninguno") })
-            Spacer(Modifier.weight(1f))
-            Text("${state.selected.size} sel.", style = MaterialTheme.typography.bodySmall)
         }
 
         // Método: desactivar (reversible) o desinstalar (usuario 0)
@@ -268,7 +301,7 @@ private fun PackagesScreen(state: UiState, vm: DebloaterViewModel, modifier: Mod
 private fun AppRowItem(row: AppRow, checked: Boolean, onToggle: () -> Unit) {
     Row(
         Modifier.fillMaxWidth().padding(vertical = 6.dp),
-        verticalAlignment = Alignment.CenterVertically,
+        verticalAlignment = Alignment.Top,
     ) {
         Checkbox(checked = checked, onCheckedChange = { onToggle() })
         Column(Modifier.weight(1f)) {
@@ -279,20 +312,49 @@ private fun AppRowItem(row: AppRow, checked: Boolean, onToggle: () -> Unit) {
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
-            row.reason?.let {
+            // Badges: telemetría + nivel de riesgo
+            Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                if (row.isTelemetry) Badge("🔎 datos", Color(0xFFFF6B6B))
+                row.risk?.let { Badge(riskLabel(it), riskColor(it)) }
+            }
+            val text = row.description ?: row.reason
+            text?.let {
                 Text(
                     it,
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.secondary,
-                    maxLines = 2,
+                    maxLines = 3,
                     overflow = TextOverflow.Ellipsis,
                 )
             }
         }
-        if (row.inAnyList) {
-            AssistChip(onClick = {}, enabled = false, label = { Text("bloat") })
-        }
     }
+}
+
+@Composable
+private fun Badge(text: String, color: Color) {
+    Text(
+        text,
+        style = MaterialTheme.typography.labelSmall,
+        color = color,
+        fontWeight = FontWeight.SemiBold,
+    )
+}
+
+private fun riskLabel(removal: String): String = when (removal.lowercase()) {
+    "recommended" -> "seguro"
+    "advanced" -> "avanzado"
+    "expert" -> "experto"
+    "unsafe" -> "no seguro"
+    else -> removal.lowercase()
+}
+
+private fun riskColor(removal: String): Color = when (removal.lowercase()) {
+    "recommended" -> Color(0xFF7BE07B)
+    "advanced" -> Color(0xFFE0C65B)
+    "expert" -> Color(0xFFE08A3C)
+    "unsafe" -> Color(0xFFFF6B6B)
+    else -> Color(0xFF9AA0A6)
 }
 
 @Composable

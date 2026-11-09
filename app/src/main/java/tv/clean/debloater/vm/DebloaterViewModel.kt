@@ -20,6 +20,8 @@ import tv.clean.debloater.data.BackupRecord
 import tv.clean.debloater.data.BackupStore
 import tv.clean.debloater.data.DebloatProfile
 import tv.clean.debloater.data.DebloatRepository
+import tv.clean.debloater.data.Telemetry
+import tv.clean.debloater.data.UadEntry
 
 enum class Stage { Connect, Packages, Working }
 
@@ -53,6 +55,7 @@ class DebloaterViewModel(app: Application) : AndroidViewModel(app) {
 
     private var installed: List<String> = emptyList()
     private var catalog: Map<String, String?> = emptyMap()
+    private var uad: Map<String, UadEntry> = emptyMap()
 
     fun onHostChange(value: String) = _state.update { it.copy(hostInput = value, error = null) }
 
@@ -69,6 +72,7 @@ class DebloaterViewModel(app: Application) : AndroidViewModel(app) {
                 is AdbResult.Ok -> {
                     val profiles = repo.profiles()
                     catalog = repo.mergedCatalog()
+                    uad = repo.uadDatabase()
                     val backup = backups.latestForHost(ip)
                     val dns = adb.currentPrivateDns()
                     _state.update {
@@ -111,14 +115,21 @@ class DebloaterViewModel(app: Application) : AndroidViewModel(app) {
         val profile = _state.value.profiles.firstOrNull { it.id == _state.value.selectedProfileId }
         val profileEntries = profile?.entries ?: emptyMap()
         val rows = installed.map { pkg ->
+            val reason = profileEntries[pkg] ?: catalog[pkg]
+            val u = uad[pkg]
+            val description = u?.description?.takeIf { it.isNotBlank() }
             AppRow(
                 packageName = pkg,
-                reason = profileEntries[pkg] ?: catalog[pkg],
+                reason = reason,
                 inSelectedProfile = pkg in profileEntries,
                 inAnyList = pkg in catalog,
+                description = description,
+                risk = u?.removal?.takeIf { it.isNotBlank() },
+                isTelemetry = Telemetry.isTelemetry(pkg, reason, description, u?.labels ?: emptyList()),
             )
         }.sortedWith(
             compareByDescending<AppRow> { it.inSelectedProfile }
+                .thenByDescending { it.isTelemetry }
                 .thenByDescending { it.inAnyList }
                 .thenBy { it.packageName },
         )
@@ -138,6 +149,10 @@ class DebloaterViewModel(app: Application) : AndroidViewModel(app) {
 
     fun selectRecommended() = _state.update {
         it.copy(selected = it.rows.filter { r -> r.inAnyList }.map { r -> r.packageName }.toSet())
+    }
+
+    fun selectTelemetry() = _state.update {
+        it.copy(selected = it.rows.filter { r -> r.isTelemetry }.map { r -> r.packageName }.toSet())
     }
 
     fun clearSelection() = _state.update { it.copy(selected = emptySet()) }
