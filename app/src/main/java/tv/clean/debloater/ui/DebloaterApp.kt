@@ -88,6 +88,30 @@ private fun ConnectScreen(state: UiState, vm: DebloaterViewModel, modifier: Modi
             }
         }
 
+        OutlinedButton(
+            onClick = vm::scanNetwork,
+            enabled = !state.busy && !state.discovering,
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            if (state.discovering) {
+                CircularProgressIndicator(Modifier.height(18.dp), strokeWidth = 2.dp)
+                Text("  Buscando TVs en tu Wi‑Fi…")
+            } else {
+                Text("Buscar mi TV en la red")
+            }
+        }
+
+        state.found.forEach { ip ->
+            Button(
+                onClick = { vm.pickFound(ip) },
+                enabled = !state.busy,
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Text("Conectar a $ip")
+            }
+        }
+
+        Text("…o escribe la IP a mano:", style = MaterialTheme.typography.bodySmall)
         OutlinedTextField(
             value = state.hostInput,
             onValueChange = vm::onHostChange,

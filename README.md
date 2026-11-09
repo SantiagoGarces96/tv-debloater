@@ -8,6 +8,7 @@ y te deja quitar el bloatware (telemetría, filas patrocinadas, apps preinstalad
 
 ## Qué hace
 
+- **Encuentra la TV sola en el Wi‑Fi** (escaneo del puerto ADB), o le pones la IP a mano.
 - Se conecta a la TV por ADB TCP (`ip:5555`), usando una clave ADB propia que la app genera y guarda.
 - Lista los paquetes instalados en la TV (`pm list packages`).
 - Los compara con **458 perfiles** de debloat (457 modelos de TV/decodificador + una lista común

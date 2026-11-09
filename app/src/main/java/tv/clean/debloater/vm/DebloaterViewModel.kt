@@ -15,6 +15,7 @@ import java.io.File
 import tv.clean.debloater.adb.AdbManager
 import tv.clean.debloater.adb.AdbResult
 import tv.clean.debloater.adb.DeviceInfo
+import tv.clean.debloater.adb.TvDiscovery
 import tv.clean.debloater.data.AppRow
 import tv.clean.debloater.data.BackupRecord
 import tv.clean.debloater.data.BackupStore
@@ -42,6 +43,8 @@ data class UiState(
     val hasBackup: Boolean = false,
     val action: Action = Action.Disable,
     val adBlockHost: String? = null,
+    val discovering: Boolean = false,
+    val found: List<String> = emptyList(),
 )
 
 class DebloaterViewModel(app: Application) : AndroidViewModel(app) {
@@ -58,6 +61,29 @@ class DebloaterViewModel(app: Application) : AndroidViewModel(app) {
     private var uad: Map<String, UadEntry> = emptyMap()
 
     fun onHostChange(value: String) = _state.update { it.copy(hostInput = value, error = null) }
+
+    fun scanNetwork() {
+        _state.update { it.copy(discovering = true, found = emptyList(), error = null) }
+        viewModelScope.launch {
+            val ips = TvDiscovery.scan()
+            _state.update {
+                it.copy(
+                    discovering = false,
+                    found = ips,
+                    error = if (ips.isEmpty()) {
+                        "No encontré TVs con depuración por red. Verifica que esté activada y en la misma Wi‑Fi."
+                    } else {
+                        null
+                    },
+                )
+            }
+        }
+    }
+
+    fun pickFound(ip: String) {
+        _state.update { it.copy(hostInput = ip) }
+        connect()
+    }
 
     fun connect() {
         val host = _state.value.hostInput.trim()
