@@ -3,256 +3,283 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Clean TV — mockup interactivo</title>
+<title>Clean TV — diseño</title>
 <style>
   :root{
-    --bg:#0E1013; --surface:#15181E; --surface2:#1E222B; --line:#262b35;
-    --accent:#7BE07B; --accentDim:#2b7a2b; --text:#E8EAED; --muted:#9AA0A6;
-    --err:#FF6B6B; --warn:#E0C65B; --exp:#E08A3C;
+    --bg:#0B0C0F; --surface:#14161B; --soft:#1B1E25; --line:#23272F;
+    --text:#F4F5F7; --muted:#9BA1AC; --faint:#6B7280;
+    --accent:#34D399; --accent2:#10B981; --danger:#F87171; --warn:#FBBF24;
+    --radius:18px;
   }
   *{box-sizing:border-box}
-  body{margin:0;background:#07080a;color:var(--text);font-family:'Segoe UI',Roboto,system-ui,sans-serif}
-  .wrap{max-width:1100px;margin:0 auto;padding:24px}
-  h1{font-size:22px;margin:0 0 4px}
-  .sub{color:var(--muted);font-size:13px;margin-bottom:18px}
-  .stage{display:flex;gap:28px;flex-wrap:wrap;align-items:flex-start}
-  .legend{flex:1;min-width:240px}
-  .legend h3{font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin:18px 0 8px}
-  .step{display:flex;gap:10px;padding:9px 12px;border:1px solid var(--line);border-radius:10px;margin-bottom:8px;cursor:pointer;background:var(--surface);font-size:13px;align-items:center}
-  .step:hover{border-color:var(--accentDim)}
-  .step.active{border-color:var(--accent);background:#10180f}
-  .step b{color:var(--accent)}
+  html,body{margin:0}
+  body{background:radial-gradient(1200px 600px at 50% -10%,#15181f 0%,#07080a 60%);color:var(--text);
+    font-family:'Inter','Segoe UI',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:900px;margin:0 auto;padding:28px 20px 60px}
+  .brandbar{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+  .logo{width:40px;height:40px;border-radius:12px;background:linear-gradient(145deg,var(--accent),var(--accent2));
+    display:flex;align-items:center;justify-content:center}
+  .brandname{font-size:20px;font-weight:800;letter-spacing:-.02em}
+  .tagline{color:var(--muted);font-size:13.5px;margin:0 0 22px 52px}
+  .tabs{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:0 0 20px}
+  .tab{font-size:12.5px;color:var(--muted);background:var(--surface);border:1px solid var(--line);
+    padding:7px 14px;border-radius:20px;cursor:pointer;transition:.15s}
+  .tab:hover{color:var(--text)}
+  .tab.on{background:var(--accent);color:#06281d;border-color:transparent;font-weight:700}
+  .stage{display:flex;justify-content:center}
   /* phone */
-  .phone{width:330px;flex:none;border:10px solid #000;border-radius:38px;background:var(--bg);height:680px;overflow:hidden;position:relative;box-shadow:0 20px 60px rgba(0,0,0,.6)}
-  .notch{position:absolute;top:0;left:50%;transform:translateX(-50%);width:120px;height:22px;background:#000;border-radius:0 0 14px 14px;z-index:5}
-  .screen{position:absolute;inset:0;overflow-y:auto;padding:30px 16px 20px;display:none}
-  .screen.on{display:block}
+  .phone{width:340px;flex:none;border-radius:44px;background:var(--bg);height:710px;position:relative;
+    overflow:hidden;border:1px solid #20242c;box-shadow:0 30px 80px rgba(0,0,0,.65),inset 0 0 0 8px #000}
+  .notch{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:110px;height:26px;background:#000;border-radius:16px;z-index:6}
+  .screen{position:absolute;inset:0;overflow-y:auto;padding:52px 22px 26px;display:none}
+  .screen.on{display:block;animation:fade .25s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
   .screen::-webkit-scrollbar{width:0}
-  .title{font-size:20px;font-weight:700;margin:4px 0}
-  .h2{font-size:16px;font-weight:700;margin:2px 0}
-  .muted{color:var(--muted);font-size:12.5px;line-height:1.45}
-  .card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px;margin:10px 0}
-  .btn{display:block;width:100%;border:none;border-radius:12px;padding:12px;font-size:14px;font-weight:600;cursor:pointer;margin:8px 0;text-align:center}
-  .btn.primary{background:var(--accent);color:#0c120c}
-  .btn.ghost{background:transparent;border:1px solid var(--line);color:var(--text)}
-  .btn.danger{background:var(--err);color:#2a0b0b}
-  .field{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:11px 12px;color:var(--muted);font-size:13px;margin:8px 0}
-  .chips{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
-  .chip{border:1px solid var(--line);border-radius:20px;padding:6px 12px;font-size:12.5px;background:var(--surface);cursor:pointer}
-  .chip.sel{border-color:var(--accent);color:var(--accent);background:#10180f}
-  .row{display:flex;align-items:flex-start;gap:10px;padding:9px 2px;border-bottom:1px solid var(--line)}
-  .cbox{width:18px;height:18px;border:2px solid var(--muted);border-radius:4px;flex:none;margin-top:2px}
-  .cbox.on{background:var(--accent);border-color:var(--accent)}
-  .pkg{font-family:ui-monospace,Consolas,monospace;font-size:12.5px;word-break:break-all}
-  .badges{display:flex;gap:8px;margin:2px 0;flex-wrap:wrap}
-  .bdg{font-size:11px;font-weight:700}
-  .reason{color:var(--muted);font-size:11.5px;line-height:1.35}
-  .ghd{color:var(--accent);font-weight:700;font-size:13px;margin:12px 0 2px}
-  .warn{color:var(--muted);font-size:11.5px}
-  .top{display:flex;justify-content:space-between;align-items:center}
-  .link{color:var(--accent)}
-  .log{font-family:ui-monospace,Consolas,monospace;font-size:11.5px;line-height:1.6}
-  .dim{color:var(--muted)}
-  .pill{display:inline-block;padding:2px 8px;border-radius:12px;font-size:11px;background:var(--surface2);color:var(--muted);margin-left:6px}
-  /* dialog */
-  .dlgback{position:absolute;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:10;padding:20px}
+  h1{font-size:25px;font-weight:800;letter-spacing:-.03em;margin:4px 0 6px;line-height:1.15}
+  h2{font-size:17px;font-weight:700;margin:0}
+  p{color:var(--muted);font-size:14px;line-height:1.5;margin:6px 0}
+  .small{font-size:12.5px;color:var(--faint)}
+  .btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;border:none;
+    border-radius:16px;padding:15px;font-size:15px;font-weight:700;cursor:pointer;margin:10px 0;transition:.15s}
+  .btn.primary{background:var(--accent);color:#06281d}
+  .btn.primary:hover{background:#3ee9a6}
+  .btn.soft{background:var(--soft);color:var(--text)}
+  .btn.plain{background:transparent;color:var(--muted);font-weight:600}
+  .btn.danger{background:transparent;color:var(--danger);border:1px solid rgba(248,113,113,.3)}
+  .pick{display:flex;align-items:center;gap:14px;background:var(--surface);border:1px solid var(--line);
+    border-radius:var(--radius);padding:16px;margin:12px 0;cursor:pointer;transition:.15s}
+  .pick:hover{border-color:var(--accent)}
+  .pick .ic{width:42px;height:42px;border-radius:12px;background:var(--soft);display:flex;align-items:center;justify-content:center;font-size:20px;flex:none}
+  .pick .t{font-weight:700;font-size:15px}
+  .pick .s{color:var(--muted);font-size:12.5px;margin-top:2px}
+  .pick .arw{margin-left:auto;color:var(--faint)}
+  .steps{list-style:none;padding:0;margin:14px 0}
+  .steps li{display:flex;gap:12px;padding:8px 0;font-size:13.5px;color:var(--muted);align-items:flex-start}
+  .steps .n{width:22px;height:22px;border-radius:50%;background:var(--soft);color:var(--accent);
+    font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex:none}
+  .field{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px;color:var(--faint);font-size:13.5px;margin:10px 0}
+  .found{display:flex;align-items:center;gap:12px;background:#0f1a15;border:1px solid rgba(52,211,153,.35);border-radius:14px;padding:13px 14px;margin:10px 0}
+  .dot{width:9px;height:9px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px rgba(52,211,153,.18)}
+  /* hero count */
+  .hero{text-align:center;padding:14px 0 4px}
+  .big{font-size:60px;font-weight:800;letter-spacing:-.04em;line-height:1;background:linear-gradient(180deg,#fff,#8ef5cc);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .stats{display:flex;gap:8px;margin:16px 0 6px}
+  .stat{flex:1;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:11px 6px;text-align:center}
+  .stat b{font-size:18px}.stat span{display:block;color:var(--muted);font-size:11px;margin-top:2px}
+  .divider{height:1px;background:var(--line);margin:18px 0}
+  .seg{display:flex;background:var(--soft);border-radius:12px;padding:4px;margin:8px 0}
+  .seg div{flex:1;text-align:center;font-size:12.5px;padding:8px;border-radius:9px;color:var(--muted);cursor:pointer}
+  .seg div.on{background:var(--surface);color:var(--text);font-weight:700}
+  .applist .item{display:flex;gap:11px;padding:11px 0;border-bottom:1px solid var(--line);align-items:flex-start}
+  .cb{width:20px;height:20px;border-radius:6px;border:2px solid var(--faint);flex:none;margin-top:1px}
+  .cb.on{background:var(--accent);border-color:var(--accent)}
+  .nm{font-weight:600;font-size:13.5px}
+  .tagrow{display:flex;gap:7px;margin-top:3px;flex-wrap:wrap}
+  .tg{font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:8px}
+  .tg.spy{background:rgba(248,113,113,.14);color:var(--danger)}
+  .tg.ok{background:rgba(52,211,153,.14);color:var(--accent)}
+  .tg.care{background:rgba(251,191,36,.14);color:var(--warn)}
+  .ex{color:var(--faint);font-size:11.5px;margin-top:3px;line-height:1.35}
+  .cat{font-size:13px;font-weight:800;color:var(--text);margin:16px 0 2px;display:flex;align-items:center;gap:8px}
+  .cat .c{color:var(--faint);font-weight:600}
+  .note{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px;color:var(--muted);font-size:12px;margin:12px 0}
+  .dlgback{position:absolute;inset:0;background:rgba(5,6,8,.72);backdrop-filter:blur(2px);display:none;align-items:flex-end;z-index:12;padding:16px}
   .dlgback.on{display:flex}
-  .dlg{background:var(--surface2);border-radius:16px;padding:18px;width:100%}
-  .dlg h4{margin:0 0 8px;font-size:16px}
+  .sheet{background:var(--soft);border-radius:22px;padding:22px;width:100%}
+  .sheet h3{margin:0 0 6px;font-size:19px}
+  .center{text-align:center}
+  .check{width:70px;height:70px;border-radius:50%;background:rgba(52,211,153,.14);display:flex;align-items:center;justify-content:center;margin:20px auto 8px;font-size:34px}
+  .back{color:var(--muted);font-size:13px;cursor:pointer;display:inline-flex;gap:6px;align-items:center;margin-top:6px}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <h1>Clean TV — cómo se ve y cómo se usa</h1>
-  <div class="sub">Mockup interactivo. Haz clic en los pasos de la izquierda, o en los botones dentro del teléfono, para recorrer el flujo real.</div>
-  <div class="stage">
-    <div class="legend">
-      <h3>Flujo Android (el principal)</h3>
-      <div class="step active" onclick="go('platform',this)"><b>1</b> Elegir plataforma</div>
-      <div class="step" onclick="go('connect',this)"><b>2</b> Conectar (buscar TV / IP)</div>
-      <div class="step" onclick="go('packages',this)"><b>3</b> Revisar y limpiar</div>
-      <div class="step" onclick="go('confirm',this)"><b>4</b> Confirmar</div>
-      <div class="step" onclick="go('working',this)"><b>5</b> Aplicando (log)</div>
-      <h3>Otras plataformas</h3>
-      <div class="step" onclick="go('lg',this)"><b>LG</b> webOS (Modo Desarrollador)</div>
-      <div class="step" onclick="go('samsung',this)"><b>SS</b> Samsung (Tizen / SDB)</div>
-      <h3>Nota</h3>
-      <div class="muted">Colores y textos tomados de la app real (tema oscuro, acento verde). Es un prototipo visual, no la app compilada.</div>
+  <div class="brandbar">
+    <div class="logo">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="12" rx="2" fill="#06281d"/><path d="M9 20h6" stroke="#06281d" stroke-width="2" stroke-linecap="round"/><path d="M12.5 8.2l1 2.1 2.3.3-1.7 1.6.4 2.3-2-1.1-2 1.1.4-2.3-1.7-1.6 2.3-.3z" fill="#34D399"/></svg>
     </div>
+    <div class="brandname">Clean&nbsp;TV</div>
+  </div>
+  <div class="tagline">Tu tele, limpia y sin anuncios — en unos toques, desde el móvil.</div>
 
+  <div class="tabs">
+    <div class="tab on" onclick="go('platform',this)">Inicio</div>
+    <div class="tab" onclick="go('connect',this)">Conectar</div>
+    <div class="tab" onclick="go('main',this)">Limpiar</div>
+    <div class="tab" onclick="go('detail',this)">En detalle</div>
+    <div class="tab" onclick="go('done',this)">Listo</div>
+    <div class="tab" onclick="go('lg',this)">LG</div>
+    <div class="tab" onclick="go('samsung',this)">Samsung</div>
+  </div>
+
+  <div class="stage">
     <div class="phone">
       <div class="notch"></div>
 
-      <!-- 1 PLATFORM -->
+      <!-- INICIO / plataforma -->
       <div class="screen on" id="platform">
-        <div class="title">Clean TV</div>
-        <div class="muted">¿Qué tipo de televisor o decodificador tienes?</div>
-        <div class="card">
-          <div class="h2">📺 Android TV / Google TV / Decodificador</div>
-          <div class="muted">Quita bloatware, telemetría y anuncios por ADB; bloqueo de anuncios por DNS y launcher limpio.</div>
-          <button class="btn primary" onclick="go('connect')">Continuar con Android</button>
+        <h1>Empecemos.<br>¿Qué tele tienes?</h1>
+        <p>Elige la marca para continuar.</p>
+        <div class="pick" onclick="go('connect')">
+          <div class="ic">📺</div>
+          <div><div class="t">Android TV / Google TV</div><div class="s">TV box, Chromecast, decodificadores y la mayoría de teles</div></div>
+          <div class="arw">›</div>
         </div>
-        <div class="card">
-          <div class="h2">📺 LG (webOS)</div>
-          <div class="muted">Las LG no son Android ni usan ADB. Se limpian con un launcher propio vía Modo Desarrollador.</div>
-          <button class="btn ghost" onclick="go('lg')">Ver opción para LG</button>
+        <div class="pick" onclick="go('lg')">
+          <div class="ic">🅛</div>
+          <div><div class="t">LG</div><div class="s">Televisores LG (webOS)</div></div>
+          <div class="arw">›</div>
         </div>
-        <div class="card">
-          <div class="h2">📺 Samsung (Tizen)</div>
-          <div class="muted">Usa SDB (no ADB) y Modo Desarrollador. La limpieza real necesita root y es específica de cada modelo; aquí solo diagnóstico y guía.</div>
-          <button class="btn ghost" onclick="go('samsung')">Ver opción para Samsung</button>
+        <div class="pick" onclick="go('samsung')">
+          <div class="ic">🅢</div>
+          <div><div class="t">Samsung</div><div class="s">Televisores Samsung (Tizen)</div></div>
+          <div class="arw">›</div>
         </div>
       </div>
 
-      <!-- 2 CONNECT -->
+      <!-- CONECTAR -->
       <div class="screen" id="connect">
-        <div class="title">Clean TV</div>
-        <div class="muted">Conecta con tu Android/Google TV por ADB sobre Wi-Fi y quita el bloatware.</div>
-        <div class="card">
-          <b style="font-size:13px">Antes de conectar</b>
-          <div class="muted" style="margin-top:6px">1. En la TV: Ajustes → Acerca de → pulsa 7 veces en Build.<br>2. Opciones de desarrollador → Depuración USB y por red.<br>3. Teléfono y TV en la misma Wi-Fi.</div>
-        </div>
-        <button class="btn ghost" onclick="findTv()">🔎 Buscar mi TV en la red</button>
-        <div id="foundList"></div>
-        <div class="muted">…o escribe la IP a mano:</div>
-        <div class="field">IP de la TV (ej. 192.168.0.42)</div>
-        <button class="btn primary" onclick="go('packages')">Conectar</button>
-        <div class="muted">Al conectar, acepta "¿Permitir depuración?" en la TV.</div>
-        <button class="btn ghost" onclick="go('platform')">← Cambiar plataforma</button>
+        <h1>Conecta tu tele</h1>
+        <p>Primero enciende el modo de conexión en la tele. Te guiamos:</p>
+        <ul class="steps">
+          <li><span class="n">1</span><span>En la tele: Ajustes › Acerca de › pulsa 7 veces en «Versión».</span></li>
+          <li><span class="n">2</span><span>Entra en «Opciones de desarrollador» y enciende la depuración por red.</span></li>
+          <li><span class="n">3</span><span>Deja el móvil y la tele en el mismo Wi-Fi.</span></li>
+        </ul>
+        <button class="btn primary" onclick="findTv()">🔎  Buscar mi tele</button>
+        <div id="foundBox"></div>
+        <p class="small">¿Prefieres a mano? Escribe la IP:</p>
+        <div class="field">Ej. 192.168.0.42</div>
+        <span class="back" onclick="go('platform')">‹ Cambiar de tele</span>
       </div>
 
-      <!-- 3 PACKAGES -->
-      <div class="screen" id="packages">
-        <div class="top">
-          <div><div class="h2">BRAVIA 4K VH2 <span class="pill">guardada</span></div><div class="muted">Android 12 · 148 apps</div></div>
-          <span class="link" style="font-size:12px" onclick="go('platform')">Desconectar</span>
+      <!-- LIMPIAR (principal) -->
+      <div class="screen" id="main">
+        <div class="hero">
+          <div class="big">35</div>
+          <p style="margin-top:8px">cosas que ensucian tu tele</p>
         </div>
-
-        <div class="card">
-          <b style="font-size:13px">Encontrado en tu TV</b>
-          <div class="muted" style="margin-top:4px">🔎 18 de rastreo · 📣 6 de anuncios · 🏷 11 extras de marca · 📦 9 apps preinstaladas</div>
+        <div class="stats">
+          <div class="stat"><b>6</b><span>Anuncios</span></div>
+          <div class="stat"><b>18</b><span>Te espían</span></div>
+          <div class="stat"><b>11</b><span>Apps de sobra</span></div>
         </div>
-        <div class="card"><div class="warn">⚠️ El malware de firmware (cajas tipo BadBox) no se quita por ADB; requiere reflashear o reemplazar el equipo. Aquí solo se desactiva/desinstala software normal.</div></div>
+        <button class="btn primary" onclick="openSheet()">✨  Limpiar ahora</button>
+        <p class="center small">Nada se borra para siempre: puedes devolverlo cuando quieras.</p>
+        <div class="divider"></div>
+        <button class="btn soft" onclick="go('detail')">Elegir en detalle</button>
+        <button class="btn soft">Bloquear anuncios en toda la tele</button>
+        <button class="btn soft">Poner una pantalla de inicio limpia</button>
+        <span class="back" onclick="go('platform')">‹ Desconectar</span>
 
-        <button class="btn primary" onclick="go('confirm')">✨ Limpieza en un toque (35, reversible)</button>
-
-        <div class="field">Modelo / perfil de debloat ▾ — Sony BRAVIA 4K (VH2)</div>
-
-        <div class="chips">
-          <span class="chip" onclick="sel(this)">Recomendados</span>
-          <span class="chip sel">Telemetría</span>
-          <span class="chip" onclick="sel(this)">Ninguno</span>
-        </div>
-        <div class="chips">
-          <span class="chip sel">Desactivar (reversible)</span>
-          <span class="chip">Desinstalar (user 0)</span>
-        </div>
-
-        <div class="ghd">Anuncios · 6</div>
-        <div class="row"><div class="cbox on"></div><div><div class="pkg">com.sony.dtv.advertisement</div><div class="badges"><span class="bdg" style="color:var(--err)">🔎 datos</span><span class="bdg" style="color:var(--err)">no seguro</span></div><div class="reason">Servicio de anuncios del fabricante.</div></div></div>
-        <div class="row"><div class="cbox on"></div><div><div class="pkg">com.google.android.ads.service</div><div class="badges"><span class="bdg" style="color:var(--err)">🔎 datos</span><span class="bdg" style="color:var(--accent)">seguro</span></div><div class="reason">Advertising ID / bidding.</div></div></div>
-
-        <div class="ghd">Rastreo / telemetría · 18</div>
-        <div class="row"><div class="cbox on"></div><div><div class="pkg">com.sony.dtv.networkanalytics</div><div class="badges"><span class="bdg" style="color:var(--err)">🔎 datos</span><span class="bdg" style="color:var(--warn)">avanzado</span></div><div class="reason">Telemetría de red: envía métricas de uso.</div></div></div>
-        <div class="row"><div class="cbox on"></div><div><div class="pkg">com.google.android.tvrecommendations</div><div class="badges"><span class="bdg" style="color:var(--err)">🔎 datos</span><span class="bdg" style="color:var(--accent)">seguro</span></div><div class="reason">Filas de "recomendados"/patrocinados del inicio.</div></div></div>
-
-        <div class="ghd">Extras de marca · 11</div>
-        <div class="row"><div class="cbox on"></div><div><div class="pkg">com.sony.dtv.promotion</div><div class="badges"><span class="bdg" style="color:var(--exp)">experto</span></div><div class="reason">Promos y contenido partner preinstalado.</div></div></div>
-
-        <div class="ghd">Apps preinstaladas · 9</div>
-        <div class="row"><div class="cbox"></div><div><div class="pkg">com.google.android.play.games</div><div class="badges"><span class="bdg" style="color:var(--accent)">seguro</span></div><div class="reason">Google Play Games — opcional.</div></div></div>
-
-        <button class="btn danger" onclick="go('confirm')">Desactivar 35</button>
-        <button class="btn ghost">Restaurar último respaldo</button>
-        <button class="btn ghost">Activar bloqueo de anuncios (DNS AdGuard)</button>
-        <button class="btn ghost">Instalar launcher (Projectivy) y fijar como inicio…</button>
-      </div>
-
-      <!-- 4 CONFIRM (overlay sits over packages visually) -->
-      <div class="screen" id="confirm">
-        <div class="top">
-          <div><div class="h2">BRAVIA 4K VH2</div><div class="muted">Android 12 · 148 apps</div></div>
-        </div>
-        <div class="card"><b style="font-size:13px">Encontrado en tu TV</b><div class="muted" style="margin-top:4px">🔎 18 rastreo · 📣 6 anuncios · 🏷 11 marca · 📦 9 apps</div></div>
-        <div class="muted" style="margin-top:20px">… (lista de apps detrás del diálogo) …</div>
-        <div class="dlgback on">
-          <div class="dlg">
-            <h4>Desactivar 35 apps</h4>
-            <div class="muted">Se desactivarán (reversible con un toque). Se guarda un respaldo antes.</div>
-            <button class="btn primary" onclick="go('working')">Continuar</button>
-            <button class="btn ghost" onclick="go('packages')">Cancelar</button>
+        <div class="dlgback" id="sheet">
+          <div class="sheet">
+            <h3>¿Limpiamos tu tele?</h3>
+            <p>Vamos a apagar 35 apps de anuncios y rastreo. Guardamos una copia por si quieres devolver alguna.</p>
+            <button class="btn primary" onclick="go('done')">Sí, limpiar</button>
+            <button class="btn plain" onclick="closeSheet()">Ahora no</button>
           </div>
         </div>
       </div>
 
-      <!-- 5 WORKING -->
-      <div class="screen" id="working">
-        <div class="h2">✅ Terminado</div>
-        <div class="log" style="margin-top:10px">
-          <div class="dim">[1/35] ✓ com.sony.dtv.advertisement</div>
-          <div class="dim">[2/35] ✓ com.sony.dtv.networkanalytics</div>
-          <div class="dim">[3/35] ✓ com.google.android.tvrecommendations</div>
-          <div class="dim">[4/35] ✓ com.sony.dtv.promotion</div>
-          <div class="dim">… </div>
-          <div class="dim">[35/35] ✓ com.google.android.ads.service</div>
-          <div style="color:var(--accent)">Respaldo guardado (35 paquetes).</div>
+      <!-- EN DETALLE -->
+      <div class="screen" id="detail">
+        <h2>Elige qué quitar</h2>
+        <p class="small">Marcamos lo seguro. Toca para incluir o dejar.</p>
+        <div class="seg"><div class="on">Apagar (se puede volver)</div><div>Borrar</div></div>
+
+        <div class="cat">📣 Anuncios <span class="c">· 6</span></div>
+        <div class="applist">
+          <div class="item"><div class="cb on"></div><div><div class="nm">Servicio de anuncios</div><div class="tagrow"><span class="tg spy">te espía</span><span class="tg care">con cuidado</span></div><div class="ex">Muestra anuncios en la pantalla de inicio.</div></div></div>
+          <div class="item"><div class="cb on"></div><div><div class="nm">Identificador de publicidad</div><div class="tagrow"><span class="tg spy">te espía</span><span class="tg ok">seguro</span></div><div class="ex">Te sigue entre apps para anuncios.</div></div></div>
         </div>
-        <button class="btn primary" onclick="go('packages')">Volver</button>
+
+        <div class="cat">🔎 Te espían <span class="c">· 18</span></div>
+        <div class="applist">
+          <div class="item"><div class="cb on"></div><div><div class="nm">Análisis de red</div><div class="tagrow"><span class="tg spy">te espía</span><span class="tg care">con cuidado</span></div><div class="ex">Envía datos de cómo usas la tele.</div></div></div>
+          <div class="item"><div class="cb on"></div><div><div class="nm">Filas recomendadas</div><div class="tagrow"><span class="tg spy">te espía</span><span class="tg ok">seguro</span></div><div class="ex">Sugerencias patrocinadas en el inicio.</div></div></div>
+        </div>
+
+        <div class="cat">📦 Apps de sobra <span class="c">· 9</span></div>
+        <div class="applist">
+          <div class="item"><div class="cb"></div><div><div class="nm">Juegos de Google Play</div><div class="tagrow"><span class="tg ok">seguro</span></div><div class="ex">Opcional, quítalo si no lo usas.</div></div></div>
+        </div>
+
+        <button class="btn danger" onclick="openSheet2()">Apagar 35 seleccionadas</button>
+        <span class="back" onclick="go('main')">‹ Volver</span>
+
+        <div class="dlgback" id="sheet2">
+          <div class="sheet">
+            <h3>Apagar 35 apps</h3>
+            <p>Se pueden volver a encender con un toque. Guardamos una copia antes.</p>
+            <button class="btn primary" onclick="go('done')">Continuar</button>
+            <button class="btn plain" onclick="closeSheet2()">Cancelar</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- LISTO -->
+      <div class="screen" id="done">
+        <div class="center">
+          <div class="check">✓</div>
+          <h1 style="font-size:24px">¡Listo!</h1>
+          <p>Tu tele quedó más limpia.<br>Apagamos <b style="color:var(--text)">35 apps</b> de anuncios y rastreo.</p>
+        </div>
+        <div class="note">Guardamos una copia. Si algo dejó de funcionar, puedes devolverlo todo con un toque.</div>
+        <button class="btn soft" onclick="go('main')">Deshacer la limpieza</button>
+        <button class="btn primary" onclick="go('platform')">Terminar</button>
       </div>
 
       <!-- LG -->
       <div class="screen" id="lg">
-        <div class="h2">LG (webOS)</div>
-        <div class="card">
-          <b style="font-size:13px">Prepara el Modo Desarrollador</b>
-          <div class="muted" style="margin-top:6px">1. Instala «Developer Mode» desde LG Content Store e inicia sesión.<br>2. Enciende «Dev Mode Status» y deja reiniciar.<br>3. Enciende «Key Server» y déjalo abierto.<br>4. Anota la IP y la passphrase de 6 caracteres.</div>
-        </div>
-        <div class="field">IP de la TV LG</div>
-        <div class="field">Passphrase de 6 caracteres</div>
-        <button class="btn primary">Comprobar conexión y clave</button>
-        <div class="muted" style="color:var(--accent)">✓ Clave lista. Elige el .ipk del launcher e instálalo.</div>
-        <button class="btn primary">Elegir IPK e instalar launcher</button>
-        <div class="card"><div class="log"><div class="dim">Paquete: com.cytv.home</div><div class="dim">Subiendo launcher.ipk a la TV…</div><div style="color:var(--accent)">✓ Instalación enviada a la TV.</div></div></div>
-        <div class="muted">Nota: la instalación por SSH aún no se ha probado contra una TV LG real.</div>
-        <button class="btn ghost" onclick="go('platform')">← Cambiar plataforma</button>
+        <h1>Tele LG</h1>
+        <p>Las LG se limpian poniendo una pantalla de inicio limpia, con el «Modo Desarrollador».</p>
+        <ul class="steps">
+          <li><span class="n">1</span><span>Instala «Developer Mode» desde la tienda de la tele e inicia sesión.</span></li>
+          <li><span class="n">2</span><span>Enciende «Dev Mode Status» y deja reiniciar.</span></li>
+          <li><span class="n">3</span><span>Enciende «Key Server» y anota la IP y la clave de 6 letras.</span></li>
+        </ul>
+        <div class="field">IP de la tele</div>
+        <div class="field">Clave de 6 letras</div>
+        <button class="btn primary">Comprobar</button>
+        <span class="back" onclick="go('platform')">‹ Cambiar de tele</span>
       </div>
 
       <!-- SAMSUNG -->
       <div class="screen" id="samsung">
-        <div class="h2">Samsung (Tizen)</div>
-        <div class="card">
-          <b style="font-size:13px;color:var(--err)">⚠️ Léelo antes</b>
-          <div class="muted" style="margin-top:6px">La limpieza de Samsung requiere root temporal y ediciones específicas de cada modelo. El proyecto de referencia está probado en UN solo modelo y aplicarlo en otro puede dañar los ajustes. Aquí solo diagnosticamos y guiamos.</div>
-        </div>
-        <div class="card">
-          <b style="font-size:13px">Activa el Modo Desarrollador</b>
-          <div class="muted" style="margin-top:6px">1. Entra en Apps y teclea 12345.<br>2. Activa «Developer mode», pon la IP de tu PC y reinicia.<br>3. Esto abre SDB en el puerto 26101.</div>
-        </div>
-        <div class="field">IP de la TV Samsung</div>
-        <button class="btn primary">Comprobar conexión (SDB)</button>
-        <div class="muted">SDB (26101) abierto: Modo Desarrollador activo.</div>
-        <button class="btn ghost">Abrir la guía del proyecto (quiet-tizen)</button>
-        <button class="btn ghost" onclick="go('platform')">← Cambiar plataforma</button>
+        <h1>Tele Samsung</h1>
+        <div class="note" style="border-color:rgba(248,113,113,.3);color:#f3b4b4">⚠️ En Samsung la limpieza depende del modelo exacto y puede afectar los ajustes. Aquí te ayudamos a conectar y te guiamos; el resto, con cuidado y para tu modelo.</div>
+        <ul class="steps">
+          <li><span class="n">1</span><span>Entra en «Apps» y teclea 12345 con el control.</span></li>
+          <li><span class="n">2</span><span>Enciende «Developer mode», pon la IP del móvil y reinicia.</span></li>
+        </ul>
+        <div class="field">IP de la tele</div>
+        <button class="btn primary">Comprobar conexión</button>
+        <button class="btn soft">Abrir la guía paso a paso</button>
+        <span class="back" onclick="go('platform')">‹ Cambiar de tele</span>
       </div>
 
     </div>
   </div>
 </div>
 <script>
-  function go(id, el){
+  const order=['platform','connect','main','detail','done','lg','samsung'];
+  function go(id,el){
     document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));
     document.getElementById(id).classList.add('on');
-    const map={platform:0,connect:1,packages:2,confirm:3,working:4,lg:5,samsung:6};
-    const steps=document.querySelectorAll('.step');
-    steps.forEach(s=>s.classList.remove('active'));
-    if(el){el.classList.add('active')} else if(map[id]!=null){steps[map[id]].classList.add('active')}
+    const tabs=document.querySelectorAll('.tab');
+    tabs.forEach(t=>t.classList.remove('on'));
+    if(el){el.classList.add('on')} else {const i=order.indexOf(id); if(i>=0)tabs[i].classList.add('on')}
     document.getElementById(id).scrollTop=0;
   }
   function findTv(){
-    document.getElementById('foundList').innerHTML =
-      '<button class="btn primary" onclick="go(\'packages\')">Conectar a 192.168.0.42</button>';
+    document.getElementById('foundBox').innerHTML =
+      '<div class="found"><span class="dot"></span><div style="flex:1"><div style="font-weight:700;font-size:13.5px">Tu tele</div><div class="small">192.168.0.42 · lista</div></div><button class="btn primary" style="width:auto;margin:0;padding:9px 16px" onclick="go(\'main\')">Conectar</button></div>';
   }
-  function sel(el){el.parentNode.querySelectorAll('.chip').forEach(c=>c.classList.remove('sel'));el.classList.add('sel')}
+  function openSheet(){document.getElementById('sheet').classList.add('on')}
+  function closeSheet(){document.getElementById('sheet').classList.remove('on')}
+  function openSheet2(){document.getElementById('sheet2').classList.add('on')}
+  function closeSheet2(){document.getElementById('sheet2').classList.remove('on')}
 </script>
 </body>
 </html>
