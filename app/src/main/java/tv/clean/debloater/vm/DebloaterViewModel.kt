@@ -25,6 +25,7 @@ import tv.clean.debloater.data.AppGroup
 import tv.clean.debloater.data.Categorizer
 import tv.clean.debloater.data.DebloatProfile
 import tv.clean.debloater.data.DebloatRepository
+import tv.clean.debloater.data.Prefs
 import tv.clean.debloater.data.Telemetry
 import tv.clean.debloater.data.UadEntry
 
@@ -71,8 +72,9 @@ class DebloaterViewModel(app: Application) : AndroidViewModel(app) {
     private val adb = AdbManager(app)
     private val repo = DebloatRepository(app)
     private val backups = BackupStore(app)
+    private val prefs = Prefs(app)
 
-    private val _state = MutableStateFlow(UiState())
+    private val _state = MutableStateFlow(UiState(hostInput = prefs.lastHost))
     val state: StateFlow<UiState> = _state.asStateFlow()
 
     private var installed: List<String> = emptyList()
@@ -175,6 +177,7 @@ class DebloaterViewModel(app: Application) : AndroidViewModel(app) {
         viewModelScope.launch {
             when (val result = adb.connect(ip, port)) {
                 is AdbResult.Ok -> {
+                    prefs.lastHost = ip
                     val profiles = repo.profiles()
                     catalog = repo.mergedCatalog()
                     uad = repo.uadDatabase()
