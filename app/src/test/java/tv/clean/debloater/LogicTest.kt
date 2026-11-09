@@ -5,6 +5,7 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import tv.clean.debloater.data.AppGroup
+import tv.clean.debloater.data.AppRow
 import tv.clean.debloater.data.Categorizer
 import tv.clean.debloater.data.DebloatRepository
 import tv.clean.debloater.data.Telemetry
@@ -43,5 +44,19 @@ class LogicTest {
         assertEquals(AppGroup.BRAND, Categorizer.of("com.x.y", null, null, UadEntry(list = "Oem"), false))
         assertEquals(AppGroup.APPS, Categorizer.of("com.x.y", null, null, UadEntry(list = "Google"), false))
         assertEquals(AppGroup.OTHER, Categorizer.of("com.x.y", null, null, null, false))
+    }
+
+    @Test
+    fun summarize_countsByGroup() {
+        val rows = listOf(
+            AppRow("a", null, false, true, group = AppGroup.ADS),
+            AppRow("b", null, false, true, group = AppGroup.ADS),
+            AppRow("c", null, false, true, group = AppGroup.TRACKING),
+            AppRow("d", null, false, false, group = AppGroup.OTHER),
+        )
+        val summary = Categorizer.summarize(rows)
+        assertEquals(2, summary[AppGroup.ADS])
+        assertEquals(1, summary[AppGroup.TRACKING])
+        assertEquals(1, summary[AppGroup.OTHER])
     }
 }

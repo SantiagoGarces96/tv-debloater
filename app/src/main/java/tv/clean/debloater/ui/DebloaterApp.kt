@@ -49,6 +49,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import tv.clean.debloater.data.AppGroup
 import tv.clean.debloater.data.AppRow
+import tv.clean.debloater.data.Categorizer
 import tv.clean.debloater.vm.Action
 import tv.clean.debloater.vm.DebloaterViewModel
 import tv.clean.debloater.vm.Stage
@@ -406,6 +407,23 @@ private fun PackagesScreen(state: UiState, vm: DebloaterViewModel, modifier: Mod
         }
 
         Spacer(Modifier.height(8.dp))
+
+        if (state.rows.isNotEmpty()) {
+            val s = remember(state.rows) { Categorizer.summarize(state.rows) }
+            Card(Modifier.fillMaxWidth()) {
+                Column(Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                    Text("Encontrado en tu TV", fontWeight = FontWeight.SemiBold)
+                    Text(
+                        "🔎 ${s[AppGroup.TRACKING] ?: 0} de rastreo · " +
+                            "📣 ${s[AppGroup.ADS] ?: 0} de anuncios · " +
+                            "🏷 ${s[AppGroup.BRAND] ?: 0} extras de marca · " +
+                            "📦 ${s[AppGroup.APPS] ?: 0} apps preinstaladas",
+                        style = MaterialTheme.typography.bodySmall,
+                    )
+                }
+            }
+            Spacer(Modifier.height(8.dp))
+        }
 
         Card(Modifier.fillMaxWidth()) {
             Text(

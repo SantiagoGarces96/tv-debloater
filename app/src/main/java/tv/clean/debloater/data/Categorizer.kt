@@ -11,6 +11,11 @@ enum class AppGroup(val label: String) {
 
 object Categorizer {
 
+    /** Cuenta cuántas apps hay en cada grupo. */
+    fun summarize(rows: List<AppRow>): Map<AppGroup, Int> =
+        rows.groupingBy { it.group }.eachCount()
+
+
     private val adsName = listOf(
         "advert", "adservice", ".ads", "ads.", "bidding", "sponsored",
         "promo", "hybridadid", "blackbird", "dtb", "kso",
