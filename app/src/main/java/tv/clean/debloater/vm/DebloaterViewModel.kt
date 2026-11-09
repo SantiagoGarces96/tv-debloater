@@ -16,6 +16,7 @@ import tv.clean.debloater.adb.AdbManager
 import tv.clean.debloater.adb.AdbResult
 import tv.clean.debloater.adb.DeviceInfo
 import tv.clean.debloater.adb.TvDiscovery
+import tv.clean.debloater.webos.WebosClient
 import tv.clean.debloater.data.AppRow
 import tv.clean.debloater.data.BackupRecord
 import tv.clean.debloater.data.BackupStore
@@ -46,6 +47,12 @@ data class UiState(
     val adBlockHost: String? = null,
     val discovering: Boolean = false,
     val found: List<String> = emptyList(),
+    // LG webOS
+    val lgIp: String = "",
+    val lgPassphrase: String = "",
+    val lgBusy: Boolean = false,
+    val lgDetail: String? = null,
+    val lgKeyReady: Boolean = false,
 )
 
 class DebloaterViewModel(app: Application) : AndroidViewModel(app) {
@@ -66,6 +73,24 @@ class DebloaterViewModel(app: Application) : AndroidViewModel(app) {
     fun chooseLg() = _state.update { it.copy(stage = Stage.LgInfo) }
 
     fun backToPlatform() = _state.update { it.copy(stage = Stage.Platform, error = null, found = emptyList()) }
+
+    fun lgOnIp(value: String) = _state.update { it.copy(lgIp = value, lgDetail = null) }
+
+    fun lgOnPassphrase(value: String) = _state.update { it.copy(lgPassphrase = value, lgDetail = null) }
+
+    fun lgCheck() {
+        _state.update { it.copy(lgBusy = true, lgDetail = null, lgKeyReady = false) }
+        viewModelScope.launch {
+            val status = WebosClient.check(_state.value.lgIp, _state.value.lgPassphrase)
+            _state.update {
+                it.copy(
+                    lgBusy = false,
+                    lgDetail = status.detail,
+                    lgKeyReady = status.devKeyPem != null,
+                )
+            }
+        }
+    }
 
     fun onHostChange(value: String) = _state.update { it.copy(hostInput = value, error = null) }
 
