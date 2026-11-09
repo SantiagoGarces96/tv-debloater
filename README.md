@@ -10,8 +10,10 @@ y te deja quitar el bloatware (telemetría, filas patrocinadas, apps preinstalad
 
 - Se conecta a la TV por ADB TCP (`ip:5555`), usando una clave ADB propia que la app genera y guarda.
 - Lista los paquetes instalados en la TV (`pm list packages`).
-- Los compara con **29 listas** de debloat (28 modelos + una lista común multimarca segura) y te
-  deja marcar/desmarcar, con el motivo de cada paquete.
+- Los compara con **458 perfiles** de debloat (457 modelos de TV/decodificador + una lista común
+  multimarca segura) y te deja marcar/desmarcar, con el motivo de cada paquete.
+- Muestra **descripción y nivel de riesgo** por paquete (Recommended/Advanced/Expert/Unsafe) usando
+  la base de **UAD‑ng**, y marca los paquetes de **telemetría/rastreo**.
 - Dos métodos, tú eliges:
   - **Desactivar** (`pm disable-user --user 0`): reversible, no borra nada. Para apps molestas.
   - **Desinstalar** (`pm uninstall --user 0`): quita la app para el usuario 0.
@@ -69,6 +71,16 @@ El APK queda en `app/build/outputs/apk/debug/app-debug.apk`.
 
 Proyecto en construcción, se sube por partes. Ver commits.
 
+## Aviso importante sobre decodificadores baratos
+
+Algunas cajas Android baratas (AOSP, no certificadas por Google) vienen con **malware a nivel de
+firmware/kernel** (caso BadBox / BadBox 2.0). Ese tipo de software **no se puede quitar** con
+`pm disable`/`pm uninstall` ni por ADB: la única solución real es reflashear firmware limpio o
+reemplazar el equipo. Esta app puede marcar paquetes sospechosos, pero no elimina malware de firmware.
+
 ## Licencia
 
-MIT — ver [`LICENSE`](LICENSE). Las listas de paquetes derivan de CleanYourTV (MIT), ver [`NOTICE`](NOTICE).
+**GPL‑3.0** — ver [`LICENSE`](LICENSE). Este proyecto integra la base de datos de paquetes de
+[UAD‑ng](https://github.com/Universal-Debloater-Alliance/universal-android-debloater-next-generation)
+(GPL‑3.0), por lo que el conjunto se distribuye bajo GPL‑3.0. Las listas por modelo derivan de
+[CleanYourTV](https://github.com/Gathin23/cleanyourtv) (MIT). Ver [`NOTICE`](NOTICE).

@@ -1,34 +1,463 @@
 {
-  "source": "https://github.com/Gathin23/cleanyourtv (MIT)",
+  "source": "https://github.com/Gathin23/cleanyourtv (MIT) + UAD-ng (GPL-3.0)",
   "profiles": [
     { "id": "_common", "name": "Común (multimarca, seguro)", "brand": "Todas", "file": "_common.txt" }
+    ,{ "id": "acer-ar3-r3", "name": "Acer Ar3 R3", "brand": "Acer", "file": "acer-ar3-r3.txt" }
+    ,{ "id": "acer-ar32ap2841hdfl", "name": "Acer Ar32ap2841hdfl", "brand": "Acer", "file": "acer-ar32ap2841hdfl.txt" }
+    ,{ "id": "acer-ar32hdigu2841at", "name": "Acer Ar32hdigu2841at", "brand": "Acer", "file": "acer-ar32hdigu2841at.txt" }
+    ,{ "id": "acer-ar55ar2851udpro", "name": "Acer Ar55ar2851udpro", "brand": "Acer", "file": "acer-ar55ar2851udpro.txt" }
+    ,{ "id": "aipro2k", "name": "Aipro2k", "brand": "aipro2k", "file": "aipro2k.txt" }
+    ,{ "id": "aipro4k", "name": "Aipro4k", "brand": "aipro4k", "file": "aipro4k.txt" }
+    ,{ "id": "aiwa-ai-pont-sa", "name": "Aiwa Ai Pont Sa", "brand": "aiwa", "file": "aiwa-ai-pont-sa.txt" }
+    ,{ "id": "alwtniet-hy320-mini", "name": "Alwtniet Hy320 Mini", "brand": "alwtniet", "file": "alwtniet-hy320-mini.txt" }
+    ,{ "id": "amazon-fire-tv-aftdec012e", "name": "Amazon Fire Tv Aftdec012e", "brand": "Amazon Fire TV", "file": "amazon-fire-tv-aftdec012e.txt" }
+    ,{ "id": "amazon-fire-tv-afteu014", "name": "Amazon Fire Tv Afteu014", "brand": "Amazon Fire TV", "file": "amazon-fire-tv-afteu014.txt" }
+    ,{ "id": "amazon-fire-tv-afttiff43", "name": "Amazon Fire Tv Afttiff43", "brand": "Amazon Fire TV", "file": "amazon-fire-tv-afttiff43.txt" }
+    ,{ "id": "amazon-fire-tv-stick-2020", "name": "Amazon Fire Tv Stick 2020", "brand": "Amazon Fire TV", "file": "amazon-fire-tv-stick-2020.txt" }
+    ,{ "id": "amazon-fire-tv-stick-4k-2018", "name": "Amazon Fire Tv Stick 4k 2018", "brand": "Amazon Fire TV", "file": "amazon-fire-tv-stick-4k-2018.txt" }
     ,{ "id": "amazon-fire-tv-stick-4k-2023", "name": "Amazon Fire Tv Stick 4k 2023", "brand": "Amazon Fire TV", "file": "amazon-fire-tv-stick-4k-2023.txt" }
+    ,{ "id": "amazon-fire-tv-stick-4k-max-2021", "name": "Amazon Fire Tv Stick 4k Max 2021", "brand": "Amazon Fire TV", "file": "amazon-fire-tv-stick-4k-max-2021.txt" }
     ,{ "id": "amazon-fire-tv-stick-4k-max-2023", "name": "Amazon Fire Tv Stick 4k Max 2023", "brand": "Amazon Fire TV", "file": "amazon-fire-tv-stick-4k-max-2023.txt" }
+    ,{ "id": "amazon-fire-tv-stick-lite-2020", "name": "Amazon Fire Tv Stick Lite 2020", "brand": "Amazon Fire TV", "file": "amazon-fire-tv-stick-lite-2020.txt" }
+    ,{ "id": "anker-nebula-d2140", "name": "Anker Nebula D2140", "brand": "anker", "file": "anker-nebula-d2140.txt" }
+    ,{ "id": "anker-nebula-d2426", "name": "Anker Nebula D2426", "brand": "anker", "file": "anker-nebula-d2426.txt" }
+    ,{ "id": "anker-nebula-mars-3-air", "name": "Anker Nebula Mars 3 Air", "brand": "anker", "file": "anker-nebula-mars-3-air.txt" }
+    ,{ "id": "aqua-matrixtv-ee-50", "name": "Aqua Matrixtv Ee 50", "brand": "aqua", "file": "aqua-matrixtv-ee-50.txt" }
+    ,{ "id": "artel-43d1200b", "name": "Artel 43d1200b", "brand": "artel", "file": "artel-43d1200b.txt" }
+    ,{ "id": "artel-a55lu8500", "name": "Artel A55lu8500", "brand": "artel", "file": "artel-a55lu8500.txt" }
+    ,{ "id": "artel-cvte-mt5863", "name": "Artel Cvte Mt5863", "brand": "artel", "file": "artel-cvte-mt5863.txt" }
+    ,{ "id": "asus-m1g", "name": "Asus M1g", "brand": "asus", "file": "asus-m1g.txt" }
+    ,{ "id": "beko-b43b880b", "name": "Beko B43b880b", "brand": "beko", "file": "beko-b43b880b.txt" }
+    ,{ "id": "bell-fibe-tv-vip7802", "name": "Bell Fibe Tv Vip7802", "brand": "Bell", "file": "bell-fibe-tv-vip7802.txt" }
+    ,{ "id": "benq-e55-735", "name": "Benq E55 735", "brand": "BenQ", "file": "benq-e55-735.txt" }
+    ,{ "id": "benq-e55-750", "name": "Benq E55 750", "brand": "BenQ", "file": "benq-e55-750.txt" }
+    ,{ "id": "benq-e55-760", "name": "Benq E55 760", "brand": "BenQ", "file": "benq-e55-760.txt" }
+    ,{ "id": "benq-gv32", "name": "Benq Gv32", "brand": "BenQ", "file": "benq-gv32.txt" }
+    ,{ "id": "benq-qs01", "name": "Benq Qs01", "brand": "BenQ", "file": "benq-qs01.txt" }
+    ,{ "id": "benq-qs02", "name": "Benq Qs02", "brand": "BenQ", "file": "benq-qs02.txt" }
+    ,{ "id": "bgh-smart-tv-android14", "name": "Bgh Smart Tv Android14", "brand": "bgh", "file": "bgh-smart-tv-android14.txt" }
+    ,{ "id": "byintek-t5-max", "name": "Byintek T5 Max", "brand": "byintek", "file": "byintek-t5-max.txt" }
+    ,{ "id": "byintek-u4", "name": "Byintek U4", "brand": "byintek", "file": "byintek-u4.txt" }
+    ,{ "id": "caxium-58-realtek-rtk2851p", "name": "Caxium 58 Realtek Rtk2851p", "brand": "caxium", "file": "caxium-58-realtek-rtk2851p.txt" }
+    ,{ "id": "cecotec-shandao", "name": "Cecotec Shandao", "brand": "cecotec", "file": "cecotec-shandao.txt" }
+    ,{ "id": "challenger-32t22bt", "name": "Challenger 32t22bt", "brand": "challenger", "file": "challenger-32t22bt.txt" }
+    ,{ "id": "challenger-r3", "name": "Challenger R3", "brand": "challenger", "file": "challenger-r3.txt" }
+    ,{ "id": "chihi-hx-p30", "name": "Chihi Hx P30", "brand": "chihi", "file": "chihi-hx-p30.txt" }
+    ,{ "id": "chiq-ai-pont", "name": "Chiq Ai Pont", "brand": "chiq", "file": "chiq-ai-pont.txt" }
+    ,{ "id": "chiq-gtvu65", "name": "Chiq Gtvu65", "brand": "chiq", "file": "chiq-gtvu65.txt" }
+    ,{ "id": "compac-atv-r2", "name": "Compac Atv R2", "brand": "compac", "file": "compac-atv-r2.txt" }
+    ,{ "id": "coocaa-k3-pro-90p3d-max", "name": "Coocaa K3 Pro 90p3d Max", "brand": "Coocaa", "file": "coocaa-k3-pro-90p3d-max.txt" }
+    ,{ "id": "coocaa-p9-projector", "name": "Coocaa P9 Projector", "brand": "Coocaa", "file": "coocaa-p9-projector.txt" }
+    ,{ "id": "dcolor-gd2", "name": "Dcolor Gd2", "brand": "dcolor", "file": "dcolor-gd2.txt" }
+    ,{ "id": "dexp-a651", "name": "Dexp A651", "brand": "dexp", "file": "dexp-a651.txt" }
+    ,{ "id": "dialog-viu-sei103dl", "name": "Dialog Viu Sei103dl", "brand": "dialog", "file": "dialog-viu-sei103dl.txt" }
+    ,{ "id": "durabrand-durat32isdb", "name": "Durabrand Durat32isdb", "brand": "durabrand", "file": "durabrand-durat32isdb.txt" }
+    ,{ "id": "dyon-2k-android-tv", "name": "Dyon 2k Android Tv", "brand": "dyon", "file": "dyon-2k-android-tv.txt" }
+    ,{ "id": "eko-2k-google-tv-tennoji", "name": "Eko 2k Google Tv Tennoji", "brand": "eko", "file": "eko-2k-google-tv-tennoji.txt" }
+    ,{ "id": "eko-4k-bangbae", "name": "Eko 4k Bangbae", "brand": "eko", "file": "eko-4k-bangbae.txt" }
+    ,{ "id": "epson-ls800", "name": "Epson Ls800", "brand": "epson", "file": "epson-ls800.txt" }
+    ,{ "id": "essentiel-b-r3", "name": "Essentiel B R3", "brand": "essentiel", "file": "essentiel-b-r3.txt" }
+    ,{ "id": "ffalcon-65s585c-pro", "name": "Ffalcon 65s585c Pro", "brand": "ffalcon", "file": "ffalcon-65s585c-pro.txt" }
+    ,{ "id": "ffalcon-peng6-55s375c", "name": "Ffalcon Peng6 55s375c", "brand": "ffalcon", "file": "ffalcon-peng6-55s375c.txt" }
+    ,{ "id": "ffalcon-r34a0-cn", "name": "Ffalcon R34a0 Cn", "brand": "ffalcon", "file": "ffalcon-r34a0-cn.txt" }
+    ,{ "id": "formovie-laser-4k-hanlla", "name": "Formovie Laser 4k Hanlla", "brand": "Formovie", "file": "formovie-laser-4k-hanlla.txt" }
+    ,{ "id": "formovie-mprojm05", "name": "Formovie Mprojm05", "brand": "Formovie", "file": "formovie-mprojm05.txt" }
     ,{ "id": "formovie-theater-koroli", "name": "Formovie Theater Koroli", "brand": "Formovie", "file": "formovie-theater-koroli.txt" }
+    ,{ "id": "formovie-xming-page-one-tianshan", "name": "Formovie Xming Page One Tianshan", "brand": "Formovie", "file": "formovie-xming-page-one-tianshan.txt" }
+    ,{ "id": "freebox-player-pop", "name": "Freebox Player Pop", "brand": "freebox", "file": "freebox-player-pop.txt" }
+    ,{ "id": "gadnic-proj100w", "name": "Gadnic Proj100w", "brand": "gadnic", "file": "gadnic-proj100w.txt" }
     ,{ "id": "google-chromecast-gtv-4k", "name": "Google Chromecast Gtv 4k", "brand": "Google", "file": "google-chromecast-gtv-4k.txt" }
     ,{ "id": "google-chromecast-gtv-hd", "name": "Google Chromecast Gtv Hd", "brand": "Google", "file": "google-chromecast-gtv-hd.txt" }
     ,{ "id": "google-tv-streamer-4k-kirkwood", "name": "Google Tv Streamer 4k Kirkwood", "brand": "Google", "file": "google-tv-streamer-4k-kirkwood.txt" }
+    ,{ "id": "grundig-50gfu7850b", "name": "Grundig 50gfu7850b", "brand": "Grundig", "file": "grundig-50gfu7850b.txt" }
+    ,{ "id": "grundig-50vlx22ldlbv", "name": "Grundig 50vlx22ldlbv", "brand": "Grundig", "file": "grundig-50vlx22ldlbv.txt" }
+    ,{ "id": "grundig-kunyang", "name": "Grundig Kunyang", "brand": "Grundig", "file": "grundig-kunyang.txt" }
+    ,{ "id": "haam-hm4k75s11tnd", "name": "Haam Hm4k75s11tnd", "brand": "haam", "file": "haam-hm4k75s11tnd.txt" }
+    ,{ "id": "haier-android-tv-dvb2k", "name": "Haier Android Tv Dvb2k", "brand": "Haier", "file": "haier-android-tv-dvb2k.txt" }
+    ,{ "id": "haier-h32s80efx", "name": "Haier H32s80efx", "brand": "Haier", "file": "haier-h32s80efx.txt" }
+    ,{ "id": "haier-hr9216eu", "name": "Haier Hr9216eu", "brand": "Haier", "file": "haier-hr9216eu.txt" }
+    ,{ "id": "haier-hra962x2", "name": "Haier Hra962x2", "brand": "Haier", "file": "haier-hra962x2.txt" }
+    ,{ "id": "haier-matrixtv-be", "name": "Haier Matrixtv Be", "brand": "Haier", "file": "haier-matrixtv-be.txt" }
+    ,{ "id": "haier-matrixtv-de", "name": "Haier Matrixtv De", "brand": "Haier", "file": "haier-matrixtv-de.txt" }
+    ,{ "id": "hikeen-smart-rtd285o", "name": "Hikeen Smart Rtd285o", "brand": "hikeen", "file": "hikeen-smart-rtd285o.txt" }
+    ,{ "id": "hisense-65d62qh", "name": "Hisense 65d62qh", "brand": "Hisense", "file": "hisense-65d62qh.txt" }
+    ,{ "id": "hisense-65e5h", "name": "Hisense 65e5h", "brand": "Hisense", "file": "hisense-65e5h.txt" }
+    ,{ "id": "hisense-85e7q", "name": "Hisense 85e7q", "brand": "Hisense", "file": "hisense-85e7q.txt" }
+    ,{ "id": "hisense-amlogict963-android9", "name": "Hisense Amlogict963 Android9", "brand": "Hisense", "file": "hisense-amlogict963-android9.txt" }
+    ,{ "id": "hisense-e5q-pro", "name": "Hisense E5q Pro", "brand": "Hisense", "file": "hisense-e5q-pro.txt" }
+    ,{ "id": "hisense-fire-tv-55qd6qf", "name": "Hisense Fire Tv 55qd6qf", "brand": "Hisense", "file": "hisense-fire-tv-55qd6qf.txt" }
+    ,{ "id": "hisense-fire-tv-aftcibfbd1", "name": "Hisense Fire Tv Aftcibfbd1", "brand": "Hisense", "file": "hisense-fire-tv-aftcibfbd1.txt" }
+    ,{ "id": "hisense-hg9", "name": "Hisense Hg9", "brand": "Hisense", "file": "hisense-hg9.txt" }
+    ,{ "id": "hisense-hismart-2k-atv4-hamamatsucho", "name": "Hisense Hismart 2k Atv4 Hamamatsucho", "brand": "Hisense", "file": "hisense-hismart-2k-atv4-hamamatsucho.txt" }
+    ,{ "id": "hisense-hismarttv-a4-android11", "name": "Hisense Hismarttv A4 Android11", "brand": "Hisense", "file": "hisense-hismarttv-a4-android11.txt" }
+    ,{ "id": "hisense-hismarttv-a4", "name": "Hisense Hismarttv A4", "brand": "Hisense", "file": "hisense-hismarttv-a4.txt" }
+    ,{ "id": "hisense-smarttv-4k-ffm-android11", "name": "Hisense Smarttv 4k Ffm Android11", "brand": "Hisense", "file": "hisense-smarttv-4k-ffm-android11.txt" }
+    ,{ "id": "hisense-smarttv-4k-ffm-lushan", "name": "Hisense Smarttv 4k Ffm Lushan", "brand": "Hisense", "file": "hisense-smarttv-4k-ffm-lushan.txt" }
+    ,{ "id": "hisense-smarttv-4k-ffm", "name": "Hisense Smarttv 4k Ffm", "brand": "Hisense", "file": "hisense-smarttv-4k-ffm.txt" }
     ,{ "id": "hisense-u7-wutaishan", "name": "Hisense U7 Wutaishan", "brand": "Hisense", "file": "hisense-u7-wutaishan.txt" }
+    ,{ "id": "hisense-u75-hengshan", "name": "Hisense U75 Hengshan", "brand": "Hisense", "file": "hisense-u75-hengshan.txt" }
+    ,{ "id": "hitachi-65qledsm20", "name": "Hitachi 65qledsm20", "brand": "Hitachi", "file": "hitachi-65qledsm20.txt" }
+    ,{ "id": "hitachi-cdh-le32smart21", "name": "Hitachi Cdh Le32smart21", "brand": "Hitachi", "file": "hitachi-cdh-le32smart21.txt" }
+    ,{ "id": "homeplus-stb-6252c", "name": "Homeplus Stb 6252c", "brand": "homeplus", "file": "homeplus-stb-6252c.txt" }
+    ,{ "id": "hotack-l018", "name": "Hotack L018", "brand": "hotack", "file": "hotack-l018.txt" }
+    ,{ "id": "hotack-smart2kpjt", "name": "Hotack Smart2kpjt", "brand": "hotack", "file": "hotack-smart2kpjt.txt" }
+    ,{ "id": "hy320", "name": "Hy320", "brand": "hy320", "file": "hy320.txt" }
+    ,{ "id": "impex-evoq-4k", "name": "Impex Evoq 4k", "brand": "impex", "file": "impex-evoq-4k.txt" }
+    ,{ "id": "inclo-google-tv-4k", "name": "Inclo Google Tv 4k", "brand": "inclo", "file": "inclo-google-tv-4k.txt" }
+    ,{ "id": "insignia-ns42f201na22", "name": "Insignia Ns42f201na22", "brand": "Insignia", "file": "insignia-ns42f201na22.txt" }
+    ,{ "id": "insignia-ns55f301na25", "name": "Insignia Ns55f301na25", "brand": "Insignia", "file": "insignia-ns55f301na25.txt" }
+    ,{ "id": "jio-stb-c200a", "name": "Jio Stb C200a", "brand": "jio", "file": "jio-stb-c200a.txt" }
+    ,{ "id": "jmgo-n1s-4k-lonavla", "name": "Jmgo N1s 4k Lonavla", "brand": "jmgo", "file": "jmgo-n1s-4k-lonavla.txt" }
+    ,{ "id": "jmgo-n1s-holan", "name": "Jmgo N1s Holan", "brand": "jmgo", "file": "jmgo-n1s-holan.txt" }
+    ,{ "id": "jvc-4k-smart-tv-elliniko", "name": "Jvc 4k Smart Tv Elliniko", "brand": "JVC", "file": "jvc-4k-smart-tv-elliniko.txt" }
     ,{ "id": "jvc-android-tv-menlo", "name": "Jvc Android Tv Menlo", "brand": "JVC", "file": "jvc-android-tv-menlo.txt" }
+    ,{ "id": "jvc-lt-43km348", "name": "Jvc Lt 43km348", "brand": "JVC", "file": "jvc-lt-43km348.txt" }
+    ,{ "id": "jvc-lt-43km4584", "name": "Jvc Lt 43km4584", "brand": "JVC", "file": "jvc-lt-43km4584.txt" }
+    ,{ "id": "jvc-lt55mb508", "name": "Jvc Lt55mb508", "brand": "JVC", "file": "jvc-lt55mb508.txt" }
+    ,{ "id": "jvc-uk-4k-sadang", "name": "Jvc Uk 4k Sadang", "brand": "JVC", "file": "jvc-uk-4k-sadang.txt" }
+    ,{ "id": "kalley-43g200", "name": "Kalley 43g200", "brand": "kalley", "file": "kalley-43g200.txt" }
+    ,{ "id": "kalley-r10g", "name": "Kalley R10g", "brand": "kalley", "file": "kalley-r10g.txt" }
+    ,{ "id": "karbonn-swtv-20ae", "name": "Karbonn Swtv 20ae", "brand": "karbonn", "file": "karbonn-swtv-20ae.txt" }
+    ,{ "id": "kodak-55ca0909", "name": "Kodak 55ca0909", "brand": "kodak", "file": "kodak-55ca0909.txt" }
+    ,{ "id": "kogan-g7", "name": "Kogan G7", "brand": "Kogan", "file": "kogan-g7.txt" }
+    ,{ "id": "kogan-gtvu65kg", "name": "Kogan Gtvu65kg", "brand": "Kogan", "file": "kogan-gtvu65kg.txt" }
+    ,{ "id": "koryo-smart-tv-hi3751v553", "name": "Koryo Smart Tv Hi3751v553", "brand": "koryo", "file": "koryo-smart-tv-hi3751v553.txt" }
+    ,{ "id": "ktc-4k-smart-tv-hongkong", "name": "Ktc 4k Smart Tv Hongkong", "brand": "ktc", "file": "ktc-4k-smart-tv-hongkong.txt" }
+    ,{ "id": "kunft-k8415h40f", "name": "Kunft K8415h40f", "brand": "kunft", "file": "kunft-k8415h40f.txt" }
+    ,{ "id": "liberton-ltv-24h01at", "name": "Liberton Ltv 24h01at", "brand": "liberton", "file": "liberton-ltv-24h01at.txt" }
+    ,{ "id": "lumio-arc-5", "name": "Lumio Arc 5", "brand": "lumio", "file": "lumio-arc-5.txt" }
+    ,{ "id": "lumio-vision-7", "name": "Lumio Vision 7", "brand": "lumio", "file": "lumio-vision-7.txt" }
+    ,{ "id": "lyncast-x3aq", "name": "Lyncast X3aq", "brand": "lyncast", "file": "lyncast-x3aq.txt" }
+    ,{ "id": "magcubic-hy300-pro-plus", "name": "Magcubic Hy300 Pro Plus", "brand": "magcubic", "file": "magcubic-hy300-pro-plus.txt" }
+    ,{ "id": "magcubic-hy300-pro", "name": "Magcubic Hy300 Pro", "brand": "magcubic", "file": "magcubic-hy300-pro.txt" }
+    ,{ "id": "marq-4k-android-tv", "name": "Marq 4k Android Tv", "brand": "marq", "file": "marq-4k-android-tv.txt" }
+    ,{ "id": "master-g-2k-atv-martin", "name": "Master G 2k Atv Martin", "brand": "master", "file": "master-g-2k-atv-martin.txt" }
+    ,{ "id": "master-g-mga3200", "name": "Master G Mga3200", "brand": "master", "file": "master-g-mga3200.txt" }
+    ,{ "id": "mecool-km2-plus", "name": "Mecool Km2 Plus", "brand": "mecool", "file": "mecool-km2-plus.txt" }
     ,{ "id": "motorola-mt4310", "name": "Motorola Mt4310", "brand": "Motorola", "file": "motorola-mt4310.txt" }
+    ,{ "id": "motorola-swtv-24ae-4k", "name": "Motorola Swtv 24ae 4k", "brand": "Motorola", "file": "motorola-swtv-24ae-4k.txt" }
+    ,{ "id": "motorola-swtv-24ae-fhd", "name": "Motorola Swtv 24ae Fhd", "brand": "Motorola", "file": "motorola-swtv-24ae-fhd.txt" }
+    ,{ "id": "mtc-uk-2k-android-tv", "name": "Mtc Uk 2k Android Tv", "brand": "mtc", "file": "mtc-uk-2k-android-tv.txt" }
+    ,{ "id": "next-start-pro-4k", "name": "Next Start Pro 4k", "brand": "next", "file": "next-start-pro-4k.txt" }
+    ,{ "id": "noblex-db58x7550", "name": "Noblex Db58x7550", "brand": "noblex", "file": "noblex-db58x7550.txt" }
+    ,{ "id": "noblex-dr55x9500", "name": "Noblex Dr55x9500", "brand": "noblex", "file": "noblex-dr55x9500.txt" }
+    ,{ "id": "noblex-shinjuku", "name": "Noblex Shinjuku", "brand": "noblex", "file": "noblex-shinjuku.txt" }
+    ,{ "id": "nokia-atv-r2", "name": "Nokia Atv R2", "brand": "Nokia", "file": "nokia-atv-r2.txt" }
+    ,{ "id": "nokia-r4", "name": "Nokia R4", "brand": "Nokia", "file": "nokia-r4.txt" }
+    ,{ "id": "nokia-streaming-box-8000", "name": "Nokia Streaming Box 8000", "brand": "Nokia", "file": "nokia-streaming-box-8000.txt" }
     ,{ "id": "nokia-streaming-box-8010", "name": "Nokia Streaming Box 8010", "brand": "Nokia", "file": "nokia-streaming-box-8010.txt" }
+    ,{ "id": "nvidia-shield-tv-2017", "name": "Nvidia Shield Tv 2017", "brand": "NVIDIA", "file": "nvidia-shield-tv-2017.txt" }
     ,{ "id": "nvidia-shield-tv-2019", "name": "Nvidia Shield Tv 2019", "brand": "NVIDIA", "file": "nvidia-shield-tv-2019.txt" }
     ,{ "id": "nvidia-shield-tv-pro-2019", "name": "Nvidia Shield Tv Pro 2019", "brand": "NVIDIA", "file": "nvidia-shield-tv-pro-2019.txt" }
+    ,{ "id": "ok-ai-pont-ikebukuro", "name": "Ok Ai Pont Ikebukuro", "brand": "ok", "file": "ok-ai-pont-ikebukuro.txt" }
+    ,{ "id": "oneplus-tv-cebu", "name": "Oneplus Tv Cebu", "brand": "oneplus", "file": "oneplus-tv-cebu.txt" }
+    ,{ "id": "oneplus-tv-dosa", "name": "Oneplus Tv Dosa", "brand": "oneplus", "file": "oneplus-tv-dosa.txt" }
+    ,{ "id": "oneplus-tv-dubai", "name": "Oneplus Tv Dubai", "brand": "oneplus", "file": "oneplus-tv-dubai.txt" }
+    ,{ "id": "oneplus-tv-y1", "name": "Oneplus Tv Y1", "brand": "oneplus", "file": "oneplus-tv-y1.txt" }
+    ,{ "id": "onn-4k-plus-2025", "name": "Onn 4k Plus 2025", "brand": "onn", "file": "onn-4k-plus-2025.txt" }
     ,{ "id": "onn-4k-pro-gen2", "name": "Onn 4k Pro Gen2", "brand": "onn", "file": "onn-4k-pro-gen2.txt" }
     ,{ "id": "onn-4k-streaming-box-2023", "name": "Onn 4k Streaming Box 2023", "brand": "onn", "file": "onn-4k-streaming-box-2023.txt" }
+    ,{ "id": "oppo-k9-55-oppocnm632", "name": "Oppo K9 55 Oppocnm632", "brand": "oppo", "file": "oppo-k9-55-oppocnm632.txt" }
+    ,{ "id": "panasonic-4ktv-0su", "name": "Panasonic 4ktv 0su", "brand": "Panasonic", "file": "panasonic-4ktv-0su.txt" }
+    ,{ "id": "panasonic-4ktv-3mup", "name": "Panasonic 4ktv 3mup", "brand": "Panasonic", "file": "panasonic-4ktv-3mup.txt" }
+    ,{ "id": "panasonic-4ktv-3su", "name": "Panasonic 4ktv 3su", "brand": "Panasonic", "file": "panasonic-4ktv-3su.txt" }
+    ,{ "id": "panasonic-4ktv-jup", "name": "Panasonic 4ktv Jup", "brand": "Panasonic", "file": "panasonic-4ktv-jup.txt" }
     ,{ "id": "panasonic-gs655", "name": "Panasonic Gs655", "brand": "Panasonic", "file": "panasonic-gs655.txt" }
+    ,{ "id": "panasonic-kowloon", "name": "Panasonic Kowloon", "brand": "Panasonic", "file": "panasonic-kowloon.txt" }
+    ,{ "id": "panasonic-th-40hs550k", "name": "Panasonic Th 40hs550k", "brand": "Panasonic", "file": "panasonic-th-40hs550k.txt" }
+    ,{ "id": "panavox-google-tv", "name": "Panavox Google Tv", "brand": "panavox", "file": "panavox-google-tv.txt" }
+    ,{ "id": "peaq-ptv43aqu-5023c", "name": "Peaq Ptv43aqu 5023c", "brand": "peaq", "file": "peaq-ptv43aqu-5023c.txt" }
+    ,{ "id": "philco-smart-tv-sunnyvale", "name": "Philco Smart Tv Sunnyvale", "brand": "philco", "file": "philco-smart-tv-sunnyvale.txt" }
+    ,{ "id": "philips-49pus6561", "name": "Philips 49pus6561", "brand": "Philips", "file": "philips-49pus6561.txt" }
     ,{ "id": "philips-50pud7406", "name": "Philips 50pud7406", "brand": "Philips", "file": "philips-50pud7406.txt" }
+    ,{ "id": "philips-50puf7099-t3", "name": "Philips 50puf7099 T3", "brand": "Philips", "file": "philips-50puf7099-t3.txt" }
+    ,{ "id": "philips-50pus8517", "name": "Philips 50pus8517", "brand": "Philips", "file": "philips-50pus8517.txt" }
+    ,{ "id": "philips-55oled707", "name": "Philips 55oled707", "brand": "Philips", "file": "philips-55oled707.txt" }
+    ,{ "id": "philips-55oled708", "name": "Philips 55oled708", "brand": "Philips", "file": "philips-55oled708.txt" }
+    ,{ "id": "philips-55oled820", "name": "Philips 55oled820", "brand": "Philips", "file": "philips-55oled820.txt" }
+    ,{ "id": "philips-55pos9002", "name": "Philips 55pos9002", "brand": "Philips", "file": "philips-55pos9002.txt" }
+    ,{ "id": "philips-55pus7503", "name": "Philips 55pus7503", "brand": "Philips", "file": "philips-55pus7503.txt" }
+    ,{ "id": "philips-65oled706", "name": "Philips 65oled706", "brand": "Philips", "file": "philips-65oled706.txt" }
+    ,{ "id": "philips-65oled807", "name": "Philips 65oled807", "brand": "Philips", "file": "philips-65oled807.txt" }
+    ,{ "id": "philips-65oled907", "name": "Philips 65oled907", "brand": "Philips", "file": "philips-65oled907.txt" }
+    ,{ "id": "philips-65pml9506", "name": "Philips 65pml9506", "brand": "Philips", "file": "philips-65pml9506.txt" }
+    ,{ "id": "philips-65pqt8169", "name": "Philips 65pqt8169", "brand": "Philips", "file": "philips-65pqt8169.txt" }
+    ,{ "id": "philips-65pus8102", "name": "Philips 65pus8102", "brand": "Philips", "file": "philips-65pus8102.txt" }
+    ,{ "id": "philips-65pus9435", "name": "Philips 65pus9435", "brand": "Philips", "file": "philips-65pus9435.txt" }
+    ,{ "id": "philips-75pus8505", "name": "Philips 75pus8505", "brand": "Philips", "file": "philips-75pus8505.txt" }
+    ,{ "id": "philips-77oled810", "name": "Philips 77oled810", "brand": "Philips", "file": "philips-77oled810.txt" }
+    ,{ "id": "philips-google-tv-ta1", "name": "Philips Google Tv Ta1", "brand": "Philips", "file": "philips-google-tv-ta1.txt" }
+    ,{ "id": "philips-google-tv-ta7", "name": "Philips Google Tv Ta7", "brand": "Philips", "file": "philips-google-tv-ta7.txt" }
+    ,{ "id": "philips-r8g-google-tv", "name": "Philips R8g Google Tv", "brand": "Philips", "file": "philips-r8g-google-tv.txt" }
+    ,{ "id": "philips-smart-4k-google-tv", "name": "Philips Smart 4k Google Tv", "brand": "Philips", "file": "philips-smart-4k-google-tv.txt" }
+    ,{ "id": "philips-tpm191e", "name": "Philips Tpm191e", "brand": "Philips", "file": "philips-tpm191e.txt" }
+    ,{ "id": "polytron-2k-hayward", "name": "Polytron 2k Hayward", "brand": "polytron", "file": "polytron-2k-hayward.txt" }
+    ,{ "id": "portronics-beem-470", "name": "Portronics Beem 470", "brand": "portronics", "file": "portronics-beem-470.txt" }
+    ,{ "id": "pptv-p34a4p", "name": "Pptv P34a4p", "brand": "pptv", "file": "pptv-p34a4p.txt" }
+    ,{ "id": "prismplus-p4ka-sw6h", "name": "Prismplus P4ka Sw6h", "brand": "prismplus", "file": "prismplus-p4ka-sw6h.txt" }
+    ,{ "id": "prismplus-q65-ultra-r10g", "name": "Prismplus Q65 Ultra R10g", "brand": "prismplus", "file": "prismplus-q65-ultra-r10g.txt" }
+    ,{ "id": "prosonic-bodrum-finch", "name": "Prosonic Bodrum Finch", "brand": "prosonic", "file": "prosonic-bodrum-finch.txt" }
+    ,{ "id": "rca-2k-android-tv-lasalle", "name": "Rca 2k Android Tv Lasalle", "brand": "RCA", "file": "rca-2k-android-tv-lasalle.txt" }
+    ,{ "id": "rca-ai-pont", "name": "Rca Ai Pont", "brand": "RCA", "file": "rca-ai-pont.txt" }
+    ,{ "id": "rca-rc50a21s-4ksm", "name": "Rca Rc50a21s 4ksm", "brand": "RCA", "file": "rca-rc50a21s-4ksm.txt" }
+    ,{ "id": "redmi-mitv-antl0", "name": "Redmi Mitv Antl0", "brand": "Xiaomi/Redmi", "file": "redmi-mitv-antl0.txt" }
+    ,{ "id": "redmi-mitv-mftp0", "name": "Redmi Mitv Mftp0", "brand": "Xiaomi/Redmi", "file": "redmi-mitv-mftp0.txt" }
     ,{ "id": "redmi-mitv-mooq3", "name": "Redmi Mitv Mooq3", "brand": "Xiaomi/Redmi", "file": "redmi-mitv-mooq3.txt" }
+    ,{ "id": "rocktek-g2", "name": "Rocktek G2", "brand": "rocktek", "file": "rocktek-g2.txt" }
+    ,{ "id": "rocktek-gb1", "name": "Rocktek Gb1", "brand": "rocktek", "file": "rocktek-gb1.txt" }
+    ,{ "id": "rocktek-gx1", "name": "Rocktek Gx1", "brand": "rocktek", "file": "rocktek-gx1.txt" }
+    ,{ "id": "salora-smart24tv", "name": "Salora Smart24tv", "brand": "salora", "file": "salora-smart24tv.txt" }
+    ,{ "id": "sankey-smart-tv-hi3751v350", "name": "Sankey Smart Tv Hi3751v350", "brand": "sankey", "file": "sankey-smart-tv-hi3751v350.txt" }
+    ,{ "id": "sankey-smart2ktvse", "name": "Sankey Smart2ktvse", "brand": "sankey", "file": "sankey-smart2ktvse.txt" }
+    ,{ "id": "sanyo-atv-r2", "name": "Sanyo Atv R2", "brand": "sanyo", "file": "sanyo-atv-r2.txt" }
+    ,{ "id": "sber-salute-tv-at30a6", "name": "Sber Salute Tv At30a6", "brand": "sber", "file": "sber-salute-tv-at30a6.txt" }
+    ,{ "id": "sber-salute-tv-pb766", "name": "Sber Salute Tv Pb766", "brand": "sber", "file": "sber-salute-tv-pb766.txt" }
+    ,{ "id": "seleco-tv39020hda9smart", "name": "Seleco Tv39020hda9smart", "brand": "seleco", "file": "seleco-tv39020hda9smart.txt" }
+    ,{ "id": "semp-tcl-50p8m", "name": "Semp Tcl 50p8m", "brand": "semp", "file": "semp-tcl-50p8m.txt" }
+    ,{ "id": "sharp-2k-eu", "name": "Sharp 2k Eu", "brand": "Sharp", "file": "sharp-2k-eu.txt" }
+    ,{ "id": "sharp-2t-c32gh3000i", "name": "Sharp 2t C32gh3000i", "brand": "Sharp", "file": "sharp-2t-c32gh3000i.txt" }
+    ,{ "id": "sharp-4t-c43dl1", "name": "Sharp 4t C43dl1", "brand": "Sharp", "file": "sharp-4t-c43dl1.txt" }
+    ,{ "id": "sharp-55gp6260e", "name": "Sharp 55gp6260e", "brand": "Sharp", "file": "sharp-55gp6260e.txt" }
+    ,{ "id": "sharp-85hp5465e", "name": "Sharp 85hp5465e", "brand": "Sharp", "file": "sharp-85hp5465e.txt" }
+    ,{ "id": "sharp-aquos-tve19c", "name": "Sharp Aquos Tve19c", "brand": "Sharp", "file": "sharp-aquos-tve19c.txt" }
+    ,{ "id": "sharp-aquos-tve21f", "name": "Sharp Aquos Tve21f", "brand": "Sharp", "file": "sharp-aquos-tve21f.txt" }
+    ,{ "id": "sharp-aquos-tve23a", "name": "Sharp Aquos Tve23a", "brand": "Sharp", "file": "sharp-aquos-tve23a.txt" }
+    ,{ "id": "sharp-aquos-tvx18", "name": "Sharp Aquos Tvx18", "brand": "Sharp", "file": "sharp-aquos-tvx18.txt" }
     ,{ "id": "sharp-aquos-tvx19b", "name": "Sharp Aquos Tvx19b", "brand": "Sharp", "file": "sharp-aquos-tvx19b.txt" }
+    ,{ "id": "siragon-4k-smart-tv-elliniko", "name": "Siragon 4k Smart Tv Elliniko", "brand": "siragon", "file": "siragon-4k-smart-tv-elliniko.txt" }
+    ,{ "id": "siragon-58da7000", "name": "Siragon 58da7000", "brand": "siragon", "file": "siragon-58da7000.txt" }
     ,{ "id": "skyworth-43e6a", "name": "Skyworth 43e6a", "brand": "Skyworth", "file": "skyworth-43e6a.txt" }
+    ,{ "id": "skyworth-4k-google-tv-stick", "name": "Skyworth 4k Google Tv Stick", "brand": "Skyworth", "file": "skyworth-4k-google-tv-stick.txt" }
+    ,{ "id": "skyworth-65a3f", "name": "Skyworth 65a3f", "brand": "Skyworth", "file": "skyworth-65a3f.txt" }
+    ,{ "id": "skyworth-7s60-a5", "name": "Skyworth 7s60 A5", "brand": "Skyworth", "file": "skyworth-7s60-a5.txt" }
+    ,{ "id": "skyworth-7t861-a23", "name": "Skyworth 7t861 A23", "brand": "Skyworth", "file": "skyworth-7t861-a23.txt" }
+    ,{ "id": "skyworth-8r40-k5c", "name": "Skyworth 8r40 K5c", "brand": "Skyworth", "file": "skyworth-8r40-k5c.txt" }
+    ,{ "id": "skyworth-sw-22hk-nf", "name": "Skyworth Sw 22hk Nf", "brand": "Skyworth", "file": "skyworth-sw-22hk-nf.txt" }
+    ,{ "id": "skyworth-sw-22sa", "name": "Skyworth Sw 22sa", "brand": "Skyworth", "file": "skyworth-sw-22sa.txt" }
+    ,{ "id": "skyworth-swtv-20sa-pro", "name": "Skyworth Swtv 20sa Pro", "brand": "Skyworth", "file": "skyworth-swtv-20sa-pro.txt" }
+    ,{ "id": "skyworth-swtv-21ae", "name": "Skyworth Swtv 21ae", "brand": "Skyworth", "file": "skyworth-swtv-21ae.txt" }
+    ,{ "id": "skyworth-swtv-22ae-fhd", "name": "Skyworth Swtv 22ae Fhd", "brand": "Skyworth", "file": "skyworth-swtv-22ae-fhd.txt" }
+    ,{ "id": "skyworth-swtv-24ae-4k-nf", "name": "Skyworth Swtv 24ae 4k Nf", "brand": "Skyworth", "file": "skyworth-swtv-24ae-4k-nf.txt" }
+    ,{ "id": "skyworth-swtv-24na-4k-nf", "name": "Skyworth Swtv 24na 4k Nf", "brand": "Skyworth", "file": "skyworth-swtv-24na-4k-nf.txt" }
+    ,{ "id": "skyworth-xiaopai-p3", "name": "Skyworth Xiaopai P3", "brand": "Skyworth", "file": "skyworth-xiaopai-p3.txt" }
+    ,{ "id": "smarttech-apollo-premium-4k", "name": "Smarttech Apollo Premium 4k", "brand": "smarttech", "file": "smarttech-apollo-premium-4k.txt" }
+    ,{ "id": "sony-bravia-4k-gb-us", "name": "Sony Bravia 4k Gb Us", "brand": "Sony", "file": "sony-bravia-4k-gb-us.txt" }
+    ,{ "id": "sony-bravia-4k-gb", "name": "Sony Bravia 4k Gb", "brand": "Sony", "file": "sony-bravia-4k-gb.txt" }
+    ,{ "id": "sony-bravia-4k-ur2", "name": "Sony Bravia 4k Ur2", "brand": "Sony", "file": "sony-bravia-4k-ur2.txt" }
     ,{ "id": "sony-bravia-4k-ur3", "name": "Sony Bravia 4k Ur3", "brand": "Sony", "file": "sony-bravia-4k-ur3.txt" }
+    ,{ "id": "sony-bravia-4k-vh1", "name": "Sony Bravia 4k Vh1", "brand": "Sony", "file": "sony-bravia-4k-vh1.txt" }
     ,{ "id": "sony-bravia-4k-vh2", "name": "Sony Bravia 4k Vh2", "brand": "Sony", "file": "sony-bravia-4k-vh2.txt" }
+    ,{ "id": "sony-bravia-4k-vh21-eu", "name": "Sony Bravia 4k Vh21 Eu", "brand": "Sony", "file": "sony-bravia-4k-vh21-eu.txt" }
+    ,{ "id": "sony-bravia-4k-vh21-sa", "name": "Sony Bravia 4k Vh21 Sa", "brand": "Sony", "file": "sony-bravia-4k-vh21-sa.txt" }
+    ,{ "id": "sony-bravia-4k-vh21-tw", "name": "Sony Bravia 4k Vh21 Tw", "brand": "Sony", "file": "sony-bravia-4k-vh21-tw.txt" }
+    ,{ "id": "sony-bravia-4k-vh21-us", "name": "Sony Bravia 4k Vh21 Us", "brand": "Sony", "file": "sony-bravia-4k-vh21-us.txt" }
     ,{ "id": "sony-bravia-4k-vh21", "name": "Sony Bravia 4k Vh21", "brand": "Sony", "file": "sony-bravia-4k-vh21.txt" }
+    ,{ "id": "sony-bravia-9-ii", "name": "Sony Bravia 9 Ii", "brand": "Sony", "file": "sony-bravia-9-ii.txt" }
+    ,{ "id": "sony-bravia-ae1", "name": "Sony Bravia Ae1", "brand": "Sony", "file": "sony-bravia-ae1.txt" }
+    ,{ "id": "sony-bravia-ae2", "name": "Sony Bravia Ae2", "brand": "Sony", "file": "sony-bravia-ae2.txt" }
+    ,{ "id": "sony-bravia-bf1", "name": "Sony Bravia Bf1", "brand": "Sony", "file": "sony-bravia-bf1.txt" }
+    ,{ "id": "sony-bravia-tl2", "name": "Sony Bravia Tl2", "brand": "Sony", "file": "sony-bravia-tl2.txt" }
+    ,{ "id": "sony-bravia-vu1", "name": "Sony Bravia Vu1", "brand": "Sony", "file": "sony-bravia-vu1.txt" }
+    ,{ "id": "sony-bravia-vu2", "name": "Sony Bravia Vu2", "brand": "Sony", "file": "sony-bravia-vu2.txt" }
+    ,{ "id": "sony-bravia-vu3", "name": "Sony Bravia Vu3", "brand": "Sony", "file": "sony-bravia-vu3.txt" }
+    ,{ "id": "sony-bravia-vu31", "name": "Sony Bravia Vu31", "brand": "Sony", "file": "sony-bravia-vu31.txt" }
+    ,{ "id": "sony-kd-43x8000g", "name": "Sony Kd 43x8000g", "brand": "Sony", "file": "sony-kd-43x8000g.txt" }
+    ,{ "id": "sony-kd-43x80l", "name": "Sony Kd 43x80l", "brand": "Sony", "file": "sony-kd-43x80l.txt" }
+    ,{ "id": "sony-kd-49x8000g-hk", "name": "Sony Kd 49x8000g Hk", "brand": "Sony", "file": "sony-kd-49x8000g-hk.txt" }
+    ,{ "id": "sony-kd-49x8307c", "name": "Sony Kd 49x8307c", "brand": "Sony", "file": "sony-kd-49x8307c.txt" }
+    ,{ "id": "sony-kd-55x7500-cn", "name": "Sony Kd 55x7500 Cn", "brand": "Sony", "file": "sony-kd-55x7500-cn.txt" }
+    ,{ "id": "sony-kd-55x8000c", "name": "Sony Kd 55x8000c", "brand": "Sony", "file": "sony-kd-55x8000c.txt" }
+    ,{ "id": "sony-kd-55x8509c", "name": "Sony Kd 55x8509c", "brand": "Sony", "file": "sony-kd-55x8509c.txt" }
+    ,{ "id": "sony-kd-55x85j", "name": "Sony Kd 55x85j", "brand": "Sony", "file": "sony-kd-55x85j.txt" }
+    ,{ "id": "sony-kd-55x9500g-cn", "name": "Sony Kd 55x9500g Cn", "brand": "Sony", "file": "sony-kd-55x9500g-cn.txt" }
+    ,{ "id": "sony-kd-55xe8596", "name": "Sony Kd 55xe8596", "brand": "Sony", "file": "sony-kd-55xe8596.txt" }
+    ,{ "id": "sony-kd-55xf7596", "name": "Sony Kd 55xf7596", "brand": "Sony", "file": "sony-kd-55xf7596.txt" }
+    ,{ "id": "sony-kd-55xf8096", "name": "Sony Kd 55xf8096", "brand": "Sony", "file": "sony-kd-55xf8096.txt" }
+    ,{ "id": "sony-kd-65x80j", "name": "Sony Kd 65x80j", "brand": "Sony", "file": "sony-kd-65x80j.txt" }
+    ,{ "id": "sony-kd-65x82l", "name": "Sony Kd 65x82l", "brand": "Sony", "file": "sony-kd-65x82l.txt" }
+    ,{ "id": "sony-kd-65x9300d", "name": "Sony Kd 65x9300d", "brand": "Sony", "file": "sony-kd-65x9300d.txt" }
+    ,{ "id": "sony-kdl-43w950d", "name": "Sony Kdl 43w950d", "brand": "Sony", "file": "sony-kdl-43w950d.txt" }
+    ,{ "id": "sony-kdl-55w800c", "name": "Sony Kdl 55w800c", "brand": "Sony", "file": "sony-kdl-55w800c.txt" }
+    ,{ "id": "sony-kj-55x9300d", "name": "Sony Kj 55x9300d", "brand": "Sony", "file": "sony-kj-55x9300d.txt" }
+    ,{ "id": "sony-x9000h-cn", "name": "Sony X9000h Cn", "brand": "Sony", "file": "sony-x9000h-cn.txt" }
+    ,{ "id": "sony-xbr-55x805g-br", "name": "Sony Xbr 55x805g Br", "brand": "Sony", "file": "sony-xbr-55x805g-br.txt" }
+    ,{ "id": "sony-xbr-55x850c", "name": "Sony Xbr 55x850c", "brand": "Sony", "file": "sony-xbr-55x850c.txt" }
+    ,{ "id": "sony-xbr-55x850d", "name": "Sony Xbr 55x850d", "brand": "Sony", "file": "sony-xbr-55x850d.txt" }
+    ,{ "id": "sony-xbr-65x900f", "name": "Sony Xbr 65x900f", "brand": "Sony", "file": "sony-xbr-65x900f.txt" }
+    ,{ "id": "sony-xbr-x805g-sa", "name": "Sony Xbr X805g Sa", "brand": "Sony", "file": "sony-xbr-x805g-sa.txt" }
+    ,{ "id": "sony-xbr-x900e", "name": "Sony Xbr X900e", "brand": "Sony", "file": "sony-xbr-x900e.txt" }
+    ,{ "id": "sony-xr-65a80j", "name": "Sony Xr 65a80j", "brand": "Sony", "file": "sony-xr-65a80j.txt" }
+    ,{ "id": "sony-xr-65x90j-cn", "name": "Sony Xr 65x90j Cn", "brand": "Sony", "file": "sony-xr-65x90j-cn.txt" }
+    ,{ "id": "sony-xr-77a80l", "name": "Sony Xr 77a80l", "brand": "Sony", "file": "sony-xr-77a80l.txt" }
+    ,{ "id": "sony-xr-85x90l-cn", "name": "Sony Xr 85x90l Cn", "brand": "Sony", "file": "sony-xr-85x90l-cn.txt" }
+    ,{ "id": "stellamore-t950s", "name": "Stellamore T950s", "brand": "stellamore", "file": "stellamore-t950s.txt" }
+    ,{ "id": "strong-leap-s3", "name": "Strong Leap S3", "brand": "strong", "file": "strong-leap-s3.txt" }
+    ,{ "id": "strong-srt-43ud6593", "name": "Strong Srt 43ud6593", "brand": "strong", "file": "strong-srt-43ud6593.txt" }
+    ,{ "id": "sunwind-sun-led32xs305", "name": "Sunwind Sun Led32xs305", "brand": "sunwind", "file": "sunwind-sun-led32xs305.txt" }
+    ,{ "id": "super-general-cvte-t972", "name": "Super General Cvte T972", "brand": "super", "file": "super-general-cvte-t972.txt" }
+    ,{ "id": "tcl-32es570f", "name": "Tcl 32es570f", "brand": "TCL", "file": "tcl-32es570f.txt" }
+    ,{ "id": "tcl-32l5a", "name": "Tcl 32l5a", "brand": "TCL", "file": "tcl-32l5a.txt" }
+    ,{ "id": "tcl-32s334", "name": "Tcl 32s334", "brand": "TCL", "file": "tcl-32s334.txt" }
+    ,{ "id": "tcl-32s5400a", "name": "Tcl 32s5400a", "brand": "TCL", "file": "tcl-32s5400a.txt" }
+    ,{ "id": "tcl-32s5k", "name": "Tcl 32s5k", "brand": "TCL", "file": "tcl-32s5k.txt" }
+    ,{ "id": "tcl-32sf560-fire-tv", "name": "Tcl 32sf560 Fire Tv", "brand": "TCL", "file": "tcl-32sf560-fire-tv.txt" }
+    ,{ "id": "tcl-40s5400a", "name": "Tcl 40s5400a", "brand": "TCL", "file": "tcl-40s5400a.txt" }
+    ,{ "id": "tcl-43c645", "name": "Tcl 43c645", "brand": "TCL", "file": "tcl-43c645.txt" }
+    ,{ "id": "tcl-43ep660", "name": "Tcl 43ep660", "brand": "TCL", "file": "tcl-43ep660.txt" }
+    ,{ "id": "tcl-43p615", "name": "Tcl 43p615", "brand": "TCL", "file": "tcl-43p615.txt" }
+    ,{ "id": "tcl-43p725", "name": "Tcl 43p725", "brand": "TCL", "file": "tcl-43p725.txt" }
+    ,{ "id": "tcl-43s450f-ca", "name": "Tcl 43s450f Ca", "brand": "TCL", "file": "tcl-43s450f-ca.txt" }
+    ,{ "id": "tcl-43s5400a", "name": "Tcl 43s5400a", "brand": "TCL", "file": "tcl-43s5400a.txt" }
+    ,{ "id": "tcl-43s5k", "name": "Tcl 43s5k", "brand": "TCL", "file": "tcl-43s5k.txt" }
+    ,{ "id": "tcl-50c725k", "name": "Tcl 50c725k", "brand": "TCL", "file": "tcl-50c725k.txt" }
+    ,{ "id": "tcl-50dp660", "name": "Tcl 50dp660", "brand": "TCL", "file": "tcl-50dp660.txt" }
+    ,{ "id": "tcl-50ep680", "name": "Tcl 50ep680", "brand": "TCL", "file": "tcl-50ep680.txt" }
+    ,{ "id": "tcl-50j7000a", "name": "Tcl 50j7000a", "brand": "TCL", "file": "tcl-50j7000a.txt" }
+    ,{ "id": "tcl-50p615", "name": "Tcl 50p615", "brand": "TCL", "file": "tcl-50p615.txt" }
+    ,{ "id": "tcl-50p735", "name": "Tcl 50p735", "brand": "TCL", "file": "tcl-50p735.txt" }
+    ,{ "id": "tcl-55a300w", "name": "Tcl 55a300w", "brand": "TCL", "file": "tcl-55a300w.txt" }
+    ,{ "id": "tcl-55c715", "name": "Tcl 55c715", "brand": "TCL", "file": "tcl-55c715.txt" }
+    ,{ "id": "tcl-55c725", "name": "Tcl 55c725", "brand": "TCL", "file": "tcl-55c725.txt" }
+    ,{ "id": "tcl-55c745", "name": "Tcl 55c745", "brand": "TCL", "file": "tcl-55c745.txt" }
+    ,{ "id": "tcl-55c7k-uk", "name": "Tcl 55c7k Uk", "brand": "TCL", "file": "tcl-55c7k-uk.txt" }
+    ,{ "id": "tcl-55c815", "name": "Tcl 55c815", "brand": "TCL", "file": "tcl-55c815.txt" }
+    ,{ "id": "tcl-55ep640", "name": "Tcl 55ep640", "brand": "TCL", "file": "tcl-55ep640.txt" }
+    ,{ "id": "tcl-55p638", "name": "Tcl 55p638", "brand": "TCL", "file": "tcl-55p638.txt" }
+    ,{ "id": "tcl-55p7k", "name": "Tcl 55p7k", "brand": "TCL", "file": "tcl-55p7k.txt" }
+    ,{ "id": "tcl-55p8ls", "name": "Tcl 55p8ls", "brand": "TCL", "file": "tcl-55p8ls.txt" }
+    ,{ "id": "tcl-55q6cx1", "name": "Tcl 55q6cx1", "brand": "TCL", "file": "tcl-55q6cx1.txt" }
+    ,{ "id": "tcl-55q7d-pro-google-tv", "name": "Tcl 55q7d Pro Google Tv", "brand": "TCL", "file": "tcl-55q7d-pro-google-tv.txt" }
+    ,{ "id": "tcl-55s470g", "name": "Tcl 55s470g", "brand": "TCL", "file": "tcl-55s470g.txt" }
+    ,{ "id": "tcl-55s546-us", "name": "Tcl 55s546 Us", "brand": "TCL", "file": "tcl-55s546-us.txt" }
+    ,{ "id": "tcl-58s571f-fire-tv", "name": "Tcl 58s571f Fire Tv", "brand": "TCL", "file": "tcl-58s571f-fire-tv.txt" }
+    ,{ "id": "tcl-65c6k-google-tv", "name": "Tcl 65c6k Google Tv", "brand": "TCL", "file": "tcl-65c6k-google-tv.txt" }
+    ,{ "id": "tcl-65c725", "name": "Tcl 65c725", "brand": "TCL", "file": "tcl-65c725.txt" }
+    ,{ "id": "tcl-65c735", "name": "Tcl 65c735", "brand": "TCL", "file": "tcl-65c735.txt" }
     ,{ "id": "tcl-65c7k-google-tv", "name": "Tcl 65c7k Google Tv", "brand": "TCL", "file": "tcl-65c7k-google-tv.txt" }
+    ,{ "id": "tcl-65c7l-google-tv", "name": "Tcl 65c7l Google Tv", "brand": "TCL", "file": "tcl-65c7l-google-tv.txt" }
+    ,{ "id": "tcl-65c8l-google-tv", "name": "Tcl 65c8l Google Tv", "brand": "TCL", "file": "tcl-65c8l-google-tv.txt" }
+    ,{ "id": "tcl-65ep640", "name": "Tcl 65ep640", "brand": "TCL", "file": "tcl-65ep640.txt" }
+    ,{ "id": "tcl-65ep68", "name": "Tcl 65ep68", "brand": "TCL", "file": "tcl-65ep68.txt" }
+    ,{ "id": "tcl-65mqled80-google-tv", "name": "Tcl 65mqled80 Google Tv", "brand": "TCL", "file": "tcl-65mqled80-google-tv.txt" }
+    ,{ "id": "tcl-65p615", "name": "Tcl 65p615", "brand": "TCL", "file": "tcl-65p615.txt" }
+    ,{ "id": "tcl-65q550g", "name": "Tcl 65q550g", "brand": "TCL", "file": "tcl-65q550g.txt" }
+    ,{ "id": "tcl-65q650g", "name": "Tcl 65q650g", "brand": "TCL", "file": "tcl-65q650g.txt" }
+    ,{ "id": "tcl-65qm8l-google-tv", "name": "Tcl 65qm8l Google Tv", "brand": "TCL", "file": "tcl-65qm8l-google-tv.txt" }
+    ,{ "id": "tcl-65x10", "name": "Tcl 65x10", "brand": "TCL", "file": "tcl-65x10.txt" }
+    ,{ "id": "tcl-75a300-pro", "name": "Tcl 75a300 Pro", "brand": "TCL", "file": "tcl-75a300-pro.txt" }
+    ,{ "id": "tcl-75p635", "name": "Tcl 75p635", "brand": "TCL", "file": "tcl-75p635.txt" }
+    ,{ "id": "tcl-75p8k", "name": "Tcl 75p8k", "brand": "TCL", "file": "tcl-75p8k.txt" }
+    ,{ "id": "tcl-85rm7l-google-tv", "name": "Tcl 85rm7l Google Tv", "brand": "TCL", "file": "tcl-85rm7l-google-tv.txt" }
+    ,{ "id": "tcl-ak30a5", "name": "Tcl Ak30a5", "brand": "TCL", "file": "tcl-ak30a5.txt" }
+    ,{ "id": "tcl-beyondtv-jp", "name": "Tcl Beyondtv Jp", "brand": "TCL", "file": "tcl-beyondtv-jp.txt" }
+    ,{ "id": "tcl-beyondtv-pl", "name": "Tcl Beyondtv Pl", "brand": "TCL", "file": "tcl-beyondtv-pl.txt" }
+    ,{ "id": "tcl-beyondtv-rt2851", "name": "Tcl Beyondtv Rt2851", "brand": "TCL", "file": "tcl-beyondtv-rt2851.txt" }
+    ,{ "id": "tcl-beyondtv", "name": "Tcl Beyondtv", "brand": "TCL", "file": "tcl-beyondtv.txt" }
+    ,{ "id": "tcl-beyondtv2-android-11", "name": "Tcl Beyondtv2 Android 11", "brand": "TCL", "file": "tcl-beyondtv2-android-11.txt" }
+    ,{ "id": "tcl-beyondtv2-latin-america", "name": "Tcl Beyondtv2 Latin America", "brand": "TCL", "file": "tcl-beyondtv2-latin-america.txt" }
+    ,{ "id": "tcl-beyondtv4-uk", "name": "Tcl Beyondtv4 Uk", "brand": "TCL", "file": "tcl-beyondtv4-uk.txt" }
+    ,{ "id": "tcl-c635", "name": "Tcl C635", "brand": "TCL", "file": "tcl-c635.txt" }
+    ,{ "id": "tcl-c755-google-tv", "name": "Tcl C755 Google Tv", "brand": "TCL", "file": "tcl-c755-google-tv.txt" }
+    ,{ "id": "tcl-c845x2-google-tv", "name": "Tcl C845x2 Google Tv", "brand": "TCL", "file": "tcl-c845x2-google-tv.txt" }
+    ,{ "id": "tcl-c89b-google-tv", "name": "Tcl C89b Google Tv", "brand": "TCL", "file": "tcl-c89b-google-tv.txt" }
+    ,{ "id": "tcl-g03-google-tv", "name": "Tcl G03 Google Tv", "brand": "TCL", "file": "tcl-g03-google-tv.txt" }
+    ,{ "id": "tcl-g05-google-tv", "name": "Tcl G05 Google Tv", "brand": "TCL", "file": "tcl-g05-google-tv.txt" }
+    ,{ "id": "tcl-g06-google-tv-indonesia", "name": "Tcl G06 Google Tv Indonesia", "brand": "TCL", "file": "tcl-g06-google-tv-indonesia.txt" }
     ,{ "id": "tcl-g06-us-google-tv", "name": "Tcl G06 Us Google Tv", "brand": "TCL", "file": "tcl-g06-us-google-tv.txt" }
+    ,{ "id": "tcl-g07-google-tv", "name": "Tcl G07 Google Tv", "brand": "TCL", "file": "tcl-g07-google-tv.txt" }
+    ,{ "id": "tcl-g08-au-android12", "name": "Tcl G08 Au Android12", "brand": "TCL", "file": "tcl-g08-au-android12.txt" }
+    ,{ "id": "tcl-g08-eu-android12", "name": "Tcl G08 Eu Android12", "brand": "TCL", "file": "tcl-g08-eu-android12.txt" }
+    ,{ "id": "tcl-g08-us-google-tv", "name": "Tcl G08 Us Google Tv", "brand": "TCL", "file": "tcl-g08-us-google-tv.txt" }
+    ,{ "id": "tcl-g09-google-tv", "name": "Tcl G09 Google Tv", "brand": "TCL", "file": "tcl-g09-google-tv.txt" }
+    ,{ "id": "tcl-g10-google-tv", "name": "Tcl G10 Google Tv", "brand": "TCL", "file": "tcl-g10-google-tv.txt" }
+    ,{ "id": "tcl-l40s66e", "name": "Tcl L40s66e", "brand": "TCL", "file": "tcl-l40s66e.txt" }
+    ,{ "id": "tcl-mt9655-cn-android14", "name": "Tcl Mt9655 Cn Android14", "brand": "TCL", "file": "tcl-mt9655-cn-android14.txt" }
+    ,{ "id": "tcl-q10g-pro", "name": "Tcl Q10g Pro", "brand": "TCL", "file": "tcl-q10g-pro.txt" }
+    ,{ "id": "tcl-q7c-google-tv", "name": "Tcl Q7c Google Tv", "brand": "TCL", "file": "tcl-q7c-google-tv.txt" }
     ,{ "id": "tcl-qm6k-google-tv", "name": "Tcl Qm6k Google Tv", "brand": "TCL", "file": "tcl-qm6k-google-tv.txt" }
+    ,{ "id": "tcl-tc8000-ay30a2", "name": "Tcl Tc8000 Ay30a2", "brand": "TCL", "file": "tcl-tc8000-ay30a2.txt" }
+    ,{ "id": "tcl-uniontv-latin-america", "name": "Tcl Uniontv Latin America", "brand": "TCL", "file": "tcl-uniontv-latin-america.txt" }
+    ,{ "id": "tdsystems-ch17f40s-redwood", "name": "Tdsystems Ch17f40s Redwood", "brand": "tdsystems", "file": "tdsystems-ch17f40s-redwood.txt" }
+    ,{ "id": "telekom-tv-sdmc-dv8519b", "name": "Telekom Tv Sdmc Dv8519b", "brand": "telekom", "file": "telekom-tv-sdmc-dv8519b.txt" }
+    ,{ "id": "telesystem-ont2hd", "name": "Telesystem Ont2hd", "brand": "telesystem", "file": "telesystem-ont2hd.txt" }
+    ,{ "id": "tesla-q55e655gus", "name": "Tesla Q55e655gus", "brand": "tesla", "file": "tesla-q55e655gus.txt" }
+    ,{ "id": "thomson-32he5800", "name": "Thomson 32he5800", "brand": "Thomson", "file": "thomson-32he5800.txt" }
+    ,{ "id": "thomson-43rt1055", "name": "Thomson 43rt1055", "brand": "Thomson", "file": "thomson-43rt1055.txt" }
     ,{ "id": "thomson-sppl-4k-sw6h", "name": "Thomson Sppl 4k Sw6h", "brand": "Thomson", "file": "thomson-sppl-4k-sw6h.txt" }
+    ,{ "id": "thomson-t32rtl6000", "name": "Thomson T32rtl6000", "brand": "Thomson", "file": "thomson-t32rtl6000.txt" }
+    ,{ "id": "tim-timvision-box-dwt765ti", "name": "Tim Timvision Box Dwt765ti", "brand": "tim", "file": "tim-timvision-box-dwt765ti.txt" }
+    ,{ "id": "tim-timvision-box-uzw4010tim", "name": "Tim Timvision Box Uzw4010tim", "brand": "tim", "file": "tim-timvision-box-uzw4010tim.txt" }
+    ,{ "id": "tivo-stream-4k", "name": "Tivo Stream 4k", "brand": "tivo", "file": "tivo-stream-4k.txt" }
+    ,{ "id": "tornado-65ua1400e", "name": "Tornado 65ua1400e", "brand": "tornado", "file": "tornado-65ua1400e.txt" }
+    ,{ "id": "toshiba-43v35kp", "name": "Toshiba 43v35kp", "brand": "Toshiba", "file": "toshiba-43v35kp.txt" }
+    ,{ "id": "toshiba-55m550lp", "name": "Toshiba 55m550lp", "brand": "Toshiba", "file": "toshiba-55m550lp.txt" }
+    ,{ "id": "toshiba-65ua2363dg", "name": "Toshiba 65ua2363dg", "brand": "Toshiba", "file": "toshiba-65ua2363dg.txt" }
     ,{ "id": "toshiba-cosmos-android-tv", "name": "Toshiba Cosmos Android Tv", "brand": "Toshiba", "file": "toshiba-cosmos-android-tv.txt" }
     ,{ "id": "toshiba-fire-tv-aftha004", "name": "Toshiba Fire Tv Aftha004", "brand": "Toshiba", "file": "toshiba-fire-tv-aftha004.txt" }
+    ,{ "id": "toshiba-shandao-atv11", "name": "Toshiba Shandao Atv11", "brand": "Toshiba", "file": "toshiba-shandao-atv11.txt" }
+    ,{ "id": "turkcell-tv-plus-4k-box-dv6069y", "name": "Turkcell Tv Plus 4k Box Dv6069y", "brand": "turkcell", "file": "turkcell-tv-plus-4k-box-dv6069y.txt" }
+    ,{ "id": "tuvio-td43ufbcv5", "name": "Tuvio Td43ufbcv5", "brand": "tuvio", "file": "tuvio-td43ufbcv5.txt" }
+    ,{ "id": "verizon-stream-tv", "name": "Verizon Stream Tv", "brand": "Verizon", "file": "verizon-stream-tv.txt" }
+    ,{ "id": "vidda-c1s-mt9669", "name": "Vidda C1s Mt9669", "brand": "vidda", "file": "vidda-c1s-mt9669.txt" }
+    ,{ "id": "vidda-mt9653", "name": "Vidda Mt9653", "brand": "vidda", "file": "vidda-mt9653.txt" }
+    ,{ "id": "visio-32", "name": "Visio 32", "brand": "visio", "file": "visio-32.txt" }
+    ,{ "id": "vision-2024vision43stv", "name": "Vision 2024vision43stv", "brand": "vision", "file": "vision-2024vision43stv.txt" }
+    ,{ "id": "vityas-hitv-50-m7332", "name": "Vityas Hitv 50 M7332", "brand": "vityas", "file": "vityas-hitv-50-m7332.txt" }
+    ,{ "id": "vu-4k-lushan", "name": "Vu 4k Lushan", "brand": "Vu", "file": "vu-4k-lushan.txt" }
+    ,{ "id": "vu-premium-fhd-43-hamamatsucho", "name": "Vu Premium Fhd 43 Hamamatsucho", "brand": "Vu", "file": "vu-premium-fhd-43-hamamatsucho.txt" }
+    ,{ "id": "vu-vibe-tv", "name": "Vu Vibe Tv", "brand": "Vu", "file": "vu-vibe-tv.txt" }
+    ,{ "id": "wanbo-x5-pro", "name": "Wanbo X5 Pro", "brand": "wanbo", "file": "wanbo-x5-pro.txt" }
+    ,{ "id": "xgimi-horizon-20", "name": "Xgimi Horizon 20", "brand": "xgimi", "file": "xgimi-horizon-20.txt" }
+    ,{ "id": "xgimi-horizon-s-pro", "name": "Xgimi Horizon S Pro", "brand": "xgimi", "file": "xgimi-horizon-s-pro.txt" }
+    ,{ "id": "xgimi-mogo-2", "name": "Xgimi Mogo 2", "brand": "xgimi", "file": "xgimi-mogo-2.txt" }
+    ,{ "id": "xgimi-mogo-3-pro", "name": "Xgimi Mogo 3 Pro", "brand": "xgimi", "file": "xgimi-mogo-3-pro.txt" }
+    ,{ "id": "xgimi-mogo-4-laser", "name": "Xgimi Mogo 4 Laser", "brand": "xgimi", "file": "xgimi-mogo-4-laser.txt" }
+    ,{ "id": "xgimi-mogo-4", "name": "Xgimi Mogo 4", "brand": "xgimi", "file": "xgimi-mogo-4.txt" }
+    ,{ "id": "xgimi-rs10-ultra", "name": "Xgimi Rs10 Ultra", "brand": "xgimi", "file": "xgimi-rs10-ultra.txt" }
+    ,{ "id": "xgimi-vibe-one", "name": "Xgimi Vibe One", "brand": "xgimi", "file": "xgimi-vibe-one.txt" }
+    ,{ "id": "xiaomi-f2-fire-tv-aftma2857f", "name": "Xiaomi F2 Fire Tv Aftma2857f", "brand": "Xiaomi", "file": "xiaomi-f2-fire-tv-aftma2857f.txt" }
+    ,{ "id": "xiaomi-fire-tv-aftne4e43f", "name": "Xiaomi Fire Tv Aftne4e43f", "brand": "Xiaomi", "file": "xiaomi-fire-tv-aftne4e43f.txt" }
+    ,{ "id": "xiaomi-mi-box-3", "name": "Xiaomi Mi Box 3", "brand": "Xiaomi", "file": "xiaomi-mi-box-3.txt" }
+    ,{ "id": "xiaomi-mi-box-4s-pro-frozen", "name": "Xiaomi Mi Box 4s Pro Frozen", "brand": "Xiaomi", "file": "xiaomi-mi-box-4s-pro-frozen.txt" }
+    ,{ "id": "xiaomi-mi-box-s-2nd-gen", "name": "Xiaomi Mi Box S 2nd Gen", "brand": "Xiaomi", "file": "xiaomi-mi-box-s-2nd-gen.txt" }
+    ,{ "id": "xiaomi-mi-box-s-android12", "name": "Xiaomi Mi Box S Android12", "brand": "Xiaomi", "file": "xiaomi-mi-box-s-android12.txt" }
+    ,{ "id": "xiaomi-mi-box-s", "name": "Xiaomi Mi Box S", "brand": "Xiaomi", "file": "xiaomi-mi-box-s.txt" }
+    ,{ "id": "xiaomi-mi-tv-4a", "name": "Xiaomi Mi Tv 4a", "brand": "Xiaomi", "file": "xiaomi-mi-tv-4a.txt" }
+    ,{ "id": "xiaomi-mitv-aesp0", "name": "Xiaomi Mitv Aesp0", "brand": "Xiaomi", "file": "xiaomi-mitv-aesp0.txt" }
+    ,{ "id": "xiaomi-mitv-afmu0", "name": "Xiaomi Mitv Afmu0", "brand": "Xiaomi", "file": "xiaomi-mitv-afmu0.txt" }
+    ,{ "id": "xiaomi-mitv-afmu1", "name": "Xiaomi Mitv Afmu1", "brand": "Xiaomi", "file": "xiaomi-mitv-afmu1.txt" }
+    ,{ "id": "xiaomi-mitv-ansp0", "name": "Xiaomi Mitv Ansp0", "brand": "Xiaomi", "file": "xiaomi-mitv-ansp0.txt" }
+    ,{ "id": "xiaomi-mitv-astp0", "name": "Xiaomi Mitv Astp0", "brand": "Xiaomi", "file": "xiaomi-mitv-astp0.txt" }
+    ,{ "id": "xiaomi-mitv-astp1", "name": "Xiaomi Mitv Astp1", "brand": "Xiaomi", "file": "xiaomi-mitv-astp1.txt" }
+    ,{ "id": "xiaomi-mitv-astr0", "name": "Xiaomi Mitv Astr0", "brand": "Xiaomi", "file": "xiaomi-mitv-astr0.txt" }
+    ,{ "id": "xiaomi-mitv-axfr0", "name": "Xiaomi Mitv Axfr0", "brand": "Xiaomi", "file": "xiaomi-mitv-axfr0.txt" }
+    ,{ "id": "xiaomi-mitv-axfr1", "name": "Xiaomi Mitv Axfr1", "brand": "Xiaomi", "file": "xiaomi-mitv-axfr1.txt" }
+    ,{ "id": "xiaomi-mitv-axfr2", "name": "Xiaomi Mitv Axfr2", "brand": "Xiaomi", "file": "xiaomi-mitv-axfr2.txt" }
+    ,{ "id": "xiaomi-mitv-axfu0", "name": "Xiaomi Mitv Axfu0", "brand": "Xiaomi", "file": "xiaomi-mitv-axfu0.txt" }
+    ,{ "id": "xiaomi-mitv-axso0", "name": "Xiaomi Mitv Axso0", "brand": "Xiaomi", "file": "xiaomi-mitv-axso0.txt" }
+    ,{ "id": "xiaomi-mitv-axso1", "name": "Xiaomi Mitv Axso1", "brand": "Xiaomi", "file": "xiaomi-mitv-axso1.txt" }
+    ,{ "id": "xiaomi-mitv-axso2", "name": "Xiaomi Mitv Axso2", "brand": "Xiaomi", "file": "xiaomi-mitv-axso2.txt" }
+    ,{ "id": "xiaomi-mitv-ayfr0", "name": "Xiaomi Mitv Ayfr0", "brand": "Xiaomi", "file": "xiaomi-mitv-ayfr0.txt" }
+    ,{ "id": "xiaomi-mitv-mffu0", "name": "Xiaomi Mitv Mffu0", "brand": "Xiaomi", "file": "xiaomi-mitv-mffu0.txt" }
+    ,{ "id": "xiaomi-mitv-mftr0", "name": "Xiaomi Mitv Mftr0", "brand": "Xiaomi", "file": "xiaomi-mitv-mftr0.txt" }
+    ,{ "id": "xiaomi-mitv-moeu0", "name": "Xiaomi Mitv Moeu0", "brand": "Xiaomi", "file": "xiaomi-mitv-moeu0.txt" }
+    ,{ "id": "xiaomi-mitv-mooq0", "name": "Xiaomi Mitv Mooq0", "brand": "Xiaomi", "file": "xiaomi-mitv-mooq0.txt" }
+    ,{ "id": "xiaomi-mitv-mooq2", "name": "Xiaomi Mitv Mooq2", "brand": "Xiaomi", "file": "xiaomi-mitv-mooq2.txt" }
+    ,{ "id": "xiaomi-mitv-moor0", "name": "Xiaomi Mitv Moor0", "brand": "Xiaomi", "file": "xiaomi-mitv-moor0.txt" }
+    ,{ "id": "xiaomi-mitv-moor2", "name": "Xiaomi Mitv Moor2", "brand": "Xiaomi", "file": "xiaomi-mitv-moor2.txt" }
+    ,{ "id": "xiaomi-mitv-mosr1", "name": "Xiaomi Mitv Mosr1", "brand": "Xiaomi", "file": "xiaomi-mitv-mosr1.txt" }
+    ,{ "id": "xiaomi-mitv-mosr4", "name": "Xiaomi Mitv Mosr4", "brand": "Xiaomi", "file": "xiaomi-mitv-mosr4.txt" }
+    ,{ "id": "xiaomi-mitv-mssp0", "name": "Xiaomi Mitv Mssp0", "brand": "Xiaomi", "file": "xiaomi-mitv-mssp0.txt" }
+    ,{ "id": "xiaomi-mitv-mssp1", "name": "Xiaomi Mitv Mssp1", "brand": "Xiaomi", "file": "xiaomi-mitv-mssp1.txt" }
+    ,{ "id": "xiaomi-mitv-mssp2", "name": "Xiaomi Mitv Mssp2", "brand": "Xiaomi", "file": "xiaomi-mitv-mssp2.txt" }
+    ,{ "id": "xiaomi-mitv-mssp3-android9", "name": "Xiaomi Mitv Mssp3 Android9", "brand": "Xiaomi", "file": "xiaomi-mitv-mssp3-android9.txt" }
+    ,{ "id": "xiaomi-mitv-mssp3", "name": "Xiaomi Mitv Mssp3", "brand": "Xiaomi", "file": "xiaomi-mitv-mssp3.txt" }
+    ,{ "id": "xiaomi-mitv-mteq0", "name": "Xiaomi Mitv Mteq0", "brand": "Xiaomi", "file": "xiaomi-mitv-mteq0.txt" }
+    ,{ "id": "xiaomi-mitv4i-magnolia", "name": "Xiaomi Mitv4i Magnolia", "brand": "Xiaomi", "file": "xiaomi-mitv4i-magnolia.txt" }
+    ,{ "id": "xiaomi-smart-projector-c025rgn", "name": "Xiaomi Smart Projector C025rgn", "brand": "Xiaomi", "file": "xiaomi-smart-projector-c025rgn.txt" }
+    ,{ "id": "xiaomi-smart-projector-l1-pro-tianshan", "name": "Xiaomi Smart Projector L1 Pro Tianshan", "brand": "Xiaomi", "file": "xiaomi-smart-projector-l1-pro-tianshan.txt" }
+    ,{ "id": "xiaomi-tv-a-pro-2026", "name": "Xiaomi Tv A Pro 2026", "brand": "Xiaomi", "file": "xiaomi-tv-a-pro-2026.txt" }
+    ,{ "id": "xiaomi-tv-a43-2025", "name": "Xiaomi Tv A43 2025", "brand": "Xiaomi", "file": "xiaomi-tv-a43-2025.txt" }
+    ,{ "id": "xvision-50xyu765", "name": "Xvision 50xyu765", "brand": "xvision", "file": "xvision-50xyu765.txt" }
   ]
 }
