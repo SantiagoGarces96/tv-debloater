@@ -3,9 +3,12 @@ package tv.clean.home
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.drawable.Drawable
+import android.net.VpnService
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -13,6 +16,8 @@ import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -54,8 +59,35 @@ class HomeActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             val apps = remember { loadApps() }
+            var vpnOn by remember { mutableStateOf(false) }
+            val consent = rememberLauncherForActivityResult(
+                ActivityResultContracts.StartActivityForResult(),
+            ) { result ->
+                if (result.resultCode == RESULT_OK) {
+                    startVpn()
+                    vpnOn = true
+                }
+            }
             Surface(Modifier.fillMaxSize(), color = Color(0xFF0B0C0F)) {
-                Home(apps, onLaunch = ::launch)
+                Home(
+                    apps = apps,
+                    onLaunch = ::launch,
+                    vpnOn = vpnOn,
+                    onToggleVpn = {
+                        if (vpnOn) {
+                            stopVpn()
+                            vpnOn = false
+                        } else {
+                            val prep = VpnService.prepare(this)
+                            if (prep != null) {
+                                consent.launch(prep)
+                            } else {
+                                startVpn()
+                                vpnOn = true
+                            }
+                        }
+                    },
+                )
             }
         }
     }
@@ -64,6 +96,14 @@ class HomeActivity : ComponentActivity() {
         val intent = packageManager.getLeanbackLaunchIntentForPackage(pkg)
             ?: packageManager.getLaunchIntentForPackage(pkg)
         if (intent != null) startActivity(intent)
+    }
+
+    private fun startVpn() {
+        startService(Intent(this, DnsBlockVpnService::class.java).setAction(DnsBlockVpnService.ACTION_START))
+    }
+
+    private fun stopVpn() {
+        startService(Intent(this, DnsBlockVpnService::class.java).setAction(DnsBlockVpnService.ACTION_STOP))
     }
 
     private fun loadApps(): List<AppEntry> {
@@ -90,15 +130,27 @@ class HomeActivity : ComponentActivity() {
 }
 
 @Composable
-private fun Home(apps: List<AppEntry>, onLaunch: (String) -> Unit) {
+private fun Home(
+    apps: List<AppEntry>,
+    onLaunch: (String) -> Unit,
+    vpnOn: Boolean,
+    onToggleVpn: () -> Unit,
+) {
     Column(Modifier.fillMaxSize().padding(40.dp)) {
-        Clock()
-        Text(
-            "Clean Home",
-            color = Color(0xFF9BA1AC),
-            fontSize = 14.sp,
-            modifier = Modifier.padding(top = 2.dp, bottom = 20.dp),
-        )
+        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
+            Column {
+                Clock()
+                Text(
+                    "Clean Home",
+                    color = Color(0xFF9BA1AC),
+                    fontSize = 14.sp,
+                    modifier = Modifier.padding(top = 2.dp),
+                )
+            }
+            Spacer(Modifier.weight(1f))
+            AdBlockToggle(vpnOn, onToggleVpn)
+        }
+        Spacer(Modifier.padding(top = 20.dp))
         LazyVerticalGrid(
             columns = GridCells.Adaptive(180.dp),
             horizontalArrangement = Arrangement.spacedBy(16.dp),
@@ -123,6 +175,31 @@ private fun Clock() {
     }
     val time = remember(now) { SimpleDateFormat("HH:mm", Locale.getDefault()).format(now) }
     Text(time, color = Color.White, fontSize = 48.sp, fontWeight = FontWeight.Bold)
+}
+
+@Composable
+private fun AdBlockToggle(on: Boolean, onToggle: () -> Unit) {
+    val interaction = remember { MutableInteractionSource() }
+    val focused by interaction.collectIsFocusedAsState()
+    val accent = Color(0xFF34D399)
+    Box(
+        Modifier
+            .clip(RoundedCornerShape(24.dp))
+            .border(
+                if (focused) 3.dp else 1.dp,
+                if (focused) accent else Color(0xFF23272F),
+                RoundedCornerShape(24.dp),
+            )
+            .clickable(interactionSource = interaction, indication = null, onClick = onToggle)
+            .padding(horizontal = 18.dp, vertical = 12.dp),
+    ) {
+        Text(
+            if (on) "● Anuncios bloqueados" else "○ Bloquear anuncios",
+            color = if (on) accent else Color.White,
+            fontSize = 15.sp,
+            fontWeight = FontWeight.Bold,
+        )
+    }
 }
 
 @Composable
