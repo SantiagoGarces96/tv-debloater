@@ -12,9 +12,11 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Arrangement
@@ -102,6 +104,12 @@ class HomeActivity : ComponentActivity() {
                             }
                         },
                         onOpenSettings = { showSettings = true },
+                        onToggleFav = { pkg ->
+                            val fav = config.favorites.toMutableSet()
+                            if (!fav.add(pkg)) fav.remove(pkg)
+                            config = config.copy(favorites = fav)
+                            prefs.save(config)
+                        },
                     )
                 }
             }
@@ -153,9 +161,16 @@ private fun Home(
     vpnOn: Boolean,
     onToggleVpn: () -> Unit,
     onOpenSettings: () -> Unit,
+    onToggleFav: (String) -> Unit,
 ) {
     val accent = Color(config.accent)
     var focusedLabel by remember { mutableStateOf<String?>(null) }
+    val ordered = remember(apps, config.favorites) {
+        apps.sortedWith(
+            compareByDescending<AppEntry> { it.packageName in config.favorites }
+                .thenBy { it.label.lowercase() },
+        )
+    }
     Column(Modifier.fillMaxSize().padding(horizontal = 48.dp, vertical = 40.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
             Clock()
@@ -171,7 +186,13 @@ private fun Home(
             fontWeight = FontWeight.Bold,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.padding(top = 22.dp, bottom = 24.dp),
+            modifier = Modifier.padding(top = 22.dp, bottom = 4.dp),
+        )
+        Text(
+            "Mantén OK sobre una app para fijarla ★",
+            color = Color(0xFF6B7280),
+            fontSize = 12.sp,
+            modifier = Modifier.padding(bottom = 20.dp),
         )
         val columns = if (config.columns > 0) GridCells.Fixed(config.columns) else GridCells.Adaptive(210.dp)
         LazyVerticalGrid(
@@ -180,11 +201,13 @@ private fun Home(
             verticalArrangement = Arrangement.spacedBy(26.dp),
             modifier = Modifier.fillMaxWidth(),
         ) {
-            items(apps, key = { it.packageName }) { app ->
+            items(ordered, key = { it.packageName }) { app ->
                 AppTile(
                     app = app,
                     accent = accent,
+                    favorite = app.packageName in config.favorites,
                     onClick = { onLaunch(app.packageName) },
+                    onLongClick = { onToggleFav(app.packageName) },
                     onFocused = { focusedLabel = app.label },
                 )
             }
@@ -320,7 +343,15 @@ private fun AdBlockToggle(on: Boolean, accent: Color, onToggle: () -> Unit) {
 }
 
 @Composable
-private fun AppTile(app: AppEntry, accent: Color, onClick: () -> Unit, onFocused: () -> Unit) {
+@OptIn(ExperimentalFoundationApi::class)
+private fun AppTile(
+    app: AppEntry,
+    accent: Color,
+    favorite: Boolean,
+    onClick: () -> Unit,
+    onLongClick: () -> Unit,
+    onFocused: () -> Unit,
+) {
     val interaction = remember { MutableInteractionSource() }
     val focused by interaction.collectIsFocusedAsState()
     val scale by animateFloatAsState(if (focused) 1.12f else 1f, spring(), label = "scale")
@@ -335,7 +366,12 @@ private fun AppTile(app: AppEntry, accent: Color, onClick: () -> Unit, onFocused
             .shadow(elevation, shape, ambientColor = accent, spotColor = accent)
             .clip(shape)
             .border(if (focused) 3.dp else 1.dp, if (focused) accent else Color(0xFF23272F), shape)
-            .clickable(interactionSource = interaction, indication = null, onClick = onClick),
+            .combinedClickable(
+                interactionSource = interaction,
+                indication = null,
+                onClick = onClick,
+                onLongClick = onLongClick,
+            ),
         contentAlignment = Alignment.Center,
     ) {
         val img = app.icon
@@ -355,6 +391,14 @@ private fun AppTile(app: AppEntry, accent: Color, onClick: () -> Unit, onFocused
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier.padding(12.dp),
+            )
+        }
+        if (favorite) {
+            Text(
+                "★",
+                color = accent,
+                fontSize = 18.sp,
+                modifier = Modifier.align(Alignment.TopStart).padding(8.dp),
             )
         }
     }

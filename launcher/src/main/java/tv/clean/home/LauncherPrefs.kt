@@ -6,6 +6,7 @@ import android.content.Context
 data class LauncherConfig(
     val accent: Long = 0xFF34D399, // esmeralda
     val columns: Int = 0,          // 0 = automático
+    val favorites: Set<String> = emptySet(), // paquetes fijados
 )
 
 class LauncherPrefs(context: Context) {
@@ -15,18 +16,21 @@ class LauncherPrefs(context: Context) {
     fun load(): LauncherConfig = LauncherConfig(
         accent = sp.getLong(KEY_ACCENT, 0xFF34D399),
         columns = sp.getInt(KEY_COLUMNS, 0),
+        favorites = sp.getStringSet(KEY_FAV, emptySet())?.toSet() ?: emptySet(),
     )
 
     fun save(config: LauncherConfig) {
         sp.edit()
             .putLong(KEY_ACCENT, config.accent)
             .putInt(KEY_COLUMNS, config.columns)
+            .putStringSet(KEY_FAV, config.favorites)
             .apply()
     }
 
     companion object {
         private const val KEY_ACCENT = "accent"
         private const val KEY_COLUMNS = "columns"
+        private const val KEY_FAV = "favorites"
 
         /** Paleta de acentos disponible (nombre -> color ARGB). */
         val ACCENTS: List<Pair<String, Long>> = listOf(
