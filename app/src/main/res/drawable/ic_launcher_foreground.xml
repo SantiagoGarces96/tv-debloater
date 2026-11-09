@@ -3,13 +3,32 @@
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
-    <path
-        android:fillColor="#CFFFCF"
-        android:pathData="M30,38h48a4,4 0 0 1 4,4v24a4,4 0 0 1 -4,4h-48a4,4 0 0 1 -4,-4v-24a4,4 0 0 1 4,-4zM30,44v20h48v-20z" />
-    <path
-        android:fillColor="#CFFFCF"
-        android:pathData="M46,74h16v4h-16z" />
-    <path
-        android:fillColor="#15181E"
-        android:pathData="M48,50l12,4l-12,4z" />
+
+    <!-- Cresta / penacho (mohawk) -->
+    <path android:fillColor="#E0312B"
+        android:pathData="M54,20 C47,20 42,27 42,38 L49,40 C49,30 51,26 54,26 C57,26 59,30 59,40 L66,38 C66,27 61,20 54,20 Z" />
+    <path android:fillColor="#8E1714"
+        android:pathData="M54,26 C52,30 51,34 51,40 L57,40 C57,34 56,30 54,26 Z" />
+
+    <!-- Casco con apertura facial (el centro negro es el rostro) -->
+    <path android:fillColor="#E0312B"
+        android:pathData="M54,30
+            C39,30 30,41 30,56
+            C30,71 39,83 50,88
+            L50,72
+            C43,68 39,62 39,56
+            C39,45 46,39 54,39
+            C62,39 69,45 69,56
+            C69,62 65,68 58,72
+            L58,88
+            C69,83 78,71 78,56
+            C78,41 69,30 54,30 Z" />
+
+    <!-- Nariguera -->
+    <path android:fillColor="#E0312B"
+        android:pathData="M51,45 h6 v30 h-6 z" />
+
+    <!-- Brillo sutil en el borde superior -->
+    <path android:fillColor="#F56B66"
+        android:pathData="M54,30 C47,30 41,33 37,38 C41,34 47,32 54,32 C61,32 67,34 71,38 C67,33 61,30 54,30 Z" />
 </vector>
