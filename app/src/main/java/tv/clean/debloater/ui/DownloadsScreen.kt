@@ -85,7 +85,7 @@ fun DownloadsScreen(state: UiState, vm: DebloaterViewModel, modifier: Modifier) 
             modifier = Modifier.padding(top = 14.dp, bottom = 4.dp),
         )
         LazyColumn(Modifier.weight(1f)) {
-            items(state.dlCatalog, key = { it.name }) { app ->
+            items(state.dlCatalog) { app ->
                 Row(
                     Modifier.fillMaxWidth().padding(vertical = 8.dp),
                     verticalAlignment = Alignment.CenterVertically,
