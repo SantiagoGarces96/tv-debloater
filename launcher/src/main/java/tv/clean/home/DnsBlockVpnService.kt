@@ -3,6 +3,7 @@ package tv.clean.home
 import android.content.Intent
 import android.net.VpnService
 import android.os.ParcelFileDescriptor
+import java.io.ByteArrayOutputStream
 import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.net.DatagramPacket
@@ -24,6 +25,7 @@ class DnsBlockVpnService : VpnService() {
     @Volatile private var running = false
     private var vpn: ParcelFileDescriptor? = null
     private var worker: Thread? = null
+    @Volatile private var blocklist: Set<String> = emptySet()
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (intent?.action == ACTION_STOP) {
@@ -35,8 +37,17 @@ class DnsBlockVpnService : VpnService() {
         return START_STICKY
     }
 
+    private fun loadBlocklist(): Set<String> = runCatching {
+        assets.open("blocklist.txt").bufferedReader().useLines { lines ->
+            lines.map { it.trim().lowercase() }
+                .filter { it.isNotEmpty() && !it.startsWith("#") }
+                .toHashSet()
+        }
+    }.getOrDefault(emptySet())
+
     private fun startBlocking() {
         if (running) return
+        if (blocklist.isEmpty()) blocklist = loadBlocklist()
         val pfd = Builder()
             .setSession("Clean Home — bloqueo de anuncios")
             .addAddress("10.111.222.2", 32)
@@ -85,10 +96,17 @@ class DnsBlockVpnService : VpnService() {
                 val dnsStart = ihl + 8
                 val query = packet.copyOfRange(dnsStart, len)
 
-                val answer = forward(socket, dstIp, query) ?: continue
-                // Respuesta: intercambiamos origen/destino y puertos.
-                val reply = buildUdpIpv4(dstIp, srcIp, dstPort, srcPort, answer)
-                output.write(reply)
+                val host = qname(query)
+                val answer = if (host != null && isBlocked(host)) {
+                    buildBlockedDns(query)        // bloqueado por lista local -> 0.0.0.0
+                } else {
+                    forward(socket, dstIp, query) // el resto lo filtra AdGuard
+                }
+                if (answer != null) {
+                    // Respuesta: intercambiamos origen/destino y puertos.
+                    val reply = buildUdpIpv4(dstIp, srcIp, dstPort, srcPort, answer)
+                    output.write(reply)
+                }
             }
         } catch (_: Throwable) {
             // túnel cerrado o interrumpido
@@ -152,6 +170,73 @@ class DnsBlockVpnService : VpnService() {
         if (i < end) sum += (data[i].toInt() and 0xFF) shl 8
         while (sum shr 16 != 0L) sum = (sum and 0xFFFF) + (sum shr 16)
         return (sum.inv() and 0xFFFF).toInt()
+    }
+
+    /** Extrae el dominio consultado (QNAME) del paquete DNS. */
+    private fun qname(dns: ByteArray): String? {
+        if (dns.size < 13) return null
+        var i = 12
+        val sb = StringBuilder()
+        while (i < dns.size) {
+            val len = dns[i].toInt() and 0xFF
+            if (len == 0) break
+            if (len and 0xC0 != 0) return null
+            i++
+            if (i + len > dns.size) return null
+            if (sb.isNotEmpty()) sb.append('.')
+            for (j in 0 until len) sb.append((dns[i + j].toInt() and 0xFF).toChar())
+            i += len
+        }
+        val host = sb.toString().lowercase()
+        return host.ifEmpty { null }
+    }
+
+    /** ¿El dominio (o alguno de sus padres) está en la lista de bloqueo? */
+    private fun isBlocked(host: String): Boolean {
+        if (host in blocklist) return true
+        var dot = host.indexOf('.')
+        while (dot >= 0 && dot + 1 < host.length) {
+            if (host.substring(dot + 1) in blocklist) return true
+            dot = host.indexOf('.', dot + 1)
+        }
+        return false
+    }
+
+    /** Fin de la sección pregunta (tras QNAME+QTYPE+QCLASS). */
+    private fun questionEnd(dns: ByteArray): Int? {
+        var i = 12
+        while (i < dns.size) {
+            val len = dns[i].toInt() and 0xFF
+            if (len == 0) { i++; break }
+            i += 1 + len
+            if (i > dns.size) return null
+        }
+        i += 4
+        return if (i <= dns.size) i else null
+    }
+
+    /** Respuesta DNS que apunta el dominio a 0.0.0.0 (bloqueado). */
+    private fun buildBlockedDns(query: ByteArray): ByteArray? {
+        val qEnd = questionEnd(query) ?: return null
+        val qtype = ((query[qEnd - 4].toInt() and 0xFF) shl 8) or (query[qEnd - 3].toInt() and 0xFF)
+        val out = ByteArrayOutputStream()
+        out.write(query, 0, 2)          // ID
+        out.write(0x81); out.write(0x80) // QR=1, RD, RA
+        out.write(0x00); out.write(0x01) // QDCOUNT=1
+        val isA = qtype == 1
+        out.write(0x00); out.write(if (isA) 0x01 else 0x00) // ANCOUNT
+        out.write(0x00); out.write(0x00) // NSCOUNT
+        out.write(0x00); out.write(0x00) // ARCOUNT
+        out.write(query, 12, qEnd - 12)  // sección pregunta
+        if (isA) {
+            out.write(0xC0); out.write(0x0C)             // puntero al nombre
+            out.write(0x00); out.write(0x01)             // tipo A
+            out.write(0x00); out.write(0x01)             // clase IN
+            out.write(0x00); out.write(0x00); out.write(0x01); out.write(0x2C) // TTL 300
+            out.write(0x00); out.write(0x04)             // rdlength 4
+            out.write(0x00); out.write(0x00); out.write(0x00); out.write(0x00) // 0.0.0.0
+        }
+        return out.toByteArray()
     }
 
     companion object {
