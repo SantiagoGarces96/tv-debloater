@@ -8,6 +8,7 @@ import tv.clean.debloater.data.AppGroup
 import tv.clean.debloater.data.AppRow
 import tv.clean.debloater.data.Categorizer
 import tv.clean.debloater.data.DebloatRepository
+import tv.clean.debloater.data.Protected
 import tv.clean.debloater.data.Telemetry
 import tv.clean.debloater.data.UadEntry
 
@@ -44,6 +45,19 @@ class LogicTest {
         assertEquals(AppGroup.BRAND, Categorizer.of("com.x.y", null, null, UadEntry(list = "Oem"), false))
         assertEquals(AppGroup.APPS, Categorizer.of("com.x.y", null, null, UadEntry(list = "Google"), false))
         assertEquals(AppGroup.OTHER, Categorizer.of("com.x.y", null, null, null, false))
+    }
+
+    @Test
+    fun protected_keepsEssentials() {
+        assertTrue(Protected.isProtected("com.android.tv.settings"))
+        assertTrue(Protected.isProtected("com.android.settings"))
+        assertTrue(Protected.isProtected("com.android.systemui"))
+        assertTrue(Protected.isProtected("com.google.android.gms"))
+        assertTrue(Protected.isProtected("com.google.android.tvlauncher"))
+        assertTrue(Protected.isProtected("com.android.providers.settings"))
+        assertTrue(Protected.isProtected("com.google.android.inputmethod.latin"))
+        // Un paquete de anuncios normal NO está protegido:
+        assertFalse(Protected.isProtected("com.sony.dtv.advertisement"))
     }
 
     @Test

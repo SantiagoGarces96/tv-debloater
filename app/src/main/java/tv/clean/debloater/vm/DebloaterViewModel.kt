@@ -26,6 +26,7 @@ import tv.clean.debloater.data.Categorizer
 import tv.clean.debloater.data.DebloatProfile
 import tv.clean.debloater.data.DebloatRepository
 import tv.clean.debloater.data.Prefs
+import tv.clean.debloater.data.Protected
 import tv.clean.debloater.data.Telemetry
 import tv.clean.debloater.data.UadEntry
 
@@ -222,7 +223,7 @@ class DebloaterViewModel(app: Application) : AndroidViewModel(app) {
     private fun rebuildRows(preselect: Boolean = true) {
         val profile = _state.value.profiles.firstOrNull { it.id == _state.value.selectedProfileId }
         val profileEntries = profile?.entries ?: emptyMap()
-        val rows = installed.map { pkg ->
+        val rows = installed.filterNot { Protected.isProtected(it) }.map { pkg ->
             val reason = profileEntries[pkg] ?: catalog[pkg]
             val u = uad[pkg]
             val description = u?.description?.takeIf { it.isNotBlank() }
