@@ -74,6 +74,7 @@ dependencies {
     implementation(libs.androidx.material.icons.extended)
     debugImplementation(libs.androidx.ui.tooling)
 
+    implementation(project(":automation"))
     implementation(libs.dadb)
     implementation(libs.jsch)
     implementation(libs.kotlinx.coroutines.android)

@@ -609,7 +609,7 @@ private fun PackagesScreen(state: UiState, vm: DebloaterViewModel, modifier: Mod
             enabled = !state.busy,
             modifier = Modifier.fillMaxWidth(),
         ) {
-            Text("Cerrar avisos automáticamente")
+            Text("Automatizaciones (cerrar avisos solo)")
         }
     }
 

@@ -22,7 +22,8 @@ import tv.clean.debloater.data.AppRow
 import tv.clean.debloater.data.BackupRecord
 import tv.clean.debloater.data.BackupStore
 import tv.clean.debloater.data.AppGroup
-import tv.clean.debloater.data.AutoRulesDefaults
+import tv.clean.automation.Macro
+import tv.clean.automation.Macros
 import tv.clean.debloater.data.CatalogApp
 import tv.clean.debloater.net.ApkDownloader
 import tv.clean.debloater.data.Categorizer
@@ -86,7 +87,11 @@ data class UiState(
     val dlInstalled: Set<String> = emptySet(),
     val dlPending: PendingApk? = null,
     // Cerrar avisos automáticamente
-    val autoRules: String = "",
+    val autoMacros: List<Macro> = emptyList(),
+    /** Automatización que estás creando o editando (null = viendo la lista). */
+    val autoDraft: Macro? = null,
+    val autoDraftIsNew: Boolean = false,
+    val autoDraftError: String? = null,
     val autoEnabled: Boolean? = null,
     val autoBusy: Boolean = false,
     val autoLog: List<String> = emptyList(),
@@ -488,12 +493,19 @@ class DebloaterViewModel(app: Application) : AndroidViewModel(app) {
     private val needLauncherMsg =
         "Primero instala la pantalla de inicio SG Alfa (botón «Poner una pantalla de inicio limpia»): el servicio viene dentro de ella."
 
+    /** Tus automatizaciones guardadas; si no hay, migra las reglas viejas; si tampoco, las plantillas. */
+    private fun loadMacros(): List<Macro> =
+        prefs.macrosJson.takeIf { it.isNotBlank() }?.let { Macros.decodeOrNull(it) }
+            ?: prefs.legacyAutoRules.takeIf { it.isNotBlank() }?.let { Macros.fromLegacyText(it) }
+            ?: Macros.templates()
+
     fun openAutomation() {
-        val saved = prefs.autoRules
         _state.update {
             it.copy(
                 stage = Stage.Automation,
-                autoRules = it.autoRules.ifBlank { saved.ifBlank { AutoRulesDefaults.TEXT } },
+                autoMacros = loadMacros(),
+                autoDraft = null,
+                autoDraftError = null,
                 autoLog = emptyList(),
             )
         }
@@ -503,11 +515,79 @@ class DebloaterViewModel(app: Application) : AndroidViewModel(app) {
         }
     }
 
-    fun onAutoRules(value: String) = _state.update { it.copy(autoRules = value) }
-
-    fun resetAutoRules() = _state.update { it.copy(autoRules = AutoRulesDefaults.TEXT) }
-
     private fun appendAuto(line: String) = _state.update { it.copy(autoLog = it.autoLog + line) }
+
+    /** Guarda la lista en el teléfono y, si el servicio está activado, la manda a la tele. */
+    private fun commitMacros(list: List<Macro>, message: String? = null) {
+        prefs.macrosJson = Macros.encode(list)
+        _state.update { it.copy(autoMacros = list, autoLog = listOfNotNull(message)) }
+        if (_state.value.autoEnabled == true) {
+            viewModelScope.launch {
+                _state.update { it.copy(autoBusy = true) }
+                sendMacros(quiet = true)
+                _state.update { it.copy(autoBusy = false) }
+            }
+        }
+    }
+
+    fun setMacroEnabled(id: String, enabled: Boolean) =
+        commitMacros(_state.value.autoMacros.map { if (it.id == id) it.copy(enabled = enabled) else it })
+
+    fun newMacro() = _state.update {
+        it.copy(
+            autoDraft = Macro(id = Macros.newId(), name = ""),
+            autoDraftIsNew = true,
+            autoDraftError = null,
+        )
+    }
+
+    fun editMacro(m: Macro) = _state.update { it.copy(autoDraft = m, autoDraftIsNew = false, autoDraftError = null) }
+
+    /** Empieza una automatización nueva a partir de una plantilla, para cambiarla a tu gusto. */
+    fun newFromTemplate(t: Macro) = _state.update {
+        it.copy(
+            autoDraft = t.copy(id = Macros.newId(), name = t.name + " (copia)"),
+            autoDraftIsNew = true,
+            autoDraftError = null,
+        )
+    }
+
+    fun addTemplate(t: Macro) {
+        val list = _state.value.autoMacros
+        if (list.any { it.id == t.id }) return
+        commitMacros(list + t, "✓ Añadida «${t.name}».")
+    }
+
+    fun cancelDraft() = _state.update { it.copy(autoDraft = null, autoDraftError = null) }
+
+    fun saveDraft(m: Macro) {
+        val clean = m.copy(
+            name = m.name.trim(),
+            text = m.text.trim(),
+            app = m.app.trim(),
+            context = m.context.map { it.trim() }.filter { it.isNotEmpty() },
+        )
+        val error = Macros.validate(clean)
+        if (error != null) {
+            _state.update { it.copy(autoDraft = clean, autoDraftError = error) }
+            return
+        }
+        val list = _state.value.autoMacros
+        val updated = if (list.any { it.id == clean.id }) {
+            list.map { if (it.id == clean.id) clean else it }
+        } else {
+            list + clean
+        }
+        _state.update { it.copy(autoDraft = null, autoDraftError = null) }
+        commitMacros(updated, "✓ Guardada «${clean.name}».")
+    }
+
+    fun deleteMacro(id: String) {
+        val list = _state.value.autoMacros
+        val gone = list.firstOrNull { it.id == id } ?: return
+        _state.update { it.copy(autoDraft = null, autoDraftError = null) }
+        commitMacros(list.filterNot { it.id == id }, "Eliminada «${gone.name}».")
+    }
 
     fun toggleAutomation() {
         val enable = _state.value.autoEnabled != true
@@ -518,36 +598,35 @@ class DebloaterViewModel(app: Application) : AndroidViewModel(app) {
                 _state.update { it.copy(autoBusy = false) }
                 return@launch
             }
-            if (enable) {
-                sendRules()
+            if (enable && !sendMacros(quiet = false)) {
+                _state.update { it.copy(autoBusy = false) }
+                return@launch
             }
             when (val r = adb.setAutoClickEnabled(enable)) {
-                is AdbResult.Ok -> appendAuto(if (enable) "✓ Activado: la tele pulsará sola esos botones." else "✓ Desactivado.")
+                is AdbResult.Ok -> appendAuto(
+                    if (enable) "✓ Activado: la tele hará sola tus automatizaciones." else "✓ Desactivado.",
+                )
                 is AdbResult.Err -> appendAuto("✗ ${r.message}")
             }
             _state.update { it.copy(autoBusy = false, autoEnabled = adb.isAutoClickEnabled()) }
         }
     }
 
-    fun saveAutoRules() {
-        viewModelScope.launch {
-            _state.update { it.copy(autoBusy = true, autoLog = emptyList()) }
-            if (!launcherInstalled()) {
-                appendAuto(needLauncherMsg)
-                _state.update { it.copy(autoBusy = false) }
-                return@launch
+    /** Manda las automatizaciones a la tele. Devuelve si la tele las aceptó. */
+    private suspend fun sendMacros(quiet: Boolean): Boolean {
+        val list = _state.value.autoMacros
+        return when (val r = adb.pushMacros(Macros.encode(list))) {
+            is AdbResult.Ok -> {
+                appendAuto(
+                    if (quiet) "✓ Cambios enviados a la tele."
+                    else "✓ ${r.value} automatizaciones guardadas en la tele (${list.count { it.enabled }} encendidas).",
+                )
+                true
             }
-            sendRules()
-            _state.update { it.copy(autoBusy = false) }
-        }
-    }
-
-    private suspend fun sendRules() {
-        val text = _state.value.autoRules
-        prefs.autoRules = text
-        when (val r = adb.pushAutoClickRules(text)) {
-            is AdbResult.Ok -> appendAuto("✓ ${r.value} reglas guardadas en la tele.")
-            is AdbResult.Err -> appendAuto("✗ No se pudieron guardar las reglas: ${r.message}")
+            is AdbResult.Err -> {
+                appendAuto("✗ No se pudieron enviar a la tele: ${r.message}")
+                false
+            }
         }
     }
 

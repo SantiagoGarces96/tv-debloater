@@ -13,15 +13,20 @@ class Prefs(context: Context) {
             sp.edit().putString(KEY_LAST_HOST, value).apply()
         }
 
-    /** Tus reglas de "cerrar avisos" (texto). Vacío = usar las reglas por defecto. */
-    var autoRules: String
+    /** Reglas antiguas en texto (versiones anteriores). Solo se leen para migrarlas. */
+    val legacyAutoRules: String
         get() = sp.getString(KEY_AUTO_RULES, "").orEmpty()
+
+    /** Tus automatizaciones (JSON). Vacío = todavía no has guardado ninguna. */
+    var macrosJson: String
+        get() = sp.getString(KEY_MACROS, "").orEmpty()
         set(value) {
-            sp.edit().putString(KEY_AUTO_RULES, value).apply()
+            sp.edit().putString(KEY_MACROS, value).remove(KEY_AUTO_RULES).apply()
         }
 
     private companion object {
         const val KEY_LAST_HOST = "last_host"
         const val KEY_AUTO_RULES = "auto_rules"
+        const val KEY_MACROS = "macros"
     }
 }

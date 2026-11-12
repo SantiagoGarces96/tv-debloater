@@ -260,17 +260,23 @@ class AdbManager(context: Context) {
         }
     }
 
-    /** Envía tus reglas al launcher de la tele. Devuelve cuántas reglas leyó. */
-    suspend fun pushAutoClickRules(text: String): AdbResult<Int> = withContext(Dispatchers.IO) {
+    /** Envía tus automatizaciones (JSON) al launcher de la tele. Devuelve cuántas guardó. */
+    suspend fun pushMacros(json: String): AdbResult<Int> = withContext(Dispatchers.IO) {
         val d = dadb ?: return@withContext AdbResult.Err("Sin conexión.")
         try {
-            val encoded = java.util.Base64.getEncoder().encodeToString(text.toByteArray(Charsets.UTF_8))
+            val encoded = java.util.Base64.getEncoder().encodeToString(json.toByteArray(Charsets.UTF_8))
             val r = d.shell(
-                "am broadcast -a tv.clean.home.SET_AUTOCLICK_RULES -n tv.clean.home/.RulesReceiver --es rules '$encoded'",
+                "am broadcast -a tv.clean.home.SET_AUTOCLICK_RULES -n tv.clean.home/.RulesReceiver --es macros '$encoded'",
             )
             val count = Regex("ok (\\d+)").find(r.output)?.groupValues?.get(1)?.toIntOrNull()
-            if (count != null) AdbResult.Ok(count)
-            else AdbResult.Err((r.output + r.errorOutput).trim().ifBlank { "La tele no confirmó las reglas." })
+            if (count != null) {
+                AdbResult.Ok(count)
+            } else {
+                AdbResult.Err(
+                    "La tele no confirmó. Actualiza la pantalla de inicio SG Alfa " +
+                        "(botón «Poner una pantalla de inicio limpia») y vuelve a intentarlo.",
+                )
+            }
         } catch (e: Throwable) {
             AdbResult.Err(describe(e, host, 5555))
         }
