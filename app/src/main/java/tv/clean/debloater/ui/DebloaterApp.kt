@@ -66,6 +66,7 @@ fun DebloaterApp(state: UiState, vm: DebloaterViewModel, modifier: Modifier = Mo
         Stage.LgInfo -> LgInfoScreen(state, vm, modifier)
         Stage.SamsungInfo -> SamsungInfoScreen(state, vm, modifier)
         Stage.Downloads -> DownloadsScreen(state, vm, modifier)
+        Stage.Automation -> AutomationScreen(state, vm, modifier)
     }
 }
 
@@ -602,6 +603,13 @@ private fun PackagesScreen(state: UiState, vm: DebloaterViewModel, modifier: Mod
             modifier = Modifier.fillMaxWidth(),
         ) {
             Text("Descargar e instalar apps")
+        }
+        OutlinedButton(
+            onClick = vm::openAutomation,
+            enabled = !state.busy,
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            Text("Cerrar avisos automáticamente")
         }
     }
 

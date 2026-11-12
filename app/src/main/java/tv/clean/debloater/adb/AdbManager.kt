@@ -7,6 +7,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
 
+/** Servicio "cerrar avisos" que vive dentro del launcher SG Alfa. */
+const val AUTOCLICK_COMPONENT = "tv.clean.home/tv.clean.home.AutoClickService"
+
 /** Nombre de paquete Android válido (evita inyectar cosas en comandos de shell). */
 private val PKG_REGEX = Regex("^[A-Za-z][A-Za-z0-9_]*(\\.[A-Za-z0-9_]+)+$")
 
@@ -219,6 +222,55 @@ class AdbManager(context: Context) {
             } else {
                 AdbResult.Err(out.ifBlank { "No se pudo abrir Play Store (¿la tele tiene Play Store?)." })
             }
+        } catch (e: Throwable) {
+            AdbResult.Err(describe(e, host, 5555))
+        }
+    }
+
+    /** ¿Está activado el servicio "cerrar avisos" del launcher SG Alfa? */
+    suspend fun isAutoClickEnabled(): Boolean = withContext(Dispatchers.IO) {
+        val d = dadb ?: return@withContext false
+        runCatching {
+            d.shell("settings get secure enabled_accessibility_services").output.contains(AUTOCLICK_COMPONENT)
+        }.getOrDefault(false)
+    }
+
+    /** Activa o desactiva el servicio "cerrar avisos", sin tocar otros servicios de accesibilidad. */
+    suspend fun setAutoClickEnabled(enable: Boolean): AdbResult<Unit> = withContext(Dispatchers.IO) {
+        val d = dadb ?: return@withContext AdbResult.Err("Sin conexión.")
+        try {
+            val current = d.shell("settings get secure enabled_accessibility_services").output.trim()
+            val list = current.takeIf { it.isNotEmpty() && it != "null" }
+                ?.split(':')?.filter { it.isNotBlank() }?.toMutableList()
+                ?: mutableListOf()
+            list.remove(AUTOCLICK_COMPONENT)
+            if (enable) list.add(AUTOCLICK_COMPONENT)
+            if (list.isEmpty()) {
+                d.shell("settings delete secure enabled_accessibility_services")
+                d.shell("settings put secure accessibility_enabled 0")
+            } else {
+                d.shell("settings put secure enabled_accessibility_services '${list.joinToString(":")}'")
+                d.shell("settings put secure accessibility_enabled 1")
+            }
+            val now = d.shell("settings get secure enabled_accessibility_services").output
+            if (now.contains(AUTOCLICK_COMPONENT) == enable) AdbResult.Ok(Unit)
+            else AdbResult.Err("La tele no aceptó el cambio.")
+        } catch (e: Throwable) {
+            AdbResult.Err(describe(e, host, 5555))
+        }
+    }
+
+    /** Envía tus reglas al launcher de la tele. Devuelve cuántas reglas leyó. */
+    suspend fun pushAutoClickRules(text: String): AdbResult<Int> = withContext(Dispatchers.IO) {
+        val d = dadb ?: return@withContext AdbResult.Err("Sin conexión.")
+        try {
+            val encoded = java.util.Base64.getEncoder().encodeToString(text.toByteArray(Charsets.UTF_8))
+            val r = d.shell(
+                "am broadcast -a tv.clean.home.SET_AUTOCLICK_RULES -n tv.clean.home/.RulesReceiver --es rules '$encoded'",
+            )
+            val count = Regex("ok (\\d+)").find(r.output)?.groupValues?.get(1)?.toIntOrNull()
+            if (count != null) AdbResult.Ok(count)
+            else AdbResult.Err((r.output + r.errorOutput).trim().ifBlank { "La tele no confirmó las reglas." })
         } catch (e: Throwable) {
             AdbResult.Err(describe(e, host, 5555))
         }

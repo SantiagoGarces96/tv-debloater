@@ -22,6 +22,7 @@ import tv.clean.debloater.data.AppRow
 import tv.clean.debloater.data.BackupRecord
 import tv.clean.debloater.data.BackupStore
 import tv.clean.debloater.data.AppGroup
+import tv.clean.debloater.data.AutoRulesDefaults
 import tv.clean.debloater.data.CatalogApp
 import tv.clean.debloater.net.ApkDownloader
 import tv.clean.debloater.data.Categorizer
@@ -32,7 +33,7 @@ import tv.clean.debloater.data.Protected
 import tv.clean.debloater.data.Telemetry
 import tv.clean.debloater.data.UadEntry
 
-enum class Stage { Platform, Connect, Packages, Working, LgInfo, SamsungInfo, Downloads }
+enum class Stage { Platform, Connect, Packages, Working, LgInfo, SamsungInfo, Downloads, Automation }
 
 /** APK ya descargado y verificado, esperando que el usuario confirme la instalación. */
 data class PendingApk(
@@ -84,6 +85,11 @@ data class UiState(
     val dlLog: List<String> = emptyList(),
     val dlInstalled: Set<String> = emptySet(),
     val dlPending: PendingApk? = null,
+    // Cerrar avisos automáticamente
+    val autoRules: String = "",
+    val autoEnabled: Boolean? = null,
+    val autoBusy: Boolean = false,
+    val autoLog: List<String> = emptyList(),
 )
 
 class DebloaterViewModel(app: Application) : AndroidViewModel(app) {
@@ -469,6 +475,81 @@ class DebloaterViewModel(app: Application) : AndroidViewModel(app) {
     }
 
     fun backToPackages() = _state.update { it.copy(stage = Stage.Packages, log = emptyList()) }
+
+    // ---------- Cerrar avisos automáticamente ----------
+
+    /** Comprueba en la tele (no en la lista guardada) si la pantalla de inicio SG Alfa está instalada. */
+    private suspend fun launcherInstalled(): Boolean {
+        val list = adb.listPackages()
+        if (list is AdbResult.Ok) installed = list.value
+        return "tv.clean.home" in installed
+    }
+
+    private val needLauncherMsg =
+        "Primero instala la pantalla de inicio SG Alfa (botón «Poner una pantalla de inicio limpia»): el servicio viene dentro de ella."
+
+    fun openAutomation() {
+        val saved = prefs.autoRules
+        _state.update {
+            it.copy(
+                stage = Stage.Automation,
+                autoRules = it.autoRules.ifBlank { saved.ifBlank { AutoRulesDefaults.TEXT } },
+                autoLog = emptyList(),
+            )
+        }
+        viewModelScope.launch {
+            val enabled = adb.isAutoClickEnabled()
+            _state.update { it.copy(autoEnabled = enabled) }
+        }
+    }
+
+    fun onAutoRules(value: String) = _state.update { it.copy(autoRules = value) }
+
+    fun resetAutoRules() = _state.update { it.copy(autoRules = AutoRulesDefaults.TEXT) }
+
+    private fun appendAuto(line: String) = _state.update { it.copy(autoLog = it.autoLog + line) }
+
+    fun toggleAutomation() {
+        val enable = _state.value.autoEnabled != true
+        viewModelScope.launch {
+            _state.update { it.copy(autoBusy = true, autoLog = emptyList()) }
+            if (enable && !launcherInstalled()) {
+                appendAuto(needLauncherMsg)
+                _state.update { it.copy(autoBusy = false) }
+                return@launch
+            }
+            if (enable) {
+                sendRules()
+            }
+            when (val r = adb.setAutoClickEnabled(enable)) {
+                is AdbResult.Ok -> appendAuto(if (enable) "✓ Activado: la tele pulsará sola esos botones." else "✓ Desactivado.")
+                is AdbResult.Err -> appendAuto("✗ ${r.message}")
+            }
+            _state.update { it.copy(autoBusy = false, autoEnabled = adb.isAutoClickEnabled()) }
+        }
+    }
+
+    fun saveAutoRules() {
+        viewModelScope.launch {
+            _state.update { it.copy(autoBusy = true, autoLog = emptyList()) }
+            if (!launcherInstalled()) {
+                appendAuto(needLauncherMsg)
+                _state.update { it.copy(autoBusy = false) }
+                return@launch
+            }
+            sendRules()
+            _state.update { it.copy(autoBusy = false) }
+        }
+    }
+
+    private suspend fun sendRules() {
+        val text = _state.value.autoRules
+        prefs.autoRules = text
+        when (val r = adb.pushAutoClickRules(text)) {
+            is AdbResult.Ok -> appendAuto("✓ ${r.value} reglas guardadas en la tele.")
+            is AdbResult.Err -> appendAuto("✗ No se pudieron guardar las reglas: ${r.message}")
+        }
+    }
 
     // ---------- Descargar e instalar ----------
 

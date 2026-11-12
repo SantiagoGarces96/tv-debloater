@@ -13,7 +13,15 @@ class Prefs(context: Context) {
             sp.edit().putString(KEY_LAST_HOST, value).apply()
         }
 
+    /** Tus reglas de "cerrar avisos" (texto). Vacío = usar las reglas por defecto. */
+    var autoRules: String
+        get() = sp.getString(KEY_AUTO_RULES, "").orEmpty()
+        set(value) {
+            sp.edit().putString(KEY_AUTO_RULES, value).apply()
+        }
+
     private companion object {
         const val KEY_LAST_HOST = "last_host"
+        const val KEY_AUTO_RULES = "auto_rules"
     }
 }
