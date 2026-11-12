@@ -59,6 +59,24 @@ object Protected {
         "setupwizard",
         "com.android.cts",
         "com.android.server",
+        // Almacenamiento y archivos (esenciales para el deco/TV)
+        "storage",
+        "externalstorage",
+        "documentsui",
+        "mediaprovider",
+        "media.module",
+        "downloads",
+        "mtp",
+        "sharedstoragebackup",
+        // Otros esenciales del sistema
+        "com.android.location",
+        "fused",
+        "com.google.android.ext",
+        "dynsystem",
+        "emergency",
+        "com.android.intentresolver",
+        "ondevicepersonalization",
+        "com.android.devicelockcontroller",
     )
 
     fun isProtected(pkg: String): Boolean {

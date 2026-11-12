@@ -56,6 +56,11 @@ class LogicTest {
         assertTrue(Protected.isProtected("com.google.android.tvlauncher"))
         assertTrue(Protected.isProtected("com.android.providers.settings"))
         assertTrue(Protected.isProtected("com.google.android.inputmethod.latin"))
+        // Almacenamiento / archivos:
+        assertTrue(Protected.isProtected("com.android.externalstorage"))
+        assertTrue(Protected.isProtected("com.android.providers.media.module"))
+        assertTrue(Protected.isProtected("com.android.documentsui"))
+        assertTrue(Protected.isProtected("com.android.storagemanager"))
         // Un paquete de anuncios normal NO está protegido:
         assertFalse(Protected.isProtected("com.sony.dtv.advertisement"))
     }
