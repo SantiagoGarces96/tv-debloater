@@ -33,6 +33,15 @@ class MacrosTest {
     }
 
     @Test
+    fun popup_closeOnlyWhenItIsAnAd() {
+        val cerrar = byId("tpl-pop-cerrar")
+        assertTrue(Macros.buttonMatches(cerrar, "Cerrar", "Publicidad · Descarga ya nuestro juego", null))
+        // Un «Cerrar» normal (sin anuncio en pantalla) no se toca:
+        assertFalse(Macros.buttonMatches(cerrar, "Cerrar", "¿Cerrar sesión de tu cuenta?", null))
+        assertTrue(Macros.buttonMatches(byId("tpl-pop-nogracias"), "No, gracias", "Oferta: 3 meses Premium", null))
+    }
+
+    @Test
     fun disabledMacro_neverFires() {
         val off = byId("tpl-continuar").copy(enabled = false)
         assertFalse(Macros.buttonMatches(off, "Continuar usando", "", null))

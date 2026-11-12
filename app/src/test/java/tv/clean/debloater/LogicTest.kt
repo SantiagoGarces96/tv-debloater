@@ -61,6 +61,17 @@ class LogicTest {
         assertTrue(Protected.isProtected("com.android.providers.media.module"))
         assertTrue(Protected.isProtected("com.android.documentsui"))
         assertTrue(Protected.isProtected("com.android.storagemanager"))
+        // Hardware de decos (ARRIS ONEtv / Broadcom):
+        assertTrue(Protected.isProtected("com.broadcom.generic.gfxdriver.default"))
+        assertTrue(Protected.isProtected("com.broadcom.BcmWifiRro"))
+        assertTrue(Protected.isProtected("com.arris.remoteservice"))
+        assertTrue(Protected.isProtected("com.commscope.rcu.millicom"))
+        assertTrue(Protected.isProtected("com.uei.hdmi.services"))
+        assertTrue(Protected.isProtected("com.dolby.android.audio.service"))
+        assertTrue(Protected.isProtected("com.arris.android.overlay"))
+        // Apps normales del deco siguen apareciendo:
+        assertFalse(Protected.isProtected("com.google.android.youtube.tv"))
+        assertFalse(Protected.isProtected("com.arris.bugreport"))
         // Un paquete de anuncios normal NO está protegido:
         assertFalse(Protected.isProtected("com.sony.dtv.advertisement"))
     }

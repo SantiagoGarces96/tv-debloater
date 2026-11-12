@@ -7,8 +7,14 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
 
-/** Servicio "cerrar avisos" que vive dentro del launcher SG Alfa. */
-const val AUTOCLICK_COMPONENT = "tv.clean.home/tv.clean.home.AutoClickService"
+/** Pantalla de inicio SG Alfa Home (basada en Arc Launcher): github.com/SantiagoGarces96/sg-alfa-home */
+const val LAUNCHER_PKG = "tv.sgalfa.home"
+const val LAUNCHER_HOME_COMPONENT = "tv.sgalfa.home/com.omeda.arc.MainActivity"
+const val AUTOCLICK_COMPONENT = "tv.sgalfa.home/tv.sgalfa.home.AutoClickService"
+
+/** Pantalla de inicio antigua (tv.clean.home). Se quita al instalar la nueva. */
+const val OLD_LAUNCHER_PKG = "tv.clean.home"
+const val OLD_AUTOCLICK_COMPONENT = "tv.clean.home/tv.clean.home.AutoClickService"
 
 /** Nombre de paquete Android válido (evita inyectar cosas en comandos de shell). */
 private val PKG_REGEX = Regex("^[A-Za-z][A-Za-z0-9_]*(\\.[A-Za-z0-9_]+)+$")
@@ -193,6 +199,29 @@ class AdbManager(context: Context) {
         }
     }
 
+    /**
+     * Quita la pantalla de inicio antigua (tv.clean.home), que es nuestra: primero su servicio de
+     * accesibilidad (sin tocar los demás) y luego la app. Devuelve true si estaba y se quitó.
+     */
+    suspend fun removeOldLauncher(): Boolean = withContext(Dispatchers.IO) {
+        val d = dadb ?: return@withContext false
+        runCatching {
+            if (!d.shell("pm list packages $OLD_LAUNCHER_PKG").output.contains("package:$OLD_LAUNCHER_PKG")) {
+                return@runCatching false
+            }
+            val current = d.shell("settings get secure enabled_accessibility_services").output.trim()
+            if (current.contains(OLD_AUTOCLICK_COMPONENT)) {
+                val rest = current.split(':').filter { it.isNotBlank() && it != OLD_AUTOCLICK_COMPONENT }
+                if (rest.isEmpty()) {
+                    d.shell("settings delete secure enabled_accessibility_services")
+                } else {
+                    d.shell("settings put secure enabled_accessibility_services '${rest.joinToString(":")}'")
+                }
+            }
+            d.shell("pm uninstall $OLD_LAUNCHER_PKG").output.contains("Success")
+        }.getOrDefault(false)
+    }
+
     /** Fija la pantalla de inicio por defecto (componente launcher). */
     suspend fun setDefaultHome(component: String): AdbResult<Unit> =
         withContext(Dispatchers.IO) {
@@ -244,6 +273,7 @@ class AdbManager(context: Context) {
                 ?.split(':')?.filter { it.isNotBlank() }?.toMutableList()
                 ?: mutableListOf()
             list.remove(AUTOCLICK_COMPONENT)
+            list.remove(OLD_AUTOCLICK_COMPONENT) // el de la pantalla de inicio antigua
             if (enable) list.add(AUTOCLICK_COMPONENT)
             if (list.isEmpty()) {
                 d.shell("settings delete secure enabled_accessibility_services")
@@ -266,7 +296,7 @@ class AdbManager(context: Context) {
         try {
             val encoded = java.util.Base64.getEncoder().encodeToString(json.toByteArray(Charsets.UTF_8))
             val r = d.shell(
-                "am broadcast -a tv.clean.home.SET_AUTOCLICK_RULES -n tv.clean.home/.RulesReceiver --es macros '$encoded'",
+                "am broadcast -a tv.sgalfa.home.SET_AUTOMATIONS -n tv.sgalfa.home/tv.sgalfa.home.RulesReceiver --es macros '$encoded'",
             )
             val count = Regex("ok (\\d+)").find(r.output)?.groupValues?.get(1)?.toIntOrNull()
             if (count != null) {
@@ -274,7 +304,7 @@ class AdbManager(context: Context) {
             } else {
                 AdbResult.Err(
                     "La tele no confirmó. Actualiza la pantalla de inicio SG Alfa " +
-                        "(botón «Poner una pantalla de inicio limpia») y vuelve a intentarlo.",
+                        "(botón «Poner la pantalla de inicio SG Alfa») y vuelve a intentarlo.",
                 )
             }
         } catch (e: Throwable) {

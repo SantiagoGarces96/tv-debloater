@@ -161,6 +161,22 @@ object Macros {
             text = "Yes",
             context = listOf("still watching", "continue watching"),
         ),
+        // Ventanas emergentes (pop-ups) de anuncios
+        Macro("tpl-pop-cerrar-anuncio", "Pop-up: Cerrar anuncio", text = "Cerrar anuncio"),
+        Macro("tpl-pop-close-ad", "Pop-up: Close ad (inglés)", text = "Close ad"),
+        Macro("tpl-pop-cerrar", "Pop-up de anuncio → Cerrar", text = "Cerrar", context = AD_WORDS),
+        Macro("tpl-pop-close", "Pop-up de anuncio → Close (inglés)", text = "Close", context = AD_WORDS),
+        Macro(
+            "tpl-pop-nogracias",
+            "Pop-up de oferta → No, gracias",
+            text = "No, gracias",
+            context = listOf("oferta", "premium", "suscríbete", "suscribete", "promoción", "promocion"),
+        ),
+    )
+
+    /** Palabras que delatan un pop-up de publicidad. Igual que en SG Alfa Home (Macros.java). */
+    private val AD_WORDS = listOf(
+        "anuncio", "publicidad", "patrocinado", "advertisement", "sponsored", "promocion", "promoción",
     )
 
     /**

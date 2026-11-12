@@ -595,7 +595,7 @@ private fun PackagesScreen(state: UiState, vm: DebloaterViewModel, modifier: Mod
             enabled = !state.busy,
             modifier = Modifier.fillMaxWidth(),
         ) {
-            Text("Poner una pantalla de inicio limpia")
+            Text("Poner la pantalla de inicio SG Alfa")
         }
         OutlinedButton(
             onClick = vm::openDownloads,

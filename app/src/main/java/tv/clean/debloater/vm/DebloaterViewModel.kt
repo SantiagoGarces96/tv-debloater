@@ -14,6 +14,8 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import tv.clean.debloater.adb.AdbManager
 import tv.clean.debloater.adb.AdbResult
+import tv.clean.debloater.adb.LAUNCHER_HOME_COMPONENT
+import tv.clean.debloater.adb.LAUNCHER_PKG
 import tv.clean.debloater.adb.DeviceInfo
 import tv.clean.debloater.adb.TvDiscovery
 import tv.clean.debloater.tizen.SamsungClient
@@ -425,29 +427,44 @@ class DebloaterViewModel(app: Application) : AndroidViewModel(app) {
         }
     }
 
-    /** Instala NUESTRO launcher (empaquetado en la app) y lo pone como pantalla de inicio. */
+    /**
+     * Instala SG Alfa Home (nuestra pantalla de inicio, basada en Arc Launcher) desde su última
+     * versión publicada en GitHub, quita la antigua y la pone como pantalla de inicio.
+     */
     fun installOwnLauncher() {
         _state.update { it.copy(stage = Stage.Working, busy = true, log = emptyList(), workDone = false) }
         viewModelScope.launch {
-            appendLog("Preparando la pantalla de inicio…")
-            val file = copyAssetToCache("launcher/clean-home.apk", "clean-home.apk")
-            if (file == null) {
-                appendLog("No encontré el launcher dentro de la app.")
-                _state.update { it.copy(busy = false, workDone = true) }
-                return@launch
+            appendLog("Descargando SG Alfa Home (última versión)…")
+            val file = File(getApplication<Application>().cacheDir, "sg-alfa-home.apk")
+            when (val dl = ApkDownloader.download(LAUNCHER_URL, file) { appendLog(it) }) {
+                is ApkDownloader.Result.Err -> {
+                    appendLog("✗ No se pudo descargar: ${dl.message}")
+                    _state.update { it.copy(busy = false, workDone = true) }
+                    return@launch
+                }
+                is ApkDownloader.Result.Ok -> appendLog("✓ Descargada (${dl.bytes / 1_048_576} MB).")
             }
             appendLog("Instalando en la tele…")
             when (val r = adb.installApk(file)) {
                 is AdbResult.Ok -> {
                     appendLog("✓ Instalada.")
+                    if (adb.removeOldLauncher()) appendLog("✓ Quitada la pantalla de inicio antigua.")
                     appendLog("Poniéndola como pantalla de inicio…")
-                    when (val h = adb.setDefaultHome(CLEAN_HOME_COMPONENT)) {
-                        is AdbResult.Ok -> appendLog("✓ Lista: tu tele abre la nueva pantalla de inicio.")
+                    when (val h = adb.setDefaultHome(LAUNCHER_HOME_COMPONENT)) {
+                        is AdbResult.Ok -> appendLog("✓ Lista: tu tele abre SG Alfa Home.")
                         is AdbResult.Err -> appendLog(
                             "Instalada, pero no pude fijarla: ${h.message}\n" +
-                                "Ábrela una vez en la tele y elígela como inicio.",
+                                "Pulsa Inicio en la tele y elige «SG Alfa Home».",
                         )
                     }
+                    // Le pasamos tus automatizaciones para que las tenga desde el principio.
+                    if (adb.pushMacros(Macros.encode(loadMacros())) is AdbResult.Ok) {
+                        appendLog("✓ Tus automatizaciones ya están en la tele.")
+                    }
+                    appendLog(
+                        "En la tele: Ajustes del launcher → «Protección SG Alfa» para bloquear anuncios " +
+                            "y activar las automatizaciones.",
+                    )
                 }
                 is AdbResult.Err -> appendLog("✗ Falló la instalación: ${r.message}")
             }
@@ -455,18 +472,6 @@ class DebloaterViewModel(app: Application) : AndroidViewModel(app) {
             _state.update { it.copy(busy = false, workDone = true) }
         }
     }
-
-    private suspend fun copyAssetToCache(assetPath: String, name: String): File? =
-        withContext(Dispatchers.IO) {
-            runCatching {
-                val ctx = getApplication<Application>()
-                val file = File(ctx.cacheDir, name)
-                ctx.assets.open(assetPath).use { input ->
-                    file.outputStream().use { output -> input.copyTo(output) }
-                }
-                file
-            }.getOrNull()
-        }
 
     private suspend fun copyUriToCache(uri: Uri, name: String = "launcher.apk"): File? = withContext(Dispatchers.IO) {
         runCatching {
@@ -487,11 +492,11 @@ class DebloaterViewModel(app: Application) : AndroidViewModel(app) {
     private suspend fun launcherInstalled(): Boolean {
         val list = adb.listPackages()
         if (list is AdbResult.Ok) installed = list.value
-        return "tv.clean.home" in installed
+        return LAUNCHER_PKG in installed
     }
 
     private val needLauncherMsg =
-        "Primero instala la pantalla de inicio SG Alfa (botón «Poner una pantalla de inicio limpia»): el servicio viene dentro de ella."
+        "Primero instala SG Alfa Home (botón «Poner la pantalla de inicio SG Alfa»): el servicio viene dentro de ella."
 
     /** Tus automatizaciones guardadas; si no hay, migra las reglas viejas; si tampoco, las plantillas. */
     private fun loadMacros(): List<Macro> =
@@ -767,7 +772,8 @@ class DebloaterViewModel(app: Application) : AndroidViewModel(app) {
     }
 
     companion object {
-        const val CLEAN_HOME_COMPONENT = "tv.clean.home/tv.clean.home.HomeActivity"
+        const val LAUNCHER_URL =
+            "https://github.com/SantiagoGarces96/sg-alfa-home/releases/latest/download/sg-alfa-home.apk"
         const val ADGUARD_DNS = "dns.adguard-dns.com"
     }
 }

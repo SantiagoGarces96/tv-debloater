@@ -1,5 +1,0 @@
-<resources>
-    <string name="app_name">SG Alfa</string>
-    <string name="autoclick_label">SG Alfa · Cerrar avisos</string>
-    <string name="autoclick_description">Pulsa automáticamente botones como «Continuar usando», «Seguir viendo» o «Saltar anuncio», según tus reglas. No guarda ni envía nada de lo que hay en pantalla.</string>
-</resources>

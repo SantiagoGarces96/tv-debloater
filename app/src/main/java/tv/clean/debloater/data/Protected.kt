@@ -77,6 +77,21 @@ object Protected {
         "com.android.intentresolver",
         "ondevicepersonalization",
         "com.android.devicelockcontroller",
+        // Hardware del deco: gráficos, red, mando, HDMI y audio (p. ej. ARRIS / Broadcom)
+        "gfxdriver",
+        "wifi",
+        "tethering",
+        "remoteservice",
+        ".rcu",
+        "hdmi",
+        "dolby",
+        "audio.service",
+        "inputdevices",
+        "managedprovisioning",
+        "modulemetadata",
+        "propertyservice",
+        "chmframework",
+        ".overlay",
     )
 
     fun isProtected(pkg: String): Boolean {

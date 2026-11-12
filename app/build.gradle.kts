@@ -47,17 +47,8 @@ android {
         }
     }
 
-    sourceSets["main"].assets.srcDir(layout.buildDirectory.dir("generated/launcherAssets"))
 }
 
-// Empaqueta nuestro propio launcher (módulo :launcher) dentro del APK de la app.
-val copyLauncherApk by tasks.registering(Copy::class) {
-    dependsOn(":launcher:assembleDebug")
-    from(project(":launcher").layout.buildDirectory.file("outputs/apk/debug/launcher-debug.apk"))
-    into(layout.buildDirectory.dir("generated/launcherAssets/launcher"))
-    rename { "clean-home.apk" }
-}
-tasks.named("preBuild").configure { dependsOn(copyLauncherApk) }
 
 dependencies {
     implementation(libs.androidx.core.ktx)

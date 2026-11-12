@@ -45,15 +45,14 @@ Al abrir, la app pregunta qué tienes:
   `install-existing`).
 - **Bloqueo de anuncios** en toda la TV (DNS filtrante AdGuard por ADB).
 
-## Pantalla de inicio propia (launcher)
+## Pantalla de inicio: SG Alfa Home
 
-La app incluye y **instala su propio launcher** (`tv.clean.home`, empaquetado dentro del APK — no depende
-de apps de terceros):
+La app instala **[SG Alfa Home](https://github.com/SantiagoGarces96/sg-alfa-home)** (basada en Arc Launcher,
+GPL-3.0), descargando siempre su última versión. Quita la pantalla de inicio antigua (`tv.clean.home`) si estaba.
 
-- **Estilo Apple TV**: estantería superior con la app enfocada y tiles que crecen y brillan.
-- **Bloqueo de anuncios integrado** (estilo Blokada, sin root): una VPN local que filtra el DNS con AdGuard.
-- **Personalizable**: color de acento, nº de columnas, **favoritos** (mantén OK para fijar) y **fondo de
-  pantalla** (degradados propios o **tu propia imagen**).
+- Aspecto de Arc Launcher: rejilla moderna, fondos de vídeo y diapositivas, protector de pantalla.
+- **Protección SG Alfa** (en sus Ajustes): bloqueo de anuncios y pop-ups por DNS (VPN local, sin root) y
+  **automatizaciones** estilo MacroDroid que se crean desde esta app.
 
 ## Importante / alcance
 
