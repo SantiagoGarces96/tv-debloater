@@ -773,7 +773,7 @@ class DebloaterViewModel(app: Application) : AndroidViewModel(app) {
 
     companion object {
         const val LAUNCHER_URL =
-            "https://github.com/SantiagoGarces96/sg-alfa-home/releases/latest/download/sg-alfa-home.apk"
+            "https://github.com/SantiagoGarces96/sg-alfa-tv/releases/latest/download/sg-alfa-home.apk"
         const val ADGUARD_DNS = "dns.adguard-dns.com"
     }
 }

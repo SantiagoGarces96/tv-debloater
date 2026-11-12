@@ -7,9 +7,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
 
-/** Pantalla de inicio SG Alfa Home (basada en Arc Launcher): github.com/SantiagoGarces96/sg-alfa-home */
+/** Pantalla de inicio SG Alfa Home (proyecto propio): github.com/SantiagoGarces96/sg-alfa-tv */
 const val LAUNCHER_PKG = "tv.sgalfa.home"
-const val LAUNCHER_HOME_COMPONENT = "tv.sgalfa.home/com.omeda.arc.MainActivity"
+const val LAUNCHER_HOME_COMPONENT = "tv.sgalfa.home/tv.sgalfa.home.MainActivity"
 const val AUTOCLICK_COMPONENT = "tv.sgalfa.home/tv.sgalfa.home.AutoClickService"
 
 /** Pantalla de inicio antigua (tv.clean.home). Se quita al instalar la nueva. */

@@ -47,10 +47,10 @@ Al abrir, la app pregunta qué tienes:
 
 ## Pantalla de inicio: SG Alfa Home
 
-La app instala **[SG Alfa Home](https://github.com/SantiagoGarces96/sg-alfa-home)** (basada en Arc Launcher,
-GPL-3.0), descargando siempre su última versión. Quita la pantalla de inicio antigua (`tv.clean.home`) si estaba.
+La app instala **[SG Alfa Home](https://github.com/SantiagoGarces96/sg-alfa-tv)** (pantalla de inicio propia,
+con Alfi, temas y actualización automática), descargando siempre su última versión. Quita la pantalla de inicio antigua (`tv.clean.home`) si estaba.
 
-- Aspecto de Arc Launcher: rejilla moderna, fondos de vídeo y diapositivas, protector de pantalla.
+- Diseño retro propio con 6 temas (y el tuyo), Alfi la mascota 8-bit, dock de favoritas y todas tus apps.
 - **Protección SG Alfa** (en sus Ajustes): bloqueo de anuncios y pop-ups por DNS (VPN local, sin root) y
   **automatizaciones** estilo MacroDroid que se crean desde esta app.
 
