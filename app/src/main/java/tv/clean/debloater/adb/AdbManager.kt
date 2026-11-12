@@ -7,6 +7,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
 
+/** Nombre de paquete Android válido (evita inyectar cosas en comandos de shell). */
+private val PKG_REGEX = Regex("^[A-Za-z][A-Za-z0-9_]*(\\.[A-Za-z0-9_]+)+$")
+
 /** Resultado simple para no propagar excepciones a la UI. */
 sealed interface AdbResult<out T> {
     data class Ok<T>(val value: T) : AdbResult<T>
@@ -203,6 +206,23 @@ class AdbManager(context: Context) {
                 AdbResult.Err(describe(e, host, 5555))
             }
         }
+
+    /** Abre en la tele la ficha oficial de Play Store de un paquete. */
+    suspend fun openPlayStore(pkg: String): AdbResult<Unit> = withContext(Dispatchers.IO) {
+        val d = dadb ?: return@withContext AdbResult.Err("Sin conexión.")
+        if (!PKG_REGEX.matches(pkg)) return@withContext AdbResult.Err("Nombre de paquete no válido.")
+        try {
+            val r = d.shell("am start -a android.intent.action.VIEW -d market://details?id=$pkg")
+            val out = (r.output + r.errorOutput).trim()
+            if (r.exitCode == 0 && !out.contains("Error", ignoreCase = true)) {
+                AdbResult.Ok(Unit)
+            } else {
+                AdbResult.Err(out.ifBlank { "No se pudo abrir Play Store (¿la tele tiene Play Store?)." })
+            }
+        } catch (e: Throwable) {
+            AdbResult.Err(describe(e, host, 5555))
+        }
+    }
 
     /** Activa bloqueo de anuncios en toda la TV via DNS privado filtrante (sin root ni app). */
     suspend fun setPrivateDns(hostname: String): AdbResult<Unit> =

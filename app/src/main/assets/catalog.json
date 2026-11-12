@@ -1,0 +1,50 @@
+{
+  "apps": [
+    {
+      "name": "Kodi",
+      "description": "Centro multimedia oficial (Play Store).",
+      "type": "playstore",
+      "pkg": "org.xbmc.kodi"
+    },
+    {
+      "name": "VLC",
+      "description": "Reproductor de video oficial (Play Store).",
+      "type": "playstore",
+      "pkg": "org.videolan.vlc"
+    },
+    {
+      "name": "Jellyfin para Android TV",
+      "description": "Tu propio servidor multimedia. Código abierto (GitHub oficial).",
+      "type": "github",
+      "repo": "jellyfin/jellyfin-androidtv",
+      "assetPattern": "release",
+      "pkg": "org.jellyfin.androidtv"
+    },
+    {
+      "name": "SmartTube",
+      "description": "Cliente de YouTube para TV sin anuncios. Código abierto (GitHub oficial).",
+      "type": "github",
+      "repo": "yuliskov/SmartTube",
+      "assetPattern": "stable.*universal",
+      "pkg": "com.teamsmart.videomanager.tv"
+    },
+    {
+      "name": "Plex",
+      "description": "Streaming de tu biblioteca (Play Store).",
+      "type": "playstore",
+      "pkg": "com.plexapp.android"
+    },
+    {
+      "name": "Stremio",
+      "description": "Centro de contenidos oficial (Play Store).",
+      "type": "playstore",
+      "pkg": "com.stremio.one"
+    },
+    {
+      "name": "Downloader (AFTVnews)",
+      "description": "Navegador y descargador oficial (Play Store).",
+      "type": "playstore",
+      "pkg": "com.esaba.downloader"
+    }
+  ]
+}

@@ -22,6 +22,8 @@ import tv.clean.debloater.data.AppRow
 import tv.clean.debloater.data.BackupRecord
 import tv.clean.debloater.data.BackupStore
 import tv.clean.debloater.data.AppGroup
+import tv.clean.debloater.data.CatalogApp
+import tv.clean.debloater.net.ApkDownloader
 import tv.clean.debloater.data.Categorizer
 import tv.clean.debloater.data.DebloatProfile
 import tv.clean.debloater.data.DebloatRepository
@@ -30,7 +32,16 @@ import tv.clean.debloater.data.Protected
 import tv.clean.debloater.data.Telemetry
 import tv.clean.debloater.data.UadEntry
 
-enum class Stage { Platform, Connect, Packages, Working, LgInfo, SamsungInfo }
+enum class Stage { Platform, Connect, Packages, Working, LgInfo, SamsungInfo, Downloads }
+
+/** APK ya descargado y verificado, esperando que el usuario confirme la instalación. */
+data class PendingApk(
+    val label: String,
+    val path: String,
+    val host: String,
+    val mb: Long,
+    val fromCode: Boolean,
+)
 
 enum class Action { Disable, Uninstall }
 
@@ -66,6 +77,13 @@ data class UiState(
     val samsungIp: String = "",
     val samsungBusy: Boolean = false,
     val samsungDetail: String? = null,
+    // Descargar e instalar
+    val dlCatalog: List<CatalogApp> = emptyList(),
+    val dlInput: String = "",
+    val dlBusy: Boolean = false,
+    val dlLog: List<String> = emptyList(),
+    val dlInstalled: Set<String> = emptySet(),
+    val dlPending: PendingApk? = null,
 )
 
 class DebloaterViewModel(app: Application) : AndroidViewModel(app) {
@@ -451,6 +469,122 @@ class DebloaterViewModel(app: Application) : AndroidViewModel(app) {
     }
 
     fun backToPackages() = _state.update { it.copy(stage = Stage.Packages, log = emptyList()) }
+
+    // ---------- Descargar e instalar ----------
+
+    fun openDownloads() {
+        _state.update { it.copy(stage = Stage.Downloads, dlInstalled = installed.toSet()) }
+        if (_state.value.dlCatalog.isEmpty()) {
+            viewModelScope.launch {
+                val apps = repo.appCatalog()
+                _state.update { it.copy(dlCatalog = apps) }
+            }
+        }
+    }
+
+    fun onDlInput(value: String) = _state.update { it.copy(dlInput = value) }
+
+    private fun appendDl(line: String) = _state.update { it.copy(dlLog = it.dlLog + line) }
+
+    /** Descarga desde lo escrito: una URL o un código de AFTVnews. */
+    fun downloadFromInput() {
+        val input = _state.value.dlInput
+        val url = ApkDownloader.toUrl(input)
+        if (url == null) {
+            _state.update { it.copy(dlLog = listOf("Escribe una URL o un código.")) }
+            return
+        }
+        val fromCode = ApkDownloader.isCode(input)
+        val label = if (fromCode) "el código ${input.trim()}" else "el enlace"
+        viewModelScope.launch {
+            _state.update { it.copy(dlBusy = true, dlLog = emptyList()) }
+            downloadAndAsk(label, url, fromCode)
+        }
+    }
+
+    fun installFromCatalog(app: CatalogApp) {
+        viewModelScope.launch {
+            _state.update { it.copy(dlBusy = true, dlLog = emptyList()) }
+            when (app.type) {
+                "playstore" -> {
+                    appendDl("Abriendo ${app.name} en la Play Store de la tele…")
+                    when (val r = adb.openPlayStore(app.pkg)) {
+                        is AdbResult.Ok -> appendDl("✓ Abierta en la tele: pulsa «Instalar» con el control.")
+                        is AdbResult.Err -> appendDl("✗ ${r.message}")
+                    }
+                    _state.update { it.copy(dlBusy = false) }
+                }
+                "github" -> {
+                    appendDl("Buscando la última versión oficial de ${app.name}…")
+                    val url = ApkDownloader.latestGithubApk(app.repo, app.assetPattern)
+                    if (url == null) {
+                        appendDl("✗ No encontré un APK en la última versión publicada.")
+                        _state.update { it.copy(dlBusy = false) }
+                    } else {
+                        downloadAndAsk(app.name, url, fromCode = false)
+                    }
+                }
+                "url" -> downloadAndAsk(app.name, app.url, fromCode = false)
+                "code" -> {
+                    val url = ApkDownloader.toUrl(app.code)
+                    if (url == null) _state.update { it.copy(dlBusy = false) }
+                    else downloadAndAsk(app.name, url, fromCode = true)
+                }
+                else -> {
+                    appendDl("Tipo de entrada desconocido: ${app.type}")
+                    _state.update { it.copy(dlBusy = false) }
+                }
+            }
+        }
+    }
+
+    private suspend fun downloadAndAsk(label: String, url: String, fromCode: Boolean) {
+        val dest = File(getApplication<Application>().cacheDir, "download.apk")
+        appendDl("Descargando $label…")
+        when (val r = ApkDownloader.download(url, dest) { appendDl(it) }) {
+            is ApkDownloader.Result.Ok -> {
+                val host = runCatching { java.net.URL(r.finalUrl).host }.getOrDefault(r.finalUrl)
+                appendDl("✓ APK verificado (${r.bytes / 1_048_576} MB), viene de $host.")
+                _state.update {
+                    it.copy(
+                        dlBusy = false,
+                        dlPending = PendingApk(label, dest.absolutePath, host, r.bytes / 1_048_576, fromCode),
+                    )
+                }
+            }
+            is ApkDownloader.Result.Err -> {
+                appendDl("✗ ${r.message}")
+                _state.update { it.copy(dlBusy = false) }
+            }
+        }
+    }
+
+    fun confirmInstallPending() {
+        val p = _state.value.dlPending ?: return
+        _state.update { it.copy(dlPending = null, dlBusy = true) }
+        viewModelScope.launch {
+            val file = File(p.path)
+            appendDl("Instalando ${p.label} en la tele…")
+            when (val r = adb.installApk(file)) {
+                is AdbResult.Ok -> appendDl("✓ Instalada. Ya la tienes en la tele.")
+                is AdbResult.Err -> appendDl("✗ Falló la instalación: ${r.message}")
+            }
+            runCatching { file.delete() }
+            val list = adb.listPackages()
+            if (list is AdbResult.Ok) {
+                installed = list.value
+                rebuildRows(preselect = false)
+                _state.update { it.copy(dlInstalled = list.value.toSet()) }
+            }
+            _state.update { it.copy(dlBusy = false) }
+        }
+    }
+
+    fun cancelPending() {
+        _state.value.dlPending?.let { runCatching { File(it.path).delete() } }
+        _state.update { it.copy(dlPending = null) }
+        appendDl("Instalación cancelada.")
+    }
 
     fun disconnect() {
         adb.close()

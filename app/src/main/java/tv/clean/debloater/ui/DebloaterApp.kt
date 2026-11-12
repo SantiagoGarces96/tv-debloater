@@ -65,6 +65,7 @@ fun DebloaterApp(state: UiState, vm: DebloaterViewModel, modifier: Modifier = Mo
         Stage.Working -> WorkingScreen(state, vm, modifier)
         Stage.LgInfo -> LgInfoScreen(state, vm, modifier)
         Stage.SamsungInfo -> SamsungInfoScreen(state, vm, modifier)
+        Stage.Downloads -> DownloadsScreen(state, vm, modifier)
     }
 }
 
@@ -594,6 +595,13 @@ private fun PackagesScreen(state: UiState, vm: DebloaterViewModel, modifier: Mod
             modifier = Modifier.fillMaxWidth(),
         ) {
             Text("Poner una pantalla de inicio limpia")
+        }
+        OutlinedButton(
+            onClick = vm::openDownloads,
+            enabled = !state.busy,
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            Text("Descargar e instalar apps")
         }
     }
 

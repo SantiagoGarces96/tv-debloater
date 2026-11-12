@@ -24,6 +24,14 @@ class DebloatRepository(private val context: Context) {
     }
 
     /** Base de datos de UAD-ng: paquete -> descripción / riesgo / etiquetas. */
+    /** Catálogo de apps para "Descargar e instalar" (assets/catalog.json). */
+    suspend fun appCatalog(): List<CatalogApp> = withContext(Dispatchers.IO) {
+        runCatching {
+            val text = context.assets.open("catalog.json").bufferedReader().use { it.readText() }
+            json.decodeFromString<AppCatalog>(text).apps
+        }.getOrDefault(emptyList())
+    }
+
     suspend fun uadDatabase(): Map<String, UadEntry> = withContext(Dispatchers.IO) {
         uadCached ?: loadUad().also { uadCached = it }
     }
