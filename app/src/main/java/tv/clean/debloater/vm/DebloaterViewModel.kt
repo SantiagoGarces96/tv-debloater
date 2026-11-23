@@ -36,7 +36,7 @@ import tv.clean.debloater.data.Protected
 import tv.clean.debloater.data.Telemetry
 import tv.clean.debloater.data.UadEntry
 
-enum class Stage { Platform, Connect, Packages, Working, LgInfo, SamsungInfo, Downloads, Automation }
+enum class Stage { Platform, Phone, Connect, Packages, Working, LgInfo, SamsungInfo, Downloads, Automation }
 
 /** APK ya descargado y verificado, esperando que el usuario confirme la instalación. */
 data class PendingApk(
@@ -115,6 +115,8 @@ class DebloaterViewModel(app: Application) : AndroidViewModel(app) {
     private var lgKey: String? = null
 
     fun chooseAndroid() = _state.update { it.copy(stage = Stage.Connect, error = null) }
+
+    fun choosePhone() = _state.update { it.copy(stage = Stage.Phone, error = null) }
 
     fun chooseLg() = _state.update { it.copy(stage = Stage.LgInfo) }
 

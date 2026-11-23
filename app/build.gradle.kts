@@ -13,8 +13,8 @@ android {
         applicationId = "tv.clean.debloater"
         minSdk = 26
         targetSdk = 35
-        versionCode = 1
-        versionName = "0.1.0"
+        versionCode = 28
+        versionName = "0.28.0"
     }
 
     buildTypes {
@@ -38,6 +38,7 @@ android {
 
     buildFeatures {
         compose = true
+        aidl = true
     }
 
     packaging {
@@ -68,6 +69,8 @@ dependencies {
     implementation(project(":automation"))
     implementation(libs.dadb)
     implementation(libs.jsch)
+    implementation(libs.shizuku.api)
+    implementation(libs.shizuku.provider)
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.serialization.json)
 

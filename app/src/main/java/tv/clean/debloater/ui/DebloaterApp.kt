@@ -60,6 +60,7 @@ import tv.clean.debloater.vm.UiState
 fun DebloaterApp(state: UiState, vm: DebloaterViewModel, modifier: Modifier = Modifier) {
     when (state.stage) {
         Stage.Platform -> PlatformScreen(vm, modifier)
+        Stage.Phone -> PhoneScreen(onBack = vm::backToPlatform, modifier = modifier)
         Stage.Connect -> ConnectScreen(state, vm, modifier)
         Stage.Packages -> PackagesScreen(state, vm, modifier)
         Stage.Working -> WorkingScreen(state, vm, modifier)
@@ -80,7 +81,20 @@ private fun PlatformScreen(vm: DebloaterViewModel, modifier: Modifier) {
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         Text("Empecemos.", style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold)
-        Text("¿Qué tele tienes? Elige la marca para continuar.", style = MaterialTheme.typography.bodyMedium)
+        Text("¿Qué quieres limpiar?", style = MaterialTheme.typography.bodyMedium)
+
+        Card(Modifier.fillMaxWidth()) {
+            Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text("📱  Este celular", fontWeight = FontWeight.Bold)
+                Text(
+                    "Quita las apps basura de Xiaomi, Samsung, Motorola, Facebook… Todo se puede devolver.",
+                    style = MaterialTheme.typography.bodySmall,
+                )
+                Button(onClick = vm::choosePhone, modifier = Modifier.fillMaxWidth()) {
+                    Text("Limpiar este celular")
+                }
+            }
+        }
 
         Card(Modifier.fillMaxWidth()) {
             Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {

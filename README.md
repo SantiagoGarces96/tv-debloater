@@ -28,7 +28,8 @@ Al abrir, la app pregunta qué tienes:
 - **Samsung (Tizen)** → usa **SDB** (no ADB) y Modo Desarrollador. La limpieza real necesita root y es
   específica de cada modelo, así que la app **diagnostica la conexión y te guía** paso a paso.
 
-**A futuro:** soporte para **teléfonos Android** (debloat del propio móvil).
+- **Este celular** (Xiaomi, Samsung, Motorola…) → quita apps basura del propio teléfono con
+  [Shizuku](https://shizuku.rikka.app), sin PC y sin root. Lista cerrada y revisada; todo se puede devolver.
 
 ## Qué hace (Android)
 
